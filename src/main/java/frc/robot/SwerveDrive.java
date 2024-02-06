@@ -125,7 +125,7 @@ public class SwerveDrive {
         robotPose2d = odometry.update(gyroRotation2d,
         new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()});
         
-        fieldPose2d = robotPose2d.rotateBy(gyroRotation2d);
+        fieldPose2d = robotPose2d.rotateBy( new Rotation2d(gyroAngle));
 
         
         // Convert to chassis speeds
@@ -203,11 +203,12 @@ public class SwerveDrive {
         // Desired Y
         // if we aren't using the joystick
         if (x1 >= -0.01 && x1 <=0.01){
-            YError = desiredY - robotPose2d.getY();
+            /*YError = desiredY - robotPose2d.getY();
             if (YError >= -0.03 && YError <= 0.03){
                 YError = 0;
             } 
-            strafe = coerceToRange(YError, -1, 1);
+            strafe = coerceToRange(YError, -1, 1);*/
+            strafe = 0;
         } else {
             // else desiredY is changed by our joystick
             desiredY = robotPose2d.getY() + (x1 * 1);
@@ -385,6 +386,10 @@ public class SwerveDrive {
     public String returnRobotPose2d(){
         return robotPose2d.toString();
     }
+    public String returnfieldPose2d(){
+        return fieldPose2d.toString();
+    }
+
     public Rotation2d returnRotation(){
         return robotPose2d.getRotation();
     }

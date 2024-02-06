@@ -236,10 +236,10 @@ public class Robot extends TimedRobot {
       swerveDrive.setDesiredYaw(180);
     }else if(controller.getBButton()){
       //East
-      swerveDrive.setDesiredYaw(90);;
+      swerveDrive.setDesiredYaw(90);
     } else if(controller.getXButton()){
       //West
-      swerveDrive.setDesiredYaw(-90);;
+      swerveDrive.setDesiredYaw(-90);
     } else {
       swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw());
     }
@@ -258,6 +258,7 @@ public class Robot extends TimedRobot {
     backLeft.resetInvert(true, false);
 
     SmartDashboard.putString("rotation2d", swerveDrive.returnRotation().toString());
+    SmartDashboard.putString("field? rotation2d", swerveDrive.returnfieldPose2d().toString());
     SmartDashboard.putNumber("robot X", swerveDrive.returnX());
     SmartDashboard.putNumber("robot Y", swerveDrive.returnY());
   }

@@ -186,11 +186,11 @@ public class WheelDrive {
 
     public SwerveModulePosition getPosition() {
         // need rotation2d to be in radians
-        return new SwerveModulePosition(speedEncoder.getPosition() * wheelCirc, new Rotation2d(angleEncoder.getPosition()/360 * 2 * Math.PI));
+        return new SwerveModulePosition(speedEncoder.getPosition() * wheelCirc, new Rotation2d(-angleEncoder.getPosition()/360 * 2 * Math.PI));
     }
 
     public SwerveModuleState getState() {
-        return new SwerveModuleState((speedEncoder.getVelocity() * wheelCirc) / 60, new Rotation2d(angleEncoder.getPosition()/360 * 2 * Math.PI));
+        return new SwerveModuleState((speedEncoder.getVelocity() * wheelCirc) / 60, new Rotation2d(-angleEncoder.getPosition()/360 * 2 * Math.PI));
     }
 
     // Set desired state?
