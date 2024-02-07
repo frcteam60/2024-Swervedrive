@@ -224,38 +224,40 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    
-    //swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw());
     if (controller.getLeftBumper()){
-      swerveDrive.visionDrive(275, 57, 0, LimelightHelpers.getBotPose("limelight"), gyro.getYaw());
-    } else if (controller.getYButton()){
-      //North
-      swerveDrive.setDesiredYaw(0);
-    } else if(controller.getAButton()){
-      //South
-      swerveDrive.setDesiredYaw(180);
-    }else if(controller.getBButton()){
-      //East
-      swerveDrive.setDesiredYaw(90);
-    } else if(controller.getXButton()){
-      //West
-      swerveDrive.setDesiredYaw(-90);
+      swerveDrive.setDesiredPosistion(0, 0, 0);
+      swerveDrive.driveToPosistion(0, 0, 0, gyro.getYaw());
     } else {
-      swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw());
+
+      if (controller.getYButton()){
+        //North
+        swerveDrive.setDesiredYaw(0);
+      } else if(controller.getAButton()){
+        //South
+        swerveDrive.setDesiredYaw(180);
+      }else if(controller.getBButton()){
+        //East
+        swerveDrive.setDesiredYaw(90);
+      } else if(controller.getXButton()){
+        //West
+        swerveDrive.setDesiredYaw(-90);
+      } else {
+        swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw());
+      }
     }
+    
+    
 
     /*if (controller.getRightBumper()){
       gyro.reset();
     }*/
 
-    if (controller.getLeftBumper()){
-      swerveDrive.setDesiredPosistion(1, 1, 45);
-    }
-    
+    /*
     frontRight.resetInvert(false, false);
     frontLeft.resetInvert(true, false);
-    backRight.resetInvert(false, false);;
+    backRight.resetInvert(false, false);
     backLeft.resetInvert(true, false);
+    */
 
     SmartDashboard.putString("rotation2d", swerveDrive.returnRotation().toString());
     SmartDashboard.putString("field? rotation2d", swerveDrive.returnfieldPose2d().toString());

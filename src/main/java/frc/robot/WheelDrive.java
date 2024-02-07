@@ -70,14 +70,13 @@ public class WheelDrive {
         this.angleEncoder.setVelocityConversionFactor(1);
 
         this.speedEncoder = this.speedMotor.getEncoder();
-        this.speedEncoder.setPositionConversionFactor((102/13) / 50.5);
+        this.speedEncoder.setPositionConversionFactor((102/13) / 50.7);
         // set this number
-        this.speedEncoder.setVelocityConversionFactor((102/13 / 50.5));
+        this.speedEncoder.setVelocityConversionFactor((102/13 / 50.7));
        
 
         this.absoluteEncoder = new DutyCycleEncoder(encoderNumber);
-        
-        
+                
         this.moduleState = new SwerveModuleState();
 
         
