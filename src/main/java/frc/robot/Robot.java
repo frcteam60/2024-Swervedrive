@@ -77,6 +77,7 @@ public class Robot extends TimedRobot {
   NetworkTableEntry ty = table.getEntry("ty");
   NetworkTableEntry ta = table.getEntry("ta");
   NetworkTableEntry ledMode = table.getEntry("ledMode");
+  NetworkTableEntry robotPoseInTargetSpace = table.getEntry("botpose_targetspace");
 
   // limelight json
   LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults("limelight");
@@ -90,6 +91,7 @@ public class Robot extends TimedRobot {
   double area;
   double v;
   double ts;
+  double botposeInTargetspace[] = {0};
 
 
 
@@ -166,12 +168,15 @@ public class Robot extends TimedRobot {
     // Limelight  
     double[] botpose2 = LimelightHelpers.getBotPose("limelight");
     SmartDashboard.putString("botpose2", Arrays.toString(botpose2));
-    
 
     //read values periodically
     x = tx.getDouble(0.0);
     y = ty.getDouble(0.0);
     area = ta.getDouble(0.0);
+
+
+    botposeInTargetspace = robotPoseInTargetSpace.getDoubleArray(botposeInTargetspace);
+    SmartDashboard.putNumber("robot from target yaw", botposeInTargetspace[3]);
 
     //post to smart dashboard periodically
     SmartDashboard.putNumber("LimelightX", x);
@@ -260,7 +265,6 @@ public class Robot extends TimedRobot {
     */
 
     SmartDashboard.putString("rotation2d", swerveDrive.returnRotation().toString());
-    SmartDashboard.putString("field? rotation2d", swerveDrive.returnfieldPose2d().toString());
     SmartDashboard.putNumber("robot X", swerveDrive.returnX());
     SmartDashboard.putNumber("robot Y", swerveDrive.returnY());
   }

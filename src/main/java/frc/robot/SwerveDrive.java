@@ -4,16 +4,13 @@
 
 package frc.robot;
 
-import javax.management.DescriptorRead;
-
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.proto.Kinematics;
 
 // add chassis speeds
 // Is our positive gyro speeds in the right angle
@@ -58,9 +55,13 @@ public class SwerveDrive {
     double YawError;
     double turning;
 
+    //
+    double newX;
+    double newY;
+    double newRobotAngle;
+
     Rotation2d gyroRotation2d;
     Pose2d robotPose2d;
-    Pose2d fieldPose2d;
     
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(translation2dfrontLeft, translation2dfrontRight, translation2dbackLeft, translation2dbackRight);
@@ -126,7 +127,7 @@ public class SwerveDrive {
         robotPose2d = odometry.update(gyroRotation2d,
         new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()});
         
-        fieldPose2d = robotPose2d.rotateBy( new Rotation2d(gyroAngle));
+  
 
         
         // Convert to chassis speeds
@@ -290,8 +291,6 @@ public class SwerveDrive {
         // Update the pose
         robotPose2d = odometry.update(gyroRotation2d,
         new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()});
-        
-        fieldPose2d = robotPose2d.rotateBy( new Rotation2d(gyroAngle));
 
         
         // Convert to chassis speeds
@@ -490,9 +489,6 @@ public class SwerveDrive {
     public String returnRobotPose2d(){
         return robotPose2d.toString();
     }
-    public String returnfieldPose2d(){
-        return fieldPose2d.toString();
-    }
 
     public Rotation2d returnRotation(){
         return robotPose2d.getRotation();
@@ -509,8 +505,81 @@ public class SwerveDrive {
     public double returnDesiredY(){
         return desiredY;
     }
-    public void resetPosistion(double gyroAngle, SwerveModulePosition[] modulePositions, Pose2d pose){
-        odometry.resetPosition(Rotation2d.fromDegrees(-gyroAngle), modulePositions, pose);
+    public void resetPosistion(double gyroAngle, SwerveModulePosition[] modulePositions, Pose2d pose, int targetNum, double botposeInTargetspace){
+        double targetAngle;
+        targetAngle = 180;
+        //
+        targetNum = 4;
+        /*
+        switch (targetNum) {
+            case 1:
+                targetAngle = ;
+                break;
+            case 2:
+                targetAngle = ;
+                break;
+            case 3:
+                targetAngle = 180;
+                break;
+            case 4:
+                targetAngle = 180;
+                break;
+            case 5:
+                targetAngle = -90;
+                break;
+            case 6:
+                targetAngle = 90;
+                break;
+            case 7:
+                targetAngle = 180;
+                break;
+            case 8:
+                targetAngle = 180;
+                break;
+            case 9:
+                targetAngle = ;
+                break;
+            case 10:
+                targetAngle = ;
+                break;
+            case 11:
+                targetAngle = ;
+                break;
+            case 12:
+                targetAngle = ;
+                break;
+            case 13:
+                targetAngle = 180;
+                break;
+            case 14:
+                targetAngle = 180;
+                break;
+            case 15:
+                targetAngle = ;
+                break;
+            case 16:
+                targetAngle = ;
+                break;
+            default:
+                break;
+        }*/
+
+        if (false){
+            // Put joystick button in this case
+        } else {
+            //if ((distanceFromTarget <= (180 * 0.0254)) && (robotPose2d.getX() - pose.getX()) <= 678 && (robotPose2d.getY() - pose.getY()) <= 567  && gyroAngle - pose.getRotation().getDegrees() >= 5678){
+            if (((pose.getX() + pose.getY()) / 2 <= (180 * 0.0254)) && Math.abs(targetAngle - pose.getRotation().getDegrees()) >= 56){
+                // our new x and y pose equal the values from the limelight
+                newX = pose.getX();
+                newY = pose.getX();
+            } else {
+                // No change in the robots x and y posistion
+                newX = robotPose2d.getX();
+                newY = robotPose2d.getY();
+            }
+            
+        }
+        odometry.resetPosition(Rotation2d.fromDegrees(newRobotAngle), modulePositions, new Pose2d(newX, newY, new Rotation2d(-(newRobotAngle/360 * 2 * Math.PI))));
     }
 
     public void updateOdometry(double gyroAngle){
