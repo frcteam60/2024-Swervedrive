@@ -10,7 +10,17 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 // add chassis speeds
 // Is our positive gyro speeds in the right angle
@@ -505,11 +515,9 @@ public class SwerveDrive {
     public double returnDesiredY(){
         return desiredY;
     }
-    public void resetPosistion(double gyroAngle, SwerveModulePosition[] modulePositions, Pose2d pose, int targetNum, double botposeInTargetspace){
+    public void resetPosition(float gyroAngle, SwerveModulePosition[] wheelPosistions, Pose2d pose, double botposeInTargetspace){
         double targetAngle;
         targetAngle = 180;
-        //
-        targetNum = 4;
         /*
         switch (targetNum) {
             case 1:
@@ -568,7 +576,7 @@ public class SwerveDrive {
             // Put joystick button in this case
         } else {
             //if ((distanceFromTarget <= (180 * 0.0254)) && (robotPose2d.getX() - pose.getX()) <= 678 && (robotPose2d.getY() - pose.getY()) <= 567  && gyroAngle - pose.getRotation().getDegrees() >= 5678){
-            if (((pose.getX() + pose.getY()) / 2 <= (180 * 0.0254)) && Math.abs(targetAngle - pose.getRotation().getDegrees()) >= 56){
+            if (((pose.getX() + pose.getY()) / 2 <= (120 * 0.0254)) && Math.abs(botposeInTargetspace) >= 15){
                 // our new x and y pose equal the values from the limelight
                 newX = pose.getX();
                 newY = pose.getX();
@@ -579,7 +587,7 @@ public class SwerveDrive {
             }
             
         }
-        odometry.resetPosition(Rotation2d.fromDegrees(newRobotAngle), modulePositions, new Pose2d(newX, newY, new Rotation2d(-(newRobotAngle/360 * 2 * Math.PI))));
+        odometry.resetPosition(Rotation2d.fromDegrees(newRobotAngle), wheelPosistions, new Pose2d(newX, newY, new Rotation2d(-(newRobotAngle/360 * 2 * Math.PI))));
     }
 
     public void updateOdometry(double gyroAngle){
@@ -590,6 +598,7 @@ public class SwerveDrive {
         desiredY = targetY;
         desiredYaw = targetYaw;
     }
+    
     
 }
 

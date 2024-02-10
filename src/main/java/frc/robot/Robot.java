@@ -27,6 +27,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 import java.util.function.DoubleUnaryOperator;
@@ -92,6 +94,8 @@ public class Robot extends TimedRobot {
   double v;
   double ts;
   double botposeInTargetspace[] = {0};
+  SwerveModulePosition[] swervedrivepositions[];
+
 
 
 
@@ -250,7 +254,9 @@ public class Robot extends TimedRobot {
         swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw());
       }
     }
-    
+    SwerveModulePosition[] modulePositions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
+    swerveDrive.resetPosition(gyro.getYaw(), modulePositions, new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[0]/360 * 2 * Math.PI))), botposeInTargetspace[3]);    
+    //swerveDrive.resetPosition(gyro.getYaw(), new SwerveDriveWheelPositions(frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[0]/360 * 2 * Math.PI))), botposeInTargetspace[3]);    
     
 
     /*if (controller.getRightBumper()){
