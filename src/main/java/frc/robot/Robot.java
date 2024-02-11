@@ -10,6 +10,8 @@
 package frc.robot;
 
 import java.util.Arrays;
+import java.util.Optional;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,6 +38,8 @@ import java.util.function.DoubleUnaryOperator;
 import com.kauailabs.navx.frc.AHRS;
 import com.kauailabs.navx.frc.Quaternion;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
 
 //import edu.wpi.first.wpilibj.
@@ -78,8 +82,10 @@ public class Robot extends TimedRobot {
   NetworkTableEntry tx = table.getEntry("tx");
   NetworkTableEntry ty = table.getEntry("ty");
   NetworkTableEntry ta = table.getEntry("ta");
+  NetworkTableEntry tv = table.getEntry("tv");
   NetworkTableEntry ledMode = table.getEntry("ledMode");
   NetworkTableEntry robotPoseInTargetSpace = table.getEntry("botpose_targetspace");
+
 
   // limelight json
   LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults("limelight");
@@ -92,9 +98,13 @@ public class Robot extends TimedRobot {
   double y;
   double area;
   double v;
+  double hasTarget;
   double ts;
-  double botposeInTargetspace[] = {0};
+  double botposeRed;
+  double botposeBlue;
+  double botposeInTargetspace[];
   SwerveModulePosition[] swervedrivepositions[];
+  boolean blue;
 
 
 
@@ -128,6 +138,33 @@ public class Robot extends TimedRobot {
     frontLeft.invertAngleMotor(false);
     backRight.invertAngleMotor(false);
     backLeft.invertAngleMotor(false);
+
+    Optional<Alliance> ally = DriverStation.getAlliance();
+    if (ally.isPresent()) {
+      if (ally.get() == Alliance.Red) {
+        //<RED ACTION>
+        blue = false;
+        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
+      }
+      if (ally.get() == Alliance.Blue) {
+        //<BLUE ACTION>
+        blue = true;
+        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
+      }
+    } else {
+      //<NO COLOR YET ACTION>
+      if (ally.get() == Alliance.Red) {
+        //<RED ACTION>
+        blue = false;
+        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
+      }
+      if (ally.get() == Alliance.Blue) {
+        //<BLUE ACTION>
+        blue = true;
+        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
+      }
+    }
+
 
     
   }
@@ -170,17 +207,26 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("currentAngle",backRight.returncurrentAngle());
 
     // Limelight  
-    double[] botpose2 = LimelightHelpers.getBotPose("limelight");
-    SmartDashboard.putString("botpose2", Arrays.toString(botpose2));
+    if (blue){
+      botpose2 = LimelightHelpers.getBotPose_wpiBlue("limelight");
+      SmartDashboard.putString("botpose2", Arrays.toString(botpose2));
+
+    } else {
+      botpose2 = LimelightHelpers.getBotPose_wpiRed("limelight");
+      SmartDashboard.putString("botpose2", Arrays.toString(botpose2));
+    }
+
 
     //read values periodically
     x = tx.getDouble(0.0);
     y = ty.getDouble(0.0);
     area = ta.getDouble(0.0);
+    hasTarget = tv.getDouble(0);
+    SmartDashboard.putNumber("tv", hasTarget);
 
 
     botposeInTargetspace = robotPoseInTargetSpace.getDoubleArray(botposeInTargetspace);
-    SmartDashboard.putNumber("robot from target yaw", botposeInTargetspace[3]);
+    SmartDashboard.putNumber("robot from target yaw", botposeInTargetspace[5]);
 
     //post to smart dashboard periodically
     SmartDashboard.putNumber("LimelightX", x);
@@ -205,9 +251,37 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    Optional<Alliance> ally = DriverStation.getAlliance();
+    if (ally.isPresent()) {
+      if (ally.get() == Alliance.Red) {
+        //<RED ACTION>
+        blue = false;
+        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
+      }
+      if (ally.get() == Alliance.Blue) {
+        //<BLUE ACTION>
+        blue = true;
+        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
+      }
+    } else {
+      //<NO COLOR YET ACTION>
+      if (ally.get() == Alliance.Red) {
+        //<RED ACTION>
+        blue = false;
+        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
+      }
+      if (ally.get() == Alliance.Blue) {
+        //<BLUE ACTION>
+        blue = true;
+        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
+      }
+    }
+
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
+
+    
   }
 
   /** This function is called periodically during autonomous. */
@@ -228,6 +302,33 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     swerveDrive.setDesiredYaw(gyro.getYaw());
+
+    Optional<Alliance> ally = DriverStation.getAlliance();
+    if (ally.isPresent()) {
+      if (ally.get() == Alliance.Red) {
+        //<RED ACTION>
+        blue = false;
+        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
+      }
+      if (ally.get() == Alliance.Blue) {
+        //<BLUE ACTION>
+        blue = true;
+        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
+      }
+    } else {
+      //<NO COLOR YET ACTION>
+      if (ally.get() == Alliance.Red) {
+        //<RED ACTION>
+        blue = false;
+        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
+      }
+      if (ally.get() == Alliance.Blue) {
+        //<BLUE ACTION>
+        blue = true;
+        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
+      }
+    }
+
   }
 
   /** This function is called periodically during operator control. */
@@ -235,7 +336,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     if (controller.getLeftBumper()){
       swerveDrive.setDesiredPosistion(0, 0, 0);
-      swerveDrive.driveToPosistion(0, 0, 0, gyro.getYaw());
+      swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
     } else {
 
       if (controller.getYButton()){
@@ -254,8 +355,9 @@ public class Robot extends TimedRobot {
         swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw());
       }
     }
+
     SwerveModulePosition[] modulePositions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
-    swerveDrive.resetPosition(gyro.getYaw(), modulePositions, new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[0]/360 * 2 * Math.PI))), botposeInTargetspace[3]);    
+    swerveDrive.resetPosition(gyro.getYaw(), modulePositions, new Pose2d(botposeInTargetspace[0], botposeInTargetspace[1], new Rotation2d(-(botposeInTargetspace[5]/360 * 2 * Math.PI))), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5]/360 * 2 * Math.PI))), hasTarget);    
     //swerveDrive.resetPosition(gyro.getYaw(), new SwerveDriveWheelPositions(frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[0]/360 * 2 * Math.PI))), botposeInTargetspace[3]);    
     
 

@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.text.BreakIterator;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -289,7 +291,7 @@ public class SwerveDrive {
     }
 
     // odometery drive to posistion
-    public void driveToPosistion (double x1, double y1, double x2, double gyroAngle) {
+    public void driveToPosition (double x1, double y1, double x2, double gyroAngle) {
         rotation = Math.sqrt((length * length) + (width * width));
 
         y1 = y1;
@@ -515,79 +517,33 @@ public class SwerveDrive {
     public double returnDesiredY(){
         return desiredY;
     }
-    public void resetPosition(float gyroAngle, SwerveModulePosition[] wheelPosistions, Pose2d pose, double botposeInTargetspace){
+    public void resetPosition(float gyroAngle, SwerveModulePosition[] wheelPosistions, Pose2d botposeInTargetspace, Pose2d robotPose2d, double tv){
+        newRobotAngle = gyroAngle;
         double targetAngle;
         targetAngle = 180;
-        /*
-        switch (targetNum) {
-            case 1:
-                targetAngle = ;
-                break;
-            case 2:
-                targetAngle = ;
-                break;
-            case 3:
-                targetAngle = 180;
-                break;
-            case 4:
-                targetAngle = 180;
-                break;
-            case 5:
-                targetAngle = -90;
-                break;
-            case 6:
-                targetAngle = 90;
-                break;
-            case 7:
-                targetAngle = 180;
-                break;
-            case 8:
-                targetAngle = 180;
-                break;
-            case 9:
-                targetAngle = ;
-                break;
-            case 10:
-                targetAngle = ;
-                break;
-            case 11:
-                targetAngle = ;
-                break;
-            case 12:
-                targetAngle = ;
-                break;
-            case 13:
-                targetAngle = 180;
-                break;
-            case 14:
-                targetAngle = 180;
-                break;
-            case 15:
-                targetAngle = ;
-                break;
-            case 16:
-                targetAngle = ;
-                break;
-            default:
-                break;
-        }*/
+        System.out.println(botposeInTargetspace.toString());
 
         if (false){
             // Put joystick button in this case
         } else {
             //if ((distanceFromTarget <= (180 * 0.0254)) && (robotPose2d.getX() - pose.getX()) <= 678 && (robotPose2d.getY() - pose.getY()) <= 567  && gyroAngle - pose.getRotation().getDegrees() >= 5678){
-            if (((pose.getX() + pose.getY()) / 2 <= (120 * 0.0254)) && Math.abs(botposeInTargetspace) >= 15){
+            //if robot is less than 120 inches from target, and robot is more than 7 degrees off from line normal to target, and target is seen
+            if ((Math.sqrt(botposeInTargetspace.getX() * botposeInTargetspace.getX() + botposeInTargetspace.getY() * botposeInTargetspace.getY()) <= (120 * 0.0254)) && Math.abs(botposeInTargetspace.getRotation().getDegrees()) >= 7 && tv == 1){
                 // our new x and y pose equal the values from the limelight
-                newX = pose.getX();
-                newY = pose.getX();
-            } else {
-                // No change in the robots x and y posistion
                 newX = robotPose2d.getX();
                 newY = robotPose2d.getY();
+                System.out.println(newX);
+                System.out.println(newY);
+
+                odometry.resetPosition(Rotation2d.fromDegrees(newRobotAngle), wheelPosistions, new Pose2d(newX, newY, new Rotation2d(-(newRobotAngle/360 * 2 * Math.PI))));
+        
+            } else {
+                // No change in the robots x and y posistion
+
             }
             
         }
-        odometry.resetPosition(Rotation2d.fromDegrees(newRobotAngle), wheelPosistions, new Pose2d(newX, newY, new Rotation2d(-(newRobotAngle/360 * 2 * Math.PI))));
+        
     }
 
     public void updateOdometry(double gyroAngle){
