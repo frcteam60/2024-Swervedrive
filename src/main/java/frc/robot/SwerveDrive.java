@@ -484,6 +484,12 @@ public class SwerveDrive {
         desiredYaw = desiredGyroAngle;
     }
 
+    // this method is to convert the position on the field that we want to be pointing at to the desired yaw
+    public void setTurnPoint(Pose2d desiredPoint){
+        Rotation2d pointAngle = new Rotation2d(desiredPoint.getX() - robotPose2d.getX(), robotPose2d.getY() - desiredPoint.getY());
+        desiredYaw = pointAngle.getDegrees();
+    }
+
     public double returnDesiredYaw(){
         return desiredYaw;
         }

@@ -102,7 +102,7 @@ public class Robot extends TimedRobot {
   double ts;
   double botposeRed;
   double botposeBlue;
-  double botposeInTargetspace[];
+  double botposeInTargetspace[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,};
   SwerveModulePosition[] swervedrivepositions[];
   boolean blue;
 
@@ -151,19 +151,7 @@ public class Robot extends TimedRobot {
         blue = true;
         //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
       }
-    } else {
-      //<NO COLOR YET ACTION>
-      if (ally.get() == Alliance.Red) {
-        //<RED ACTION>
-        blue = false;
-        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
-      }
-      if (ally.get() == Alliance.Blue) {
-        //<BLUE ACTION>
-        blue = true;
-        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
-      }
-    }
+    } 
 
 
     
@@ -263,19 +251,7 @@ public class Robot extends TimedRobot {
         blue = true;
         //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
       }
-    } else {
-      //<NO COLOR YET ACTION>
-      if (ally.get() == Alliance.Red) {
-        //<RED ACTION>
-        blue = false;
-        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
-      }
-      if (ally.get() == Alliance.Blue) {
-        //<BLUE ACTION>
-        blue = true;
-        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
-      }
-    }
+    } 
 
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
@@ -315,19 +291,7 @@ public class Robot extends TimedRobot {
         blue = true;
         //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
       }
-    } else {
-      //<NO COLOR YET ACTION>
-      if (ally.get() == Alliance.Red) {
-        //<RED ACTION>
-        blue = false;
-        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
-      }
-      if (ally.get() == Alliance.Blue) {
-        //<BLUE ACTION>
-        blue = true;
-        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
-      }
-    }
+    } 
 
   }
 
@@ -339,22 +303,28 @@ public class Robot extends TimedRobot {
       swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
     } else {
 
-      if (controller.getYButton()){
+      if (controller.getPOV() == 0){
         //North
         swerveDrive.setDesiredYaw(0);
-      } else if(controller.getAButton()){
+      } else if(controller.getPOV() == 180){
         //South
         swerveDrive.setDesiredYaw(180);
-      }else if(controller.getBButton()){
+      }else if(controller.getPOV() == 90){
         //East
         swerveDrive.setDesiredYaw(90);
-      } else if(controller.getXButton()){
+      } else if(controller.getPOV() == 270){
         //West
         swerveDrive.setDesiredYaw(-90);
       } else {
         swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw());
       }
     }
+
+    if (controller.getRightBumper()){
+      swerveDrive.setTurnPoint(new Pose2d(0, 0, null)); 
+    }
+    
+    
 
     SwerveModulePosition[] modulePositions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
     swerveDrive.resetPosition(gyro.getYaw(), modulePositions, new Pose2d(botposeInTargetspace[0], botposeInTargetspace[1], new Rotation2d(-(botposeInTargetspace[5]/360 * 2 * Math.PI))), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5]/360 * 2 * Math.PI))), hasTarget);    
