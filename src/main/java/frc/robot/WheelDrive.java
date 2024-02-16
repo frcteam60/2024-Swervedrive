@@ -120,7 +120,6 @@ public class WheelDrive {
 
         currentAngle = angleEncoder.getPosition();
         //speed = speed * 0.5;
-        speed = speed * 0.25;
 
         setPointAngle = angleSubtractor(currentAngle, angle);
         setPointAngleFlipped = angleSubtractor(currentAngle + 180, angle);

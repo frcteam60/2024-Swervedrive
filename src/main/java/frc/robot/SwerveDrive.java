@@ -37,6 +37,9 @@ public class SwerveDrive {
     public static final double length = 27.4;
     public static final double width = 12.25;
 
+    /*public static final double length = 22.25
+    public static final double width = 22.25;*/
+
 
     // Kinematics
     private static Translation2d translation2dfrontRight = new Translation2d(width / 2, -(length / 2));
@@ -161,7 +164,8 @@ public class SwerveDrive {
             if (YawError >= -3 && YawError <= 3){
                 YawError = 0;
             } 
-            turning = coerceToRange((YawError) * 0.015, -1, 1);
+            //turning = coerceToRange((YawError) * 0.015, -1, 1);
+            turning = coerceToRange((YawError) * 0.020, -1, 1);
         } 
         
         else {
@@ -170,7 +174,8 @@ public class SwerveDrive {
             if (YawError >= -3 && YawError <= 3){
                 YawError = 0;
             } 
-            turning = coerceToRange((YawError) * 0.06, -1, 1);
+            //turning = coerceToRange((YawError) * 0.06, -1, 1);
+            turning = coerceToRange((YawError) * 0.07, -1, 1);
         }
 
 
@@ -527,7 +532,7 @@ public class SwerveDrive {
         newRobotAngle = gyroAngle;
         double targetAngle;
         targetAngle = 180;
-        System.out.println(botposeInTargetspace.toString());
+        //System.out.println(botposeInTargetspace.toString());
 
         if (false){
             // Put joystick button in this case
@@ -538,8 +543,8 @@ public class SwerveDrive {
                 // our new x and y pose equal the values from the limelight
                 newX = robotPose2d.getX();
                 newY = robotPose2d.getY();
-                System.out.println(newX);
-                System.out.println(newY);
+                //System.out.println(newX);
+                //System.out.println(newY);
 
                 odometry.resetPosition(Rotation2d.fromDegrees(newRobotAngle), wheelPosistions, new Pose2d(newX, newY, new Rotation2d(-(newRobotAngle/360 * 2 * Math.PI))));
         

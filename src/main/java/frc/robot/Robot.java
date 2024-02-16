@@ -78,7 +78,10 @@ public class Robot extends TimedRobot {
   private SwerveDrive swerveDrive = new SwerveDrive(backRight, backLeft, frontRight, frontLeft, gyro.getYaw());
 
   // Limelight
+
+  //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+  //NetworkTableEntry video = table.getEntry("stream").setNumber(0);
   NetworkTableEntry tx = table.getEntry("tx");
   NetworkTableEntry ty = table.getEntry("ty");
   NetworkTableEntry ta = table.getEntry("ta");
@@ -189,6 +192,7 @@ public class Robot extends TimedRobot {
 
 
     //
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
     SmartDashboard.putNumber("desiredX", swerveDrive.returnDesiredX());
     SmartDashboard.putNumber("desiredY", swerveDrive.returnDesiredY());
     SmartDashboard.putNumber("desiredYaw", swerveDrive.returnDesiredYaw());
@@ -212,6 +216,8 @@ public class Robot extends TimedRobot {
     hasTarget = tv.getDouble(0);
     SmartDashboard.putNumber("tv", hasTarget);
 
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(0);
+
 
     botposeInTargetspace = robotPoseInTargetSpace.getDoubleArray(botposeInTargetspace);
     SmartDashboard.putNumber("robot from target yaw", botposeInTargetspace[5]);
@@ -220,7 +226,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightX", x);
     SmartDashboard.putNumber("LimelightY", y);
     SmartDashboard.putNumber("LimelightArea", area);
-    /*
+   /*
     SmartDashboard.putString("rotation2d", swerveDrive.returnRotation().toString());
     SmartDashboard.putNumber("robot X", swerveDrive.returnX());
     SmartDashboard.putNumber("robot Y", swerveDrive.returnY());*/
@@ -342,9 +348,6 @@ public class Robot extends TimedRobot {
     backLeft.resetInvert(true, false);
     */
 
-    SmartDashboard.putString("rotation2d", swerveDrive.returnRotation().toString());
-    SmartDashboard.putNumber("robot X", swerveDrive.returnX());
-    SmartDashboard.putNumber("robot Y", swerveDrive.returnY());
   }
 
   /** This function is called once when the robot is disabled. */
