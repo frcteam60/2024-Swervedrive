@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.LimelightHelpers.LimelightResults;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.SPI;
 
@@ -69,6 +70,8 @@ public class Robot extends TimedRobot {
 
   // Joystick
   private XboxController controller = new XboxController(0);
+  private Joystick joystick = new Joystick(1);
+  private Joystick wheelJoystick = new Joystick(2);
 
   // Swerve drive
   private WheelDrive backLeft = new WheelDrive(2, 1,0);
@@ -329,9 +332,28 @@ public class Robot extends TimedRobot {
     if (controller.getRightBumper()){
       swerveDrive.setTurnPoint(new Pose2d(0, 0, null)); 
     }
-    
-    
+    /*
+    if(controller.getXButton()){
+      swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw());
+    } else {
+      swerveDrive.drive(joystick.getX(), joystick.getY(), wheelJoystick.getRawAxis(0), gyro.getYaw());
+    }
 
+    if(joystick.getRawButtonPressed(0)){
+      // Go to source 
+      swerveDrive.setDesiredPosistion(0, 0, 0);
+      swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+    } else if(joystick.getRawButtonPressed(1)){
+      // Go to source 
+      swerveDrive.setDesiredPosistion(0, 0, 0);
+      swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+    } else if(joystick.getRawButtonPressed(2)){
+      // Go to amp
+      swerveDrive.setDesiredPosistion(0, 0, 0);
+      swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+    }*/
+    
+  
     SwerveModulePosition[] modulePositions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
     swerveDrive.resetPosition(gyro.getYaw(), modulePositions, new Pose2d(botposeInTargetspace[0], botposeInTargetspace[1], new Rotation2d(-(botposeInTargetspace[5]/360 * 2 * Math.PI))), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5]/360 * 2 * Math.PI))), hasTarget);    
     //swerveDrive.resetPosition(gyro.getYaw(), new SwerveDriveWheelPositions(frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[0]/360 * 2 * Math.PI))), botposeInTargetspace[3]);    
