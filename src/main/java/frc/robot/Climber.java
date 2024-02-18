@@ -15,10 +15,10 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 
 /** Add your docs here. */
 public class Climber {
-    TalonSRX climber1 = new TalonSRX(9);
-    TalonSRX climber2 = new TalonSRX(10);
-    TalonSRX climber3 = new TalonSRX(11);
-    TalonSRX climber4 = new TalonSRX(12);
+    TalonSRX climber1 = new TalonSRX(14);
+    TalonSRX climber2 = new TalonSRX(15);
+    TalonSRX climber3 = new TalonSRX(16);
+    TalonSRX climber4 = new TalonSRX(17);
 
     
     // SwerveDrive constructor

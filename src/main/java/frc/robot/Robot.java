@@ -2,15 +2,18 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-
-// set spark max encoder from absolute encoder
-// add motor CAN numbers
-// add motor watch dogs
-// configAbsoluteSensorRange
+// encoder offset numbers
+// correct joysticks
+// joystick axes
+// auto starting posistion
+// desired positions for sources and amp
 package frc.robot;
 
+import java.nio.ShortBuffer;
+import edu.wpi.first.cameraserver.CameraServer;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.StringTokenizer;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -43,12 +46,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
 
-//import edu.wpi.first.wpilibj.
-//import com.ctre.phoenix.sensors.
-/*import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenix.sensors.WPI_CANCoder;
-import com.ctre.phoenix.sensors.CANCoderConfiguration;
-import com.ctre.phoenix.sensors.CANCoderStatusFrame;*/
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -59,6 +57,8 @@ import com.ctre.phoenix.sensors.CANCoderStatusFrame;*/
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
+  private static final String kAutoRight = "AutoRight";
+  private static final String kAutoLeft = "AutoLeft";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
@@ -72,6 +72,13 @@ public class Robot extends TimedRobot {
   private XboxController controller = new XboxController(0);
   private Joystick joystick = new Joystick(1);
   private Joystick wheelJoystick = new Joystick(2);
+
+  // Shooter and Intake
+  //ShooterAndIntake shooterAndIntake = new ShooterAndIntake(false, false, false, false, false, 
+  //0, 1);
+
+  // Climber
+  //Climber climber = new Climber(false, false, false, false);
 
   // Swerve drive
   private WheelDrive backLeft = new WheelDrive(2, 1,0);
@@ -123,27 +130,46 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
+    m_chooser.addOption("AutoRight", kAutoRight);
+    m_chooser.addOption("AutoLeft", kAutoLeft);
     SmartDashboard.putData("Auto choices", m_chooser);
 
-    //AbsoluteEncoder.configSensorDirection(false);
-    //AbsoluteEncoder.configAbsoluteSensorRange
-    //AbsoluteEncoder.getAbsolutePosition();
-    
+    //CameraServer.startAutomaticCapture();
+
+
+    // zeros angle encoders
     backRight.zeroEncoders(0.3389 * 360);
     backLeft.zeroEncoders(0.7695 * 360);
     frontRight.zeroEncoders(0.0614 * 360);
     frontLeft.zeroEncoders(0.8470 * 360);
-
-    
+    // Inverts drive motors
     frontRight.invertDriveMotor(false);
     frontLeft.invertDriveMotor(true);
     backRight.invertDriveMotor(false);
     backLeft.invertDriveMotor(true);
-
+    // Inverts angle motors
     frontRight.invertAngleMotor(false);
     frontLeft.invertAngleMotor(false);
     backRight.invertAngleMotor(false);
     backLeft.invertAngleMotor(false);
+
+    /*
+    // zeros angle encoders
+    backRight.zeroEncoders(0.3389 * 360);
+    backLeft.zeroEncoders(0.7695 * 360);
+    frontRight.zeroEncoders(0.0614 * 360);
+    frontLeft.zeroEncoders(0.8470 * 360);
+    // Inverts drive motors
+    frontRight.invertDriveMotor(false);
+    frontLeft.invertDriveMotor(true);
+    backRight.invertDriveMotor(false);
+    backLeft.invertDriveMotor(true);
+    // Inverts angle motors
+    frontRight.invertAngleMotor(false);
+    frontLeft.invertAngleMotor(false);
+    backRight.invertAngleMotor(false);
+    backLeft.invertAngleMotor(false);
+     */
 
     Optional<Alliance> ally = DriverStation.getAlliance();
     if (ally.isPresent()) {
@@ -229,6 +255,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightX", x);
     SmartDashboard.putNumber("LimelightY", y);
     SmartDashboard.putNumber("LimelightArea", area);
+
    /*
     SmartDashboard.putString("rotation2d", swerveDrive.returnRotation().toString());
     SmartDashboard.putNumber("robot X", swerveDrive.returnX());
@@ -276,6 +303,12 @@ public class Robot extends TimedRobot {
       case kCustomAuto:
         // Put custom auto code here
         break;
+      case kAutoRight:
+        // auto right
+        break;
+      case kAutoLeft:
+        // auto left
+        break;
       case kDefaultAuto:
       default:
         // Put default auto code here
@@ -312,13 +345,13 @@ public class Robot extends TimedRobot {
       swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
     } else {
 
-      if (controller.getPOV() == 0){
+      /*if (controller.getPOV() == 0){
         //North
         swerveDrive.setDesiredYaw(0);
       } else if(controller.getPOV() == 180){
         //South
         swerveDrive.setDesiredYaw(180);
-      }else if(controller.getPOV() == 90){
+      } else if(controller.getPOV() == 90){
         //East
         swerveDrive.setDesiredYaw(90);
       } else if(controller.getPOV() == 270){
@@ -326,34 +359,126 @@ public class Robot extends TimedRobot {
         swerveDrive.setDesiredYaw(-90);
       } else {
         swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw());
-      }
+      }*/
     }
 
     if (controller.getRightBumper()){
       swerveDrive.setTurnPoint(new Pose2d(0, 0, null)); 
     }
-    /*
+
     if(controller.getXButton()){
+      // if override pressed
       swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw());
-    } else {
+    }  else {
+      // primary driver inputs
       swerveDrive.drive(joystick.getX(), joystick.getY(), wheelJoystick.getRawAxis(0), gyro.getYaw());
     }
-
-    if(joystick.getRawButtonPressed(0)){
-      // Go to source 
-      swerveDrive.setDesiredPosistion(0, 0, 0);
-      swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
-    } else if(joystick.getRawButtonPressed(1)){
-      // Go to source 
-      swerveDrive.setDesiredPosistion(0, 0, 0);
-      swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+    ///////////////////
+    /*
+    if (controller.getBButton()){
+      // line up robot angle
+      // write variable linedUp
+    } else if(controller.getXButton()){
+      // if override pressed
+      swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw());
+    } else if(joystick.getRawButtonPressed(5)){
+      // Go to source 1
+      if (blue){
+        swerveDrive.setDesiredPosistion(0, 0, 0);
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+      } else {
+        swerveDrive.setDesiredPosistion(0, 0, 0);
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+      }
+    } else if(joystick.getRawButtonPressed(3)){
+      // Go to source 2
+      if (blue){
+        swerveDrive.setDesiredPosistion(0, 0, 0);
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+      } else {
+        swerveDrive.setDesiredPosistion(0, 0, 0);
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+      }
+    } else if(joystick.getRawButtonPressed(4)){
+      // Go to subwoofer
+      if (blue){
+        swerveDrive.setDesiredPosistion(0, 0, 0);
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+      } else {
+        swerveDrive.setDesiredPosistion(0, 0, 0);
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+      }
     } else if(joystick.getRawButtonPressed(2)){
       // Go to amp
-      swerveDrive.setDesiredPosistion(0, 0, 0);
-      swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
-    }*/
+      if (blue){
+        swerveDrive.setDesiredPosistion(0, 0, 0);
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+      } else {
+        swerveDrive.setDesiredPosistion(0, 0, 0);
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+      }
+    } else {
+      // primary driver inputs
+      swerveDrive.drive(joystick.getX(), joystick.getY(), wheelJoystick.getRawAxis(0), gyro.getYaw());
+    }
     
-  
+    /*if (controller.getPOV() == 0){
+      //North
+      swerveDrive.setDesiredYaw(0);
+    } else if(controller.getPOV() == 180){
+      //South
+      swerveDrive.setDesiredYaw(180);
+    } else if(controller.getPOV() == 90){
+      //East
+      swerveDrive.setDesiredYaw(90);
+    } else if(controller.getPOV() == 270){
+      //West
+      swerveDrive.setDesiredYaw(-90);
+    }*//*
+    
+    // shooter
+    if (controller.getBButton() || controller.getAButton() || joystick.getRawButton(5) || joystick.getRawButton(3)){
+      // shooter control below
+    } else if (controller.getRightTriggerAxis() == 1){
+      // Shoot out
+      shooterAndIntake.shooter(0.5);
+    } else if (controller.getRightBumper() == true){
+      // Shooter in
+      shooterAndIntake.shooter(-0.5);
+    }
+
+    // shooter angle
+    if (joystick.getRawButton(5) || joystick.getRawButton(3)){
+      // Source pick up
+      shooterAndIntake.setAngle(0);
+      shooterAndIntake.shooter(-0.5);
+    } else if(controller.getBButton()){
+      // line up shooter for speaker
+      shooterAndIntake.shootInSpeaker(true, botposeInTargetspace);
+    } else if(controller.getAButton()){
+      // If lined up
+      // shoot in amp
+      shooterAndIntake.shootInAmp(botpose2);
+    } else {
+      shooterAndIntake.changeAngle(controller.getLeftY());
+    }
+
+    // intake
+    if (controller.getLeftTriggerAxis() == 1){
+      // Intake
+      shooterAndIntake.intake(1);
+    } else if (controller.getLeftBumper()){
+      // Reverse intake
+      shooterAndIntake.intake(-1);
+    }
+
+    // climber
+    if (controller.getPOV() == 0){
+      climber.climb(1);
+    } else if (controller.getPOV() == 180) {
+      climber.climb(-1);
+    }*/
+
     SwerveModulePosition[] modulePositions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
     swerveDrive.resetPosition(gyro.getYaw(), modulePositions, new Pose2d(botposeInTargetspace[0], botposeInTargetspace[1], new Rotation2d(-(botposeInTargetspace[5]/360 * 2 * Math.PI))), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5]/360 * 2 * Math.PI))), hasTarget);    
     //swerveDrive.resetPosition(gyro.getYaw(), new SwerveDriveWheelPositions(frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[0]/360 * 2 * Math.PI))), botposeInTargetspace[3]);    

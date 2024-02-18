@@ -4,7 +4,8 @@
 
 package frc.robot;
 
-// Angle multiplyer 
+// Change wheel cir.
+// random multiplyer
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -30,9 +31,9 @@ public class WheelDrive {
     private DutyCycleEncoder absoluteEncoder;
 
     private SwerveModuleState moduleState;
-
-        
-
+    
+    // This number is very important but we dont know why we use it
+    double randomMultiplyer = 50.7;
 
     // PID coefficients
     public double kP = 0.005;
@@ -70,9 +71,9 @@ public class WheelDrive {
         this.angleEncoder.setVelocityConversionFactor(1);
 
         this.speedEncoder = this.speedMotor.getEncoder();
-        this.speedEncoder.setPositionConversionFactor((102/13) / 50.7);
+        this.speedEncoder.setPositionConversionFactor((102/13) / randomMultiplyer);
         // set this number
-        this.speedEncoder.setVelocityConversionFactor((102/13 / 50.7));
+        this.speedEncoder.setVelocityConversionFactor((102/13 / randomMultiplyer));
        
 
         this.absoluteEncoder = new DutyCycleEncoder(encoderNumber);

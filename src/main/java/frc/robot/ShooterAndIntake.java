@@ -3,8 +3,9 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
-import java.nio.ShortBuffer;
+// zero angle encoder
 
+import java.nio.ShortBuffer;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
@@ -12,49 +13,89 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.math.geometry.Pose2d;
+
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+
 /** Add your docs here. */
 public class ShooterAndIntake {
-    CANSparkMax Rshooter = new CANSparkMax(13, MotorType.kBrushless);
-    CANSparkMax Lshooter = new CANSparkMax(14, MotorType.kBrushless);
+    CANSparkMax Rshooter = new CANSparkMax(9, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
+    CANSparkMax Lshooter = new CANSparkMax(10, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
 
-    CANSparkMax shooterAngle = new CANSparkMax(15, MotorType.kBrushless);
+    CANSparkMax shooterAngle = new CANSparkMax(11, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
 
-    CANSparkMax intakeLow = new CANSparkMax(16, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
-    CANSparkMax intakeHigh = new CANSparkMax(17, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
+    CANSparkMax intakeLow = new CANSparkMax(12, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
+    CANSparkMax intakeHigh = new CANSparkMax(13, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
+
+    DutyCycleEncoder absAngleEncoder = new DutyCycleEncoder(0);
+    RelativeEncoder angleEncoder;
+
+    double angleLimitUpper;
+    double angleLimitLower;
 
     SparkMaxPIDController angle_PidController;
     // SwerveDrive constructor
-    public ShooterAndIntake (boolean invertRShooter, boolean invertLShooter, boolean invertShooterAngle, boolean invertIntakeLow, boolean invertIntakeHigh){
+    public ShooterAndIntake (boolean invertRShooter, boolean invertLShooter, boolean invertShooterAngle, boolean invertIntakeLow, boolean invertIntakeHigh, double upperLimitAngle, double lowerLimitAngle){
 
         // Shooter
         Rshooter.setInverted(invertRShooter);
         Lshooter.setInverted(invertLShooter);
-        shooterAngle.setInverted(invertShooterAngle);
-
+        // Intake
         intakeLow.setInverted(invertIntakeLow);
         intakeHigh.setInverted(invertIntakeHigh);
+        // Shooter angle
+        shooterAngle.setInverted(invertShooterAngle);
+        angleEncoder = shooterAngle.getEncoder();
+        //angleEncoder.setPositionConversionFactor(0);
+        angleLimitUpper = upperLimitAngle;
+        angleLimitLower = lowerLimitAngle;
         
     }
 
-    void shoot(double speed, double angle){
+    void shooter(double speed){
         Rshooter.set(speed);
-        Lshooter.set(speed);
-
-        shooterAngle.set(angle)       
+        Lshooter.set(-speed);     
     }
 
-    void Shooter(){
+    void changeAngle(double angleChange){
+        if (angleEncoder.getPosition() >= angleLimitUpper && Math.signum(angleChange) == 1){
+            shooterAngle.set(0);    
+        } else if (angleEncoder.getPosition() <= angleLimitLower && Math.signum(angleChange) == -1){
+            shooterAngle.set(0);
+        } else {
+            shooterAngle.set(angleChange);
+        }
+    }
 
+    void setAngle(double desiredAngle){
+        shooterAngle.set((desiredAngle - angleEncoder.getPosition()) * 0.5);
     }
-    void invertDriveMotor(boolean isInverted){
-        speedMotor.setInverted(isInverted);
-    }
-    void invertAngleMotor(boolean isInverted){
-        angleMotor.setInverted(isInverted);
+    void shootInSpeaker(boolean isRobotInPlace, double[] poseFromTarget){
+        boolean angleLinedUp = false;
+        // Find desired shooter angle
+        // shooter angle
+        if (angleLinedUp == false) {
+            //setAngle();
+            // set angleLinedUp
+        }
+        if (angleLinedUp && isRobotInPlace){
+            // Shoot
+        }
     }
 
-    void InvertClimber(boolean dMotorInvert, boolean aMotorInvert){
-        shooter.setInverted(dMotorInvert);
-        angleMotor.setInverted(aMotorInvert);
+    void shootInAmp(double[] poseFromTarget){
+        //line up
+        // if both parts lined up
+        // then shoot
+        //setAngle(0);
+        //shooter(0);
+    }
+    void intake(int direction){
+        intakeHigh.set(direction * 0.5);
+        intakeLow.set(direction * 0.5);
+    }
+
+    void zeroAngleEncoder(double absoluteOffSet){
+        angleEncoder.setPosition(absAngleEncoder.getAbsolutePosition() * 360 - absoluteOffSet);
     }
 }

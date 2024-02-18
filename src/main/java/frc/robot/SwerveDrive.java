@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
+// robot length and width
 
 import java.text.BreakIterator;
 
@@ -142,8 +143,6 @@ public class SwerveDrive {
         robotPose2d = odometry.update(gyroRotation2d,
         new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()});
         
-  
-
         
         // Convert to chassis speeds
         ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
@@ -171,7 +170,7 @@ public class SwerveDrive {
         else {
             desiredYaw = gyroAngle + (x2 * 10);
             YawError = angleSubtractor(desiredYaw, gyroAngle);
-            if (YawError >= -3 && YawError <= 3){
+            if (YawError >= -2 && YawError <= 2){
                 YawError = 0;
             } 
             //turning = coerceToRange((YawError) * 0.06, -1, 1);
@@ -379,92 +378,67 @@ public class SwerveDrive {
         frontLeft.drive(frontLeftSpeed, frontLeftAngle);
         
     }
-    // april tag method
-    public void visionDrive (double targetX, double targetY, double targetYaw, double[] robotPosition, double gyroAngle) {
+    
+    // drive method
+    public void robotOrientedDrive (double x1, double y1, double x2, double gyroAngle) {
         rotation = Math.sqrt((length * length) + (width * width));
+
+        y1 = y1;
         
         // Converts gyro angle into radians then Rotation2d
         gyroRotation2d = new Rotation2d(-(gyroAngle/360 * 2 * Math.PI));
-        
-       /*if ((x2 > 0.1) || (x2 < -0.1)){
-            desiredYaw = gyroAngle + (x2 * 10);       
-        }
-        
-        error = angleSubtractor(desiredYaw, gyroAngle);
 
-        if (error >= -3 && error <= 3){
-            error = 0;
-        }   
-        turning = coerceToRange((error) * 0.02, -0.5, 0.5);*/
-        
-        //converts our target values to meters
-        targetX = inchesToMeters(targetX);
-        targetY = inchesToMeters(targetY);
 
+        // Update the pose
+        robotPose2d = odometry.update(gyroRotation2d,
+        new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()});
         
-        strafe = coerceToRange((targetY - robotPosition[1]) * -0.5, -0.5,0.5);
-        forward = coerceToRange((targetX - robotPosition[0]) * -0.5, -0.5,0.5);
-        turning = coerceToRange((targetYaw - robotPosition[5]) * 0.01, -0.5,0.5);
         
-        /*
+        // Convert to chassis speeds
+        ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
+        
+
         if (x2 >= -0.01 && x2 <=0.01){
-            error = angleSubtractor(desiredYaw, gyroAngle);
-            if (error >= -3 && error <= 3){
-                error = 0;
+            YawError = angleSubtractor(desiredYaw, gyroAngle);
+            if (YawError >= -3 && YawError <= 3){
+                YawError = 0;
             } 
-            turning = coerceToRange((error) * 0.015, -1, 1);
+            //turning = coerceToRange((YawError) * 0.015, -1, 1);
+            turning = coerceToRange((YawError) * 0.020, -1, 1);
         } 
         
         else {
-            desiredYaw = gyroAngle + (x2 * 10);
-            error = angleSubtractor(desiredYaw, gyroAngle);
-            if (error >= -3 && error <= 3){
-                error = 0;
+            desiredYaw = gyroAngle + (x2 * 5);
+            YawError = angleSubtractor(desiredYaw, gyroAngle);
+            if (YawError >= -3 && YawError <= 3){
+                YawError = 0;
             } 
-            turning = coerceToRange((error) * 0.06, -1, 1);
-        }*/
-
-        if (turning >= -0.03 && turning <= 0.03) {
-            turning = 0;
-        } else {
-            turning = turning * -1;
+            //turning = coerceToRange((YawError) * 0.06, -1, 1);
+            turning = coerceToRange((YawError) * 0.1, -1, 1);
         }
 
-        if (forward >= -0.03 && forward <= 0.03) {
+
+        if (y1 >= -0.01 && y1 <= 0.01) {
             forward = 0;
         } else {
-            forward = forward * -1;
+            forward = y1 * -1;
         }
 
-        if (strafe >= -0.03 && strafe <= 0.03){
+        if (x1 >= -0.01 && x1 <= 0.01){
             strafe = 0;
         } else {
-            strafe = strafe;
+            strafe = x1;
         }
-
-        /*rotation = Math.sqrt((length * length) + (width * width));
-        forward = y1 * -1;
-        strafe = x1;*/
-
-        // Adjusts values to field oriented drive
-        
-        /*gyro_degrees = gyroAngle;
-        gyro_radians = gyro_degrees * Math.PI/180;
-        temp = forward * Math.cos(gyro_radians) + strafe * Math.sin(gyro_radians);
-        strafe = (forward * -1) * Math.sin(gyro_radians) + strafe * Math.cos(gyro_radians);
-        forward = temp;*/
         
 
         double a = strafe - turning * (length / rotation); //back horizontal
         double b = strafe + turning * (length / rotation); //front horizontal
         double c = forward - turning * (width / rotation);  //right vertical
         double d = forward + turning * (width / rotation);  //left vertical
-        
 
         /*We switched left and right(we could also have switched front and back)
         * this change should turn the wheels the right way when the robot is trying to rotate
         */
-        
         //Speed Values
         double backRightSpeed = Math.sqrt ((a * a) + (c * c));
         double backLeftSpeed = Math.sqrt ((a * a) + (d * d));
@@ -483,7 +457,6 @@ public class SwerveDrive {
         frontLeft.drive(frontLeftSpeed, frontLeftAngle);
         
     }
-
     // 
     public void setDesiredYaw(double desiredGyroAngle){
         desiredYaw = desiredGyroAngle;
