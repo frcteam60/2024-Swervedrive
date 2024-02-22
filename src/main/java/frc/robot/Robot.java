@@ -8,6 +8,7 @@
 // auto starting posistion
 // desired positions for sources and amp
 package frc.robot;
+// Important !! new Robot!
 
 import java.nio.ShortBuffer;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -74,8 +75,8 @@ public class Robot extends TimedRobot {
   private Joystick wheelJoystick = new Joystick(2);
 
   // Shooter and Intake
-  //ShooterAndIntake shooterAndIntake = new ShooterAndIntake(false, false, false, false, false, 
-  //0, 1);
+  ShooterAndIntake shooterAndIntake = new ShooterAndIntake(false, false, false, false, false, 
+  0, 1);
 
   // Climber
   //Climber climber = new Climber(false, false, false, false);
@@ -138,10 +139,11 @@ public class Robot extends TimedRobot {
 
 
     // zeros angle encoders
-    backRight.zeroEncoders(0.3389 * 360);
-    backLeft.zeroEncoders(0.7695 * 360);
-    frontRight.zeroEncoders(0.0614 * 360);
-    frontLeft.zeroEncoders(0.8470 * 360);
+    frontRight.zeroEncoders(0.675 * 360);
+    frontLeft.zeroEncoders(0.37 * 360);
+    backRight.zeroEncoders(0.4763 * 360);
+    backLeft.zeroEncoders(0.4177 * 360);
+    
     // Inverts drive motors
     frontRight.invertDriveMotor(false);
     frontLeft.invertDriveMotor(true);
@@ -256,6 +258,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightY", y);
     SmartDashboard.putNumber("LimelightArea", area);
 
+    SmartDashboard.putNumber("Shooter Angle encoder", shooterAndIntake.returnAngle());
+
    /*
     SmartDashboard.putString("rotation2d", swerveDrive.returnRotation().toString());
     SmartDashboard.putNumber("robot X", swerveDrive.returnX());
@@ -366,12 +370,19 @@ public class Robot extends TimedRobot {
       swerveDrive.setTurnPoint(new Pose2d(0, 0, null)); 
     }
 
-    if(controller.getXButton()){
+    if (controller.getXButton()){
       // if override pressed
       swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw());
     }  else {
       // primary driver inputs
       swerveDrive.drive(joystick.getX(), joystick.getY(), wheelJoystick.getRawAxis(0), gyro.getYaw());
+    }
+
+    if (Math.abs(controller.getLeftY()) > 0.01){
+      shooterAndIntake.angle(controller.getLeftY());
+    }
+    if ( controller.getRightTriggerAxis() >= 0.5){
+      shooterAndIntake.shooter(controller.getRightTriggerAxis());
     }
     ///////////////////
     /*
@@ -479,8 +490,8 @@ public class Robot extends TimedRobot {
       climber.climb(-1);
     }*/
 
-    SwerveModulePosition[] modulePositions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
-    swerveDrive.resetPosition(gyro.getYaw(), modulePositions, new Pose2d(botposeInTargetspace[0], botposeInTargetspace[1], new Rotation2d(-(botposeInTargetspace[5]/360 * 2 * Math.PI))), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5]/360 * 2 * Math.PI))), hasTarget);    
+    //SwerveModulePosition[] modulePositions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
+    //swerveDrive.resetPosition(gyro.getYaw(), modulePositions, new Pose2d(botposeInTargetspace[0], botposeInTargetspace[1], new Rotation2d(-(botposeInTargetspace[5]/360 * 2 * Math.PI))), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5]/360 * 2 * Math.PI))), hasTarget);    
     //swerveDrive.resetPosition(gyro.getYaw(), new SwerveDriveWheelPositions(frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[0]/360 * 2 * Math.PI))), botposeInTargetspace[3]);    
     
 

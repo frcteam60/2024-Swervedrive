@@ -3,7 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
-// robot length and width
 
 import java.text.BreakIterator;
 
@@ -35,11 +34,8 @@ public class SwerveDrive {
     private WheelDrive frontRight;
     private WheelDrive frontLeft;
     //dimensions between wheels center-to-center
-    public static final double length = 27.4;
-    public static final double width = 12.25;
-
-    /*public static final double length = 22.25
-    public static final double width = 22.25;*/
+    public static final double length = 22.25;
+    public static final double width = 22.25;
 
 
     // Kinematics

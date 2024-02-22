@@ -41,8 +41,8 @@ public class ShooterAndIntake {
         Rshooter.setInverted(invertRShooter);
         Lshooter.setInverted(invertLShooter);
         // Intake
-        intakeLow.setInverted(invertIntakeLow);
-        intakeHigh.setInverted(invertIntakeHigh);
+        //intakeLow.setInverted(invertIntakeLow);
+        //intakeHigh.setInverted(invertIntakeHigh);
         // Shooter angle
         shooterAngle.setInverted(invertShooterAngle);
         angleEncoder = shooterAngle.getEncoder();
@@ -55,6 +55,9 @@ public class ShooterAndIntake {
     void shooter(double speed){
         Rshooter.set(speed);
         Lshooter.set(-speed);     
+    }
+    void angle(double direction){
+        shooterAngle.set(direction);
     }
 
     void changeAngle(double angleChange){
@@ -90,12 +93,15 @@ public class ShooterAndIntake {
         //setAngle(0);
         //shooter(0);
     }
-    void intake(int direction){
+    /*void intake(int direction){
         intakeHigh.set(direction * 0.5);
         intakeLow.set(direction * 0.5);
-    }
+    }*/
 
     void zeroAngleEncoder(double absoluteOffSet){
         angleEncoder.setPosition(absAngleEncoder.getAbsolutePosition() * 360 - absoluteOffSet);
+    }
+    double returnAngle(){
+        return angleEncoder.getPosition();
     }
 }
