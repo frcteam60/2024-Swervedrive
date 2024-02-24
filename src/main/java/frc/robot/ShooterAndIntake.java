@@ -53,7 +53,7 @@ public class ShooterAndIntake {
         angleEncoder = shooterAngle.getEncoder();
         angleEncoder.setPositionConversionFactor(360.0 / 500);
         shooterAngle.setSoftLimit(SoftLimitDirection.kForward, 96);
-        shooterAngle.setSoftLimit(SoftLimitDirection.kReverse, 3);
+        shooterAngle.setSoftLimit(SoftLimitDirection.kReverse, 1f);
         shooterAngle.enableSoftLimit(SoftLimitDirection.kForward, true);
         shooterAngle.enableSoftLimit(SoftLimitDirection.kReverse, true);
         angleLimitUpper = upperLimitAngle;

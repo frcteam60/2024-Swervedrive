@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Preferences;
 
 // need shooter limits
 
@@ -48,6 +49,8 @@ public class Robot extends TimedRobot {
   private static final String kAutoLeft = "AutoLeft";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+
+  Preferences pref;
 
   //private final CANCoder AbsoluteEncoder = new CANCoder(0);
   //private WPI_CANCoder CANCoder = new 
@@ -122,6 +125,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
 
     //CameraServer.startAutomaticCapture();
+    
 
 
     // zeros angle encoders
@@ -423,12 +427,23 @@ public class Robot extends TimedRobot {
       shooterAndIntake.angle(0);
     }
 
-    if ( controller.getRightTriggerAxis() >= 0.5){
+    /*(if ( controller.getRightTriggerAxis() >= 0.5){
       shooterAndIntake.shooter(controller.getRightTriggerAxis());
     } else if(controller.getRightBumper()){
       shooterAndIntake.shooter(-0.5);
     } else {
       shooterAndIntake.shooter(0);
+    }*/
+    if (controller.getYButton()){
+      shooterAndIntake.shooter(0.15);
+    } else if(controller.getBButton()){
+      shooterAndIntake.shooter(0.25);
+    } else if (controller.getAButton()){
+      shooterAndIntake.shooter(Preferences.getDouble("ShooterPower", 0.7));
+    } else if(controller.getRightBumper()){
+      shooterAndIntake.shooter(-0.5);
+    } else {
+      shooterAndIntake.shooter(controller.getRightTriggerAxis());
     }
     ///////////////////
     /*
