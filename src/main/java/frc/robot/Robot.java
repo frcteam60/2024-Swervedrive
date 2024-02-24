@@ -47,6 +47,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
 
+// need shooter limits
 
 
 /**
@@ -344,30 +345,33 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    if (controller.getLeftBumper()){
+    /*if (controller.getLeftBumper()){
       swerveDrive.setDesiredPosistion(0, 0, 0);
       swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
-    } else {
+    } else {*/
 
-      /*if (controller.getPOV() == 0){
+      if (joystick.getPOV() == 0){
         //North
         swerveDrive.setDesiredYaw(0);
-      } else if(controller.getPOV() == 180){
+      } else if(joystick.getPOV() == 180){
         //South
         swerveDrive.setDesiredYaw(180);
-      } else if(controller.getPOV() == 90){
+      } else if(joystick.getPOV() == 90){
         //East
         swerveDrive.setDesiredYaw(90);
-      } else if(controller.getPOV() == 270){
+      } else if(joystick.getPOV() == 270){
         //West
         swerveDrive.setDesiredYaw(-90);
-      } else {
-        swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw());
-      }*/
-    }
+      }
+    //}
 
-    if (controller.getRightBumper()){
-      swerveDrive.setTurnPoint(new Pose2d(0, 0, null)); 
+    if (controller.getLeftTriggerAxis() >= 0.5){
+      shooterAndIntake.intake(1);
+      //swerveDrive.setTurnPoint(new Pose2d(0, 0, null)); 
+    } else if(controller.getLeftBumper()){
+      shooterAndIntake.intake(-1);
+    }else {
+      shooterAndIntake.intake(0);
     }
 
     if (controller.getXButton()){
@@ -378,16 +382,22 @@ public class Robot extends TimedRobot {
       swerveDrive.drive(joystick.getX(), joystick.getY(), wheelJoystick.getRawAxis(0), gyro.getYaw());
     }
 
-    if (Math.abs(controller.getLeftY()) > 0.01){
+    if (Math.abs(controller.getLeftY()) > 0.02){
       shooterAndIntake.angle(controller.getLeftY());
+    } else {
+      shooterAndIntake.angle(0);
     }
+
     if ( controller.getRightTriggerAxis() >= 0.5){
       shooterAndIntake.shooter(controller.getRightTriggerAxis());
+    } else {
+      shooterAndIntake.shooter(0);
     }
     ///////////////////
     /*
     if (controller.getBButton()){
       // line up robot angle
+
       // write variable linedUp
     } else if(controller.getXButton()){
       // if override pressed
@@ -456,6 +466,8 @@ public class Robot extends TimedRobot {
     } else if (controller.getRightBumper() == true){
       // Shooter in
       shooterAndIntake.shooter(-0.5);
+    } else {
+      shooterAndIntake.
     }
 
     // shooter angle

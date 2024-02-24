@@ -6,6 +6,9 @@ package frc.robot;
 // zero angle encoder
 
 import java.nio.ShortBuffer;
+
+import javax.swing.text.Position;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
@@ -27,11 +30,12 @@ public class ShooterAndIntake {
     CANSparkMax intakeLow = new CANSparkMax(12, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     CANSparkMax intakeHigh = new CANSparkMax(13, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
 
-    DutyCycleEncoder absAngleEncoder = new DutyCycleEncoder(0);
+    //DutyCycleEncoder absAngleEncoder = new DutyCycleEncoder(0);
     RelativeEncoder angleEncoder;
 
     double angleLimitUpper;
     double angleLimitLower;
+    double lastDirection;
 
     SparkMaxPIDController angle_PidController;
     // SwerveDrive constructor
@@ -41,12 +45,12 @@ public class ShooterAndIntake {
         Rshooter.setInverted(invertRShooter);
         Lshooter.setInverted(invertLShooter);
         // Intake
-        //intakeLow.setInverted(invertIntakeLow);
-        //intakeHigh.setInverted(invertIntakeHigh);
+        intakeLow.setInverted(invertIntakeLow);
+        intakeHigh.setInverted(invertIntakeHigh);
         // Shooter angle
         shooterAngle.setInverted(invertShooterAngle);
         angleEncoder = shooterAngle.getEncoder();
-        //angleEncoder.setPositionConversionFactor(0);
+        angleEncoder.setPositionConversionFactor(500 * 360);
         angleLimitUpper = upperLimitAngle;
         angleLimitLower = lowerLimitAngle;
         
@@ -93,13 +97,14 @@ public class ShooterAndIntake {
         //setAngle(0);
         //shooter(0);
     }
-    /*void intake(int direction){
-        intakeHigh.set(direction * 0.5);
+    void intake(int direction){
+        lastDirection = direction; 
+        intakeHigh.set(direction * 0.75);
         intakeLow.set(direction * 0.5);
-    }*/
+    }
 
-    void zeroAngleEncoder(double absoluteOffSet){
-        angleEncoder.setPosition(absAngleEncoder.getAbsolutePosition() * 360 - absoluteOffSet);
+    void zeroAngleEncoder(double position){
+        angleEncoder.setPosition(position);
     }
     double returnAngle(){
         return angleEncoder.getPosition();
