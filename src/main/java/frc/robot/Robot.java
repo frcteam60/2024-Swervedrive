@@ -10,42 +10,27 @@
 package frc.robot;
 // Important !! new Robot!
 
-import java.nio.ShortBuffer;
-import edu.wpi.first.cameraserver.CameraServer;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.StringTokenizer;
 
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.LimelightHelpers.LimelightResults;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.SPI;
+import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 // Network table for Limelight
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-
-import java.util.function.DoubleUnaryOperator;
-
-import com.kauailabs.navx.frc.AHRS;
-import com.kauailabs.navx.frc.Quaternion;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 // need shooter limits
 
@@ -58,7 +43,7 @@ import edu.wpi.first.wpilibj.Joystick;
  */
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
+  private static final String kAutoMiddle = "AutoMiddle";
   private static final String kAutoRight = "AutoRight";
   private static final String kAutoLeft = "AutoLeft";
   private String m_autoSelected;
@@ -76,7 +61,7 @@ public class Robot extends TimedRobot {
   private Joystick wheelJoystick = new Joystick(2);
 
   // Shooter and Intake
-  ShooterAndIntake shooterAndIntake = new ShooterAndIntake(false, false, false, false, false, 
+  ShooterAndIntake shooterAndIntake = new ShooterAndIntake(false, true, false, false, false, 
   0, 1);
 
   // Climber
@@ -131,7 +116,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
+    m_chooser.addOption("AutoMiddle", kAutoMiddle);
     m_chooser.addOption("AutoRight", kAutoRight);
     m_chooser.addOption("AutoLeft", kAutoLeft);
     SmartDashboard.putData("Auto choices", m_chooser);
@@ -297,6 +282,21 @@ public class Robot extends TimedRobot {
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
+    switch (m_autoSelected) {
+      case kAutoMiddle:
+        // Put custom auto code here
+        break;
+      case kAutoRight:
+        // auto right
+        break;
+      case kAutoLeft:
+        // auto left
+        break;
+      case kDefaultAuto:
+      default:
+        // Put default auto code here
+        break;
+    }
 
     
   }
@@ -305,14 +305,29 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
-      case kCustomAuto:
+      case kAutoMiddle:
         // Put custom auto code here
+        if (blue == true){
+
+        } else {
+
+        }
         break;
       case kAutoRight:
         // auto right
+        if (blue == true){
+
+        } else {
+          
+        }
         break;
       case kAutoLeft:
         // auto left
+        if (blue == true){
+
+        } else {
+          
+        }
         break;
       case kDefaultAuto:
       default:
@@ -350,7 +365,7 @@ public class Robot extends TimedRobot {
       swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
     } else {*/
 
-      if (joystick.getPOV() == 0){
+      /*if (joystick.getPOV() == 0){
         //North
         swerveDrive.setDesiredYaw(0);
       } else if(joystick.getPOV() == 180){
@@ -362,9 +377,13 @@ public class Robot extends TimedRobot {
       } else if(joystick.getPOV() == 270){
         //West
         swerveDrive.setDesiredYaw(-90);
-      }
+
+      }*/
     //}
 
+    SwerveModulePosition[] modulePositions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
+    swerveDrive.resetPosition(gyro.getYaw(), modulePositions, new Pose2d(botposeInTargetspace[0], botposeInTargetspace[1], new Rotation2d(-(botposeInTargetspace[5]/360 * 2 * Math.PI))), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5]/360 * 2 * Math.PI))), hasTarget); 
+    
     if (controller.getLeftTriggerAxis() >= 0.5){
       shooterAndIntake.intake(1);
       //swerveDrive.setTurnPoint(new Pose2d(0, 0, null)); 
@@ -377,7 +396,23 @@ public class Robot extends TimedRobot {
     if (controller.getXButton()){
       // if override pressed
       swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw());
-    }  else {
+    } else if (joystick.getPOV() == 0){
+      //North
+      swerveDrive.setDesiredYaw(0);
+      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw());
+    } else if(joystick.getPOV() == 180){
+      //South
+      swerveDrive.setDesiredYaw(180);
+      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw());
+    } else if(joystick.getPOV() == 90){
+      //East
+      swerveDrive.setDesiredYaw(90);
+      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw());
+    } else if(joystick.getPOV() == 270){
+      //West
+      swerveDrive.setDesiredYaw(-90);
+      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw());
+    } else {
       // primary driver inputs
       swerveDrive.drive(joystick.getX(), joystick.getY(), wheelJoystick.getRawAxis(0), gyro.getYaw());
     }
@@ -390,6 +425,8 @@ public class Robot extends TimedRobot {
 
     if ( controller.getRightTriggerAxis() >= 0.5){
       shooterAndIntake.shooter(controller.getRightTriggerAxis());
+    } else if(controller.getRightBumper()){
+      shooterAndIntake.shooter(-0.5);
     } else {
       shooterAndIntake.shooter(0);
     }

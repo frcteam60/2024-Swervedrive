@@ -13,6 +13,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
@@ -50,7 +51,11 @@ public class ShooterAndIntake {
         // Shooter angle
         shooterAngle.setInverted(invertShooterAngle);
         angleEncoder = shooterAngle.getEncoder();
-        angleEncoder.setPositionConversionFactor(500 * 360);
+        angleEncoder.setPositionConversionFactor(360.0 / 500);
+        shooterAngle.setSoftLimit(SoftLimitDirection.kForward, 96);
+        shooterAngle.setSoftLimit(SoftLimitDirection.kReverse, 3);
+        shooterAngle.enableSoftLimit(SoftLimitDirection.kForward, true);
+        shooterAngle.enableSoftLimit(SoftLimitDirection.kReverse, true);
         angleLimitUpper = upperLimitAngle;
         angleLimitLower = lowerLimitAngle;
         
@@ -62,16 +67,6 @@ public class ShooterAndIntake {
     }
     void angle(double direction){
         shooterAngle.set(direction);
-    }
-
-    void changeAngle(double angleChange){
-        if (angleEncoder.getPosition() >= angleLimitUpper && Math.signum(angleChange) == 1){
-            shooterAngle.set(0);    
-        } else if (angleEncoder.getPosition() <= angleLimitLower && Math.signum(angleChange) == -1){
-            shooterAngle.set(0);
-        } else {
-            shooterAngle.set(angleChange);
-        }
     }
 
     void setAngle(double desiredAngle){
@@ -99,7 +94,7 @@ public class ShooterAndIntake {
     }
     void intake(int direction){
         lastDirection = direction; 
-        intakeHigh.set(direction * 0.75);
+        intakeHigh.set(direction * 0.5);
         intakeLow.set(direction * 0.5);
     }
 
