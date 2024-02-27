@@ -526,6 +526,10 @@ public class SwerveDrive {
         
     }
 
+    public void setPosition(double gyroYaw, SwerveModulePosition[] wheelPosistions, Pose2d pose2d){
+        //odometry.resetPosition(new Rotation2d(gyroYaw), null, pose2d);
+    }
+
     public void updateOdometry(double gyroAngle){
         odometry.update(gyroRotation2d, new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()});
     }

@@ -97,6 +97,10 @@ public class ShooterAndIntake {
         intakeHigh.set(direction * 0.5);
         intakeLow.set(direction * 0.5);
     }
+    void intakeSpeed(double speedTop, double speedBottom){
+        intakeHigh.set(speedTop);
+        intakeLow.set(speedBottom);
+    }
 
     void zeroAngleEncoder(double position){
         angleEncoder.setPosition(position);

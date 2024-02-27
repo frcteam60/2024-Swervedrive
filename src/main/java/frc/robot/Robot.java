@@ -2,9 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-// encoder offset numbers
-// correct joysticks
-// joystick axes
+// Intake to match paper
 // auto starting posistion
 // desired positions for sources and amp
 package frc.robot;
@@ -33,8 +31,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Preferences;
 
-// need shooter limits
-
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -56,6 +52,7 @@ public class Robot extends TimedRobot {
   //private WPI_CANCoder CANCoder = new 
 
   AHRS gyro = new AHRS(SPI.Port.kMXP);
+  float yawOffset;
 
 
   // Joystick
@@ -75,7 +72,7 @@ public class Robot extends TimedRobot {
   private WheelDrive backRight = new WheelDrive(4, 3,1);
   private WheelDrive frontLeft = new WheelDrive(8, 7,3);
   private WheelDrive frontRight = new WheelDrive(6, 5,2);
-  private SwerveDrive swerveDrive = new SwerveDrive(backRight, backLeft, frontRight, frontLeft, gyro.getYaw());
+  private SwerveDrive swerveDrive = new SwerveDrive(backRight, backLeft, frontRight, frontLeft, gyro.getYaw() + yawOffset);
 
   // Limelight
 
@@ -202,7 +199,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("frontRight AbsoluteEncoder", frontRight.returnabsolute());
 
     // Gyro angle
-    SmartDashboard.putNumber("Yaw", gyro.getYaw());
+    SmartDashboard.putNumber("Yaw", gyro.getYaw() + yawOffset);
 
     //Drive method
     SmartDashboard.putNumber("desiredYaw", swerveDrive.returnDesiredYaw());
@@ -288,17 +285,41 @@ public class Robot extends TimedRobot {
     System.out.println("Auto selected: " + m_autoSelected);
     switch (m_autoSelected) {
       case kAutoMiddle:
-        // Put custom auto code here
+        // In the middle of the subwoofer
+        if (blue){
+          yawOffset = 180;
+          swerveDrive.setPosition(180, new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}, null);
+        } else {
+          yawOffset = 180;
+          swerveDrive.setPosition(180, null, null);
+        }
         break;
       case kAutoRight:
         // auto right
+        // In the right of the subwoofer
+        if (blue){
+          yawOffset = 180;
+          swerveDrive.setPosition(180, null, null);
+        } else {
+          yawOffset = 180;
+          swerveDrive.setPosition(180, null, null);
+        }
         break;
       case kAutoLeft:
         // auto left
+        // On the left of the subwoofer
+        if (blue){
+          yawOffset = 180;
+          swerveDrive.setPosition(180, null, null);
+        } else {
+          yawOffset = 180;
+          swerveDrive.setPosition(180, null, null);
+        }
         break;
       case kDefaultAuto:
       default:
         // Put default auto code here
+        yawOffset = 0;
         break;
     }
 
@@ -343,7 +364,7 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    swerveDrive.setDesiredYaw(gyro.getYaw());
+    swerveDrive.setDesiredYaw(gyro.getYaw() + yawOffset);
 
     Optional<Alliance> ally = DriverStation.getAlliance();
     if (ally.isPresent()) {
@@ -386,39 +407,39 @@ public class Robot extends TimedRobot {
     //}
 
     SwerveModulePosition[] modulePositions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
-    swerveDrive.resetPosition(gyro.getYaw(), modulePositions, new Pose2d(botposeInTargetspace[0], botposeInTargetspace[1], new Rotation2d(-(botposeInTargetspace[5]/360 * 2 * Math.PI))), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5]/360 * 2 * Math.PI))), hasTarget); 
+    swerveDrive.resetPosition((gyro.getYaw() + yawOffset), modulePositions, new Pose2d(botposeInTargetspace[0], botposeInTargetspace[1], new Rotation2d(-(botposeInTargetspace[5]/360 * 2 * Math.PI))), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5]/360 * 2 * Math.PI))), hasTarget); 
     
     if (controller.getLeftTriggerAxis() >= 0.5){
       shooterAndIntake.intake(1);
       //swerveDrive.setTurnPoint(new Pose2d(0, 0, null)); 
     } else if(controller.getLeftBumper()){
-      shooterAndIntake.intake(-1);
+      shooterAndIntake.intakeSpeed(Preferences.getDouble("IntakeTop", 0.7), Preferences.getDouble("IntakeBottom", 0.7));
     }else {
       shooterAndIntake.intake(0);
     }
 
     if (controller.getXButton()){
       // if override pressed
-      swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw());
+      swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw() + yawOffset);
     } else if (joystick.getPOV() == 0){
       //North
       swerveDrive.setDesiredYaw(0);
-      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw());
+      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw() + yawOffset);
     } else if(joystick.getPOV() == 180){
       //South
       swerveDrive.setDesiredYaw(180);
-      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw());
+      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw() + yawOffset);
     } else if(joystick.getPOV() == 90){
       //East
       swerveDrive.setDesiredYaw(90);
-      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw());
+      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw() + yawOffset);
     } else if(joystick.getPOV() == 270){
       //West
       swerveDrive.setDesiredYaw(-90);
-      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw());
+      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw() + yawOffset);
     } else {
       // primary driver inputs
-      swerveDrive.drive(joystick.getX(), joystick.getY(), wheelJoystick.getRawAxis(0), gyro.getYaw());
+      swerveDrive.drive(joystick.getX(), joystick.getY(), wheelJoystick.getRawAxis(0), gyro.getYaw() + yawOffset);
     }
 
     if (Math.abs(controller.getLeftY()) > 0.02){
