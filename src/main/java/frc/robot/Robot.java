@@ -5,6 +5,7 @@
 // Intake to match paper
 // auto starting posistion
 // desired positions for sources and amp
+// shooter robot lineup
 package frc.robot;
 // Important !! new Robot!
 
@@ -123,8 +124,6 @@ public class Robot extends TimedRobot {
 
     //CameraServer.startAutomaticCapture();
     
-
-
     // zeros angle encoders
     frontRight.zeroEncoders(0.675 * 360);
     frontLeft.zeroEncoders(0.37 * 360);
@@ -388,93 +387,21 @@ public class Robot extends TimedRobot {
     /*if (controller.getLeftBumper()){
       swerveDrive.setDesiredPosistion(0, 0, 0);
       swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
-    } else {*/
-
-      /*if (joystick.getPOV() == 0){
-        //North
-        swerveDrive.setDesiredYaw(0);
-      } else if(joystick.getPOV() == 180){
-        //South
-        swerveDrive.setDesiredYaw(180);
-      } else if(joystick.getPOV() == 90){
-        //East
-        swerveDrive.setDesiredYaw(90);
-      } else if(joystick.getPOV() == 270){
-        //West
-        swerveDrive.setDesiredYaw(-90);
-
-      }*/
-    //}
+    } else {
+    }*/
 
     SwerveModulePosition[] modulePositions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
     swerveDrive.resetPosition((gyro.getYaw() + yawOffset), modulePositions, new Pose2d(botposeInTargetspace[0], botposeInTargetspace[1], new Rotation2d(-(botposeInTargetspace[5]/360 * 2 * Math.PI))), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5]/360 * 2 * Math.PI))), hasTarget); 
     
-    if (controller.getLeftTriggerAxis() >= 0.5){
-      shooterAndIntake.intake(1);
-      //swerveDrive.setTurnPoint(new Pose2d(0, 0, null)); 
-    } else if(controller.getLeftBumper()){
-      shooterAndIntake.intakeSpeed(Preferences.getDouble("IntakeTop", 0.7), Preferences.getDouble("IntakeBottom", 0.7));
-    }else {
-      shooterAndIntake.intake(0);
-    }
-
+    
     if (controller.getXButton()){
       // if override pressed
       swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw() + yawOffset);
-    } else if (joystick.getPOV() == 0){
-      //North
+    } else if (controller.getBButton()){
+      // line up robot angle for shooter
       swerveDrive.setDesiredYaw(0);
       swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw() + yawOffset);
-    } else if(joystick.getPOV() == 180){
-      //South
-      swerveDrive.setDesiredYaw(180);
-      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw() + yawOffset);
-    } else if(joystick.getPOV() == 90){
-      //East
-      swerveDrive.setDesiredYaw(90);
-      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw() + yawOffset);
-    } else if(joystick.getPOV() == 270){
-      //West
-      swerveDrive.setDesiredYaw(-90);
-      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw() + yawOffset);
-    } else {
-      // primary driver inputs
-      swerveDrive.drive(joystick.getX(), joystick.getY(), wheelJoystick.getRawAxis(0), gyro.getYaw() + yawOffset);
-    }
-
-    if (Math.abs(controller.getLeftY()) > 0.02){
-      shooterAndIntake.angle(controller.getLeftY());
-    } else {
-      shooterAndIntake.angle(0);
-    }
-
-    /*(if ( controller.getRightTriggerAxis() >= 0.5){
-      shooterAndIntake.shooter(controller.getRightTriggerAxis());
-    } else if(controller.getRightBumper()){
-      shooterAndIntake.shooter(-0.5);
-    } else {
-      shooterAndIntake.shooter(0);
-    }*/
-    if (controller.getYButton()){
-      shooterAndIntake.shooter(0.15);
-    } else if(controller.getBButton()){
-      shooterAndIntake.shooter(0.25);
-    } else if (controller.getAButton()){
-      shooterAndIntake.shooter(Preferences.getDouble("ShooterPower", 0.7));
-    } else if(controller.getRightBumper()){
-      shooterAndIntake.shooter(-0.5);
-    } else {
-      shooterAndIntake.shooter(controller.getRightTriggerAxis());
-    }
-    ///////////////////
-    /*
-    if (controller.getBButton()){
-      // line up robot angle
-
       // write variable linedUp
-    } else if(controller.getXButton()){
-      // if override pressed
-      swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw());
     } else if(joystick.getRawButtonPressed(5)){
       // Go to source 1
       if (blue){
@@ -511,39 +438,29 @@ public class Robot extends TimedRobot {
         swerveDrive.setDesiredPosistion(0, 0, 0);
         swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
       }
-    } else {
-      // primary driver inputs
-      swerveDrive.drive(joystick.getX(), joystick.getY(), wheelJoystick.getRawAxis(0), gyro.getYaw());
-    }
-    
-    /*if (controller.getPOV() == 0){
+    } else if (joystick.getPOV() == 0){
       //North
       swerveDrive.setDesiredYaw(0);
-    } else if(controller.getPOV() == 180){
+      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw() + yawOffset);
+    } else if(joystick.getPOV() == 180){
       //South
       swerveDrive.setDesiredYaw(180);
-    } else if(controller.getPOV() == 90){
+      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw() + yawOffset);
+    } else if(joystick.getPOV() == 90){
       //East
       swerveDrive.setDesiredYaw(90);
-    } else if(controller.getPOV() == 270){
+      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw() + yawOffset);
+    } else if(joystick.getPOV() == 270){
       //West
       swerveDrive.setDesiredYaw(-90);
-    }*//*
-    
-    // shooter
-    if (controller.getBButton() || controller.getAButton() || joystick.getRawButton(5) || joystick.getRawButton(3)){
-      // shooter control below
-    } else if (controller.getRightTriggerAxis() == 1){
-      // Shoot out
-      shooterAndIntake.shooter(0.5);
-    } else if (controller.getRightBumper() == true){
-      // Shooter in
-      shooterAndIntake.shooter(-0.5);
+      swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw() + yawOffset);
     } else {
-      shooterAndIntake.
+      // primary driver inputs
+      swerveDrive.drive(joystick.getX(), joystick.getY(), wheelJoystick.getRawAxis(0), gyro.getYaw() + yawOffset);
     }
+    
 
-    // shooter angle
+    // Shooter angle
     if (joystick.getRawButton(5) || joystick.getRawButton(3)){
       // Source pick up
       shooterAndIntake.setAngle(0);
@@ -555,30 +472,74 @@ public class Robot extends TimedRobot {
       // If lined up
       // shoot in amp
       shooterAndIntake.shootInAmp(botpose2);
+    } else if (Math.abs(controller.getLeftY()) > 0.02){
+      shooterAndIntake.angle(controller.getLeftY());
     } else {
-      shooterAndIntake.changeAngle(controller.getLeftY());
+      shooterAndIntake.angle(0);
     }
 
-    // intake
+    // Shooter
+    if (joystick.getRawButton(5) || joystick.getRawButton(3)){
+      // Source
+    } else if (controller.getYButton()){
+      // Low power
+      // 0.15 good low power
+      shooterAndIntake.shooter(Preferences.getDouble("ShooterPower", 0.7));
+    } else if(controller.getBButton()){
+      // Speaker
+      shooterAndIntake.shooter(0.25);
+    } else if (controller.getAButton()){
+      // amp shoot
+    } else if (controller.getRightTriggerAxis() == 0.5){
+      // Shoot out
+      shooterAndIntake.shooter(0.5);
+    } else if(controller.getRightBumper()){
+      // Reverse shooter
+      shooterAndIntake.shooter(-0.5);
+    } else {
+      shooterAndIntake.shooter(0);
+    }
+    
+
+    /*(if ( controller.getRightTriggerAxis() >= 0.5){
+      shooterAndIntake.shooter(controller.getRightTriggerAxis());
+    } else if(controller.getRightBumper()){
+      shooterAndIntake.shooter(-0.5);
+    } else {
+      shooterAndIntake.shooter(0);
+    }*/
+    
+    // Intake
+    if (controller.getLeftTriggerAxis() >= 0.5){
+      shooterAndIntake.intake(1);
+      //swerveDrive.setTurnPoint(new Pose2d(0, 0, null)); 
+    } else if(controller.getLeftBumper()){
+      shooterAndIntake.intakeSpeed(Preferences.getDouble("IntakeTop", 0.7), Preferences.getDouble("IntakeBottom", 0.7));
+    }else {
+      shooterAndIntake.intake(0);
+    }
+
+    /*// intake
     if (controller.getLeftTriggerAxis() == 1){
       // Intake
       shooterAndIntake.intake(1);
     } else if (controller.getLeftBumper()){
       // Reverse intake
       shooterAndIntake.intake(-1);
-    }
+    }*/
 
+    
+    
+
+    ///////////////////
+    
+    
     // climber
-    if (controller.getPOV() == 0){
+    /*if (controller.getPOV() == 0){
       climber.climb(1);
     } else if (controller.getPOV() == 180) {
       climber.climb(-1);
     }*/
-
-    //SwerveModulePosition[] modulePositions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
-    //swerveDrive.resetPosition(gyro.getYaw(), modulePositions, new Pose2d(botposeInTargetspace[0], botposeInTargetspace[1], new Rotation2d(-(botposeInTargetspace[5]/360 * 2 * Math.PI))), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5]/360 * 2 * Math.PI))), hasTarget);    
-    //swerveDrive.resetPosition(gyro.getYaw(), new SwerveDriveWheelPositions(frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[0]/360 * 2 * Math.PI))), botposeInTargetspace[3]);    
-    
 
     /*if (controller.getRightBumper()){
       gyro.reset();
