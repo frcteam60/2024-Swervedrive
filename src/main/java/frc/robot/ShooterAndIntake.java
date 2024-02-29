@@ -85,12 +85,16 @@ public class ShooterAndIntake {
         }
     }
 
-    void shootInAmp(double[] poseFromTarget){
-        //line up
-        // if both parts lined up
-        // then shoot
-        //setAngle(0);
-        //shooter(0);
+    void shootInAmp(){
+        if (angleEncoder.getPosition() == 96){
+            shooter(0.15);
+        }
+    }
+
+    void shootInSubwoofer(){
+        if (angleEncoder.getPosition() == 31){
+        shooter(0.15);
+        }
     }
     void intake(int direction){
         lastDirection = direction; 
