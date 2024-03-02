@@ -538,6 +538,10 @@ public class SwerveDrive {
         desiredY = targetY;
         desiredYaw = targetYaw;
     }
+
+    Pose2d returnOdometry(){
+        return robotPose2d;
+    }
     
     
 }

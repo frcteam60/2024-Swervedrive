@@ -45,6 +45,7 @@ public class ShooterAndIntake {
         // Shooter
         Rshooter.setInverted(invertRShooter);
         Lshooter.setInverted(invertLShooter);
+        
         // Intake
         intakeLow.setInverted(invertIntakeLow);
         intakeHigh.setInverted(invertIntakeHigh);
@@ -97,7 +98,6 @@ public class ShooterAndIntake {
         }
     }
     void intake(int direction){
-        lastDirection = direction; 
         intakeHigh.set(direction * 0.5);
         intakeLow.set(direction * 0.5);
     }
