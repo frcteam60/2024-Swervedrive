@@ -16,7 +16,6 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 // Network table for Limelight
 import edu.wpi.first.networktables.NetworkTable;
@@ -25,12 +24,13 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.Preferences;
 
 
 /**
@@ -46,8 +46,18 @@ public class Robot extends TimedRobot {
   private static final String kAutoLeft = "AutoLeft";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  private Timer timer = new Timer();
 
   Preferences pref;
+
+  public boolean stepOne = false;
+  public boolean stepTwo = false;
+  public boolean stepThree = false;
+  public boolean stepFour = false;
+  public boolean stepFive = false;
+  public boolean stepSix = false;
+  public boolean stepSeven = false;
+  public boolean stepEight = false;
 
   //private final CANCoder AbsoluteEncoder = new CANCoder(0);
   //private WPI_CANCoder CANCoder = new 
@@ -121,6 +131,8 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("AutoRight", kAutoRight);
     m_chooser.addOption("AutoLeft", kAutoLeft);
     SmartDashboard.putData("Auto choices", m_chooser);
+
+
 
     //CameraServer.startAutomaticCapture();
     
@@ -265,6 +277,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    timer.stop();
+    timer.start();
     Optional<Alliance> ally = DriverStation.getAlliance();
     if (ally.isPresent()) {
       if (ally.get() == Alliance.Red) {
@@ -330,7 +344,78 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
       case kAutoMiddle:
-        // Put custom auto code here
+        // Put auto middle
+        boolean intakeOut = false;
+        if ((stepEight && stepSeven && stepSix && stepFive && stepFour && stepThree && stepTwo && stepOne) == false){
+          // Step one
+          shooterAndIntake.setAngle(31);
+          shooterAndIntake.shooter(0.33);
+        } else if((stepEight && stepSeven && stepSix && stepFive && stepFour && stepThree && stepTwo) == false){
+          //Step two
+          // shoot
+          shooterAndIntake.intake(1);
+        } else if((stepEight && stepSeven && stepSix && stepFive && stepFour && stepThree) == false){
+          // Step three
+          // blue doesn't have 2nd position
+          if (blue == true){
+            stepThree = true; 
+          } else {
+            stepThree = true;
+          }
+        } else if((stepEight && stepSeven && stepSix && stepFive && stepFour) == false){
+          // Step four
+          shooterAndIntake.intake(1);
+          if (blue == true){
+            swerveDrive.setDesiredPosistion(2.623, 5.548, 0);
+            swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+          } else {
+            swerveDrive.setDesiredPosistion(2.623, 2.56, 0);
+            swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+          }
+        } else if((stepEight && stepSeven && stepSix && stepFive) == false){
+          // Step five
+          // line up to shoot
+          shooterAndIntake.shooter(0.33);
+          shooterAndIntake.setAngle(50);
+          swerveDrive.setDesiredPosistion(0, 0, 0);
+          swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+        } else if((stepEight && stepSeven && stepSix) == false){
+          // Step six
+          // shoot second note
+          shooterAndIntake.intake(1);
+        }
+        // Step 1 check
+        if (shooterAndIntake.returnAngle() >= 29){
+          // if shooter angle is close to 31
+          shooterAndIntake.angle(0);
+          timer.reset();
+          stepOne = true;
+        }
+        // Step 2 check
+        if (timer.get() >= 2){
+          // if 2 or more seconds on step 2
+          shooterAndIntake.shooter(0);
+          shooterAndIntake.intake(0);
+          stepTwo = true;
+        }
+        // Step 3 check
+        if (swerveDrive.returnOdometry() == new Pose2d(x, y, null)){
+          // if at 2nd position
+          stepThree = true;
+        }
+        // Step 4 check
+        if (swerveDrive.returnOdometry() == new Pose2d(x, y, null)){
+          // if at 3rd position
+          shooterAndIntake.intake(0);
+          stepFour = true;
+        } 
+        // Step 5 check
+        if (timer.get() >= 2){
+          // if lined up
+          timer.reset();
+          stepFive = true;
+        } 
+        
         if (blue == true){
 
         } else {
