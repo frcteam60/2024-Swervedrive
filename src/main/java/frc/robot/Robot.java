@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -23,6 +24,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SPI;
@@ -50,6 +52,7 @@ public class Robot extends TimedRobot {
 
   Preferences pref;
 
+  public int autoStep = 1;
   public boolean stepOne = false;
   public boolean stepTwo = false;
   public boolean stepThree = false;
@@ -65,6 +68,7 @@ public class Robot extends TimedRobot {
   AHRS gyro = new AHRS(SPI.Port.kMXP);
   float yawOffset;
 
+  ColorSensorV3 colorSensor = new ColorSensorV3(Port.kMXP);
 
   // Joystick
   private XboxController controller = new XboxController(0);
@@ -132,9 +136,8 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("AutoLeft", kAutoLeft);
     SmartDashboard.putData("Auto choices", m_chooser);
 
-
-
     //CameraServer.startAutomaticCapture();
+    shooterAndIntake.setAngleEncoder(25);
     
     // zeros angle encoders
     frontRight.zeroEncoders(0.675 * 360);
@@ -153,24 +156,6 @@ public class Robot extends TimedRobot {
     backRight.invertAngleMotor(false);
     backLeft.invertAngleMotor(false);
 
-    /*
-    // zeros angle encoders
-    backRight.zeroEncoders(0.3389 * 360);
-    backLeft.zeroEncoders(0.7695 * 360);
-    frontRight.zeroEncoders(0.0614 * 360);
-    frontLeft.zeroEncoders(0.8470 * 360);
-    // Inverts drive motors
-    frontRight.invertDriveMotor(false);
-    frontLeft.invertDriveMotor(true);
-    backRight.invertDriveMotor(false);
-    backLeft.invertDriveMotor(true);
-    // Inverts angle motors
-    frontRight.invertAngleMotor(false);
-    frontLeft.invertAngleMotor(false);
-    backRight.invertAngleMotor(false);
-    backLeft.invertAngleMotor(false);
-     */
-
     Optional<Alliance> ally = DriverStation.getAlliance();
     if (ally.isPresent()) {
       if (ally.get() == Alliance.Red) {
@@ -184,8 +169,6 @@ public class Robot extends TimedRobot {
         //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
       }
     } 
-
-
     
   }
 
@@ -211,6 +194,11 @@ public class Robot extends TimedRobot {
 
     // Gyro angle
     SmartDashboard.putNumber("Yaw", gyro.getYaw() + yawOffset);
+
+    // Color sensor
+    SmartDashboard.putNumber("Proximity", colorSensor.getProximity());
+    SmartDashboard.putNumber("IR", colorSensor.getIR());
+    //colorSensor.getColor();
 
     //Drive method
     SmartDashboard.putNumber("desiredYaw", swerveDrive.returnDesiredYaw());
@@ -344,91 +332,294 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
       case kAutoMiddle:
-        // Put auto middle
-        boolean intakeOut = false;
-        if ((stepEight && stepSeven && stepSix && stepFive && stepFour && stepThree && stepTwo && stepOne) == false){
+        switch (autoStep) {
+          case 1:
           // Step one
-          shooterAndIntake.setAngle(31);
+          shooterAndIntake.setAngle(57);
           shooterAndIntake.shooter(0.33);
-        } else if((stepEight && stepSeven && stepSix && stepFive && stepFour && stepThree && stepTwo) == false){
+          // Step 1 check
+          if (Math.abs(shooterAndIntake.returnAngle() - 57) <= 2){
+            // if shooter angle is close to 31
+            shooterAndIntake.angle(0);
+            timer.reset();
+            autoStep = 2;
+          }
+          break;
+          case 2:
           //Step two
           // shoot
           shooterAndIntake.intake(1);
-        } else if((stepEight && stepSeven && stepSix && stepFive && stepFour && stepThree) == false){
-          // Step three
-          // blue doesn't have 2nd position
-          if (blue == true){
-            stepThree = true; 
-          } else {
-            stepThree = true;
+          shooterAndIntake.shooter(0.33);
+          // Step 2 check
+          if (timer.get() >= 2){
+            // if 2 or more seconds on step 2
+            shooterAndIntake.shooter(0);
+            shooterAndIntake.intake(0);
+            autoStep = 3;
           }
-        } else if((stepEight && stepSeven && stepSix && stepFive && stepFour) == false){
+          break;
+          case 3:
+          // Step three
+          // middle doesn't have 2nd position
+          if (blue == true){
+            // Blue
+          } else {
+            // Red
+          }
+          // Step 3 check
+          if (true){
+            // if at 2nd position
+            autoStep = 4;
+          }
+          break;
+          case 4:
           // Step four
+          // 3rd position and intake
+          shooterAndIntake.setAngle(25);
           shooterAndIntake.intake(1);
           if (blue == true){
+            // drive to note
             swerveDrive.setDesiredPosistion(2.623, 5.548, 0);
             swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+            // Step 4 check
+            if (Math.sqrt(((2.623 - swerveDrive.returnX())*(2.623 - swerveDrive.returnX())) + ((5.548 - swerveDrive.returnY())*(5.548 - swerveDrive.returnY()))) <= 0.05){
+              // if at 3rd position
+              shooterAndIntake.intake(0);
+              timer.reset();
+              autoStep = 5;
+            } 
           } else {
+            // drive to note
             swerveDrive.setDesiredPosistion(2.623, 2.56, 0);
             swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+            // Step 4 check
+            if (Math.sqrt(((2.623 - swerveDrive.returnX())*(2.623 - swerveDrive.returnX())) + ((2.56 - swerveDrive.returnY())*(2.56 - swerveDrive.returnY()))) <= 0.05){
+              // if at 3rd position
+              shooterAndIntake.intake(0);
+              timer.reset();
+              autoStep = 5;
+            } 
           }
-        } else if((stepEight && stepSeven && stepSix && stepFive) == false){
-          // Step five
-          // line up to shoot
-          shooterAndIntake.shooter(0.33);
-          shooterAndIntake.setAngle(50);
-          swerveDrive.setDesiredPosistion(0, 0, 0);
-          swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
-        } else if((stepEight && stepSeven && stepSix) == false){
+          break;
+          case 5:
+            shooterAndIntake.intake(-1);
+            shooterAndIntake.setAngle(37);
+            if (timer.get() >= 0.5){
+              shooterAndIntake.intake(0);
+              autoStep = 6;
+            }
+          break;
+          case 6:
           // Step six
+          // line up to shoot
+          // power up shooter
+          shooterAndIntake.shooter(0.7);
+          // set shooter angle
+          shooterAndIntake.setAngle(37);
+          /* Back to subwoofer
+          if (blue){
+            swerveDrive.setDesiredPosistion(1.365, 5.548, 0);
+            swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+          } else {
+            swerveDrive.setDesiredPosistion(1.365, 2.656, 0);
+            swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+          }*/
+          // Step 6 check
+          if (Math.abs(shooterAndIntake.returnAngle() - 37) <= 2){
+            // if lined up
+            shooterAndIntake.angle(0);
+            timer.reset();
+            autoStep = 7;
+          } 
+          break;
+          case 7:
+          // Step seven
           // shoot second note
           shooterAndIntake.intake(1);
+          shooterAndIntake.shooter(0.7);
+          // Step 7 check
+          if (timer.get() >= 2){
+            shooterAndIntake.angle(0);
+            shooterAndIntake.shooter(0);
+            shooterAndIntake.intake(0);
+            autoStep = 8;
+          }
+          break;
+          case 8:
+          // Step eight
+          if (blue == true){
+            swerveDrive.setDesiredPosistion(3.623, 5.548, 0);
+            swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+          } else {
+            swerveDrive.setDesiredPosistion(3.623, 2.56, 0);
+            swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+          }
+          break;
         }
-        // Step 1 check
-        if (shooterAndIntake.returnAngle() >= 29){
-          // if shooter angle is close to 31
-          shooterAndIntake.angle(0);
-          timer.reset();
-          stepOne = true;
-        }
-        // Step 2 check
-        if (timer.get() >= 2){
-          // if 2 or more seconds on step 2
-          shooterAndIntake.shooter(0);
-          shooterAndIntake.intake(0);
-          stepTwo = true;
-        }
-        // Step 3 check
-        if (swerveDrive.returnOdometry() == new Pose2d(x, y, null)){
-          // if at 2nd position
-          stepThree = true;
-        }
-        // Step 4 check
-        if (swerveDrive.returnOdometry() == new Pose2d(x, y, null)){
-          // if at 3rd position
-          shooterAndIntake.intake(0);
-          stepFour = true;
-        } 
-        // Step 5 check
-        if (timer.get() >= 2){
-          // if lined up
-          timer.reset();
-          stepFive = true;
-        } 
-        
-        if (blue == true){
 
-        } else {
-
-        }
-        break;
       case kAutoRight:
         // auto right
-        if (blue == true){
-
-        } else {
-          
+        switch (autoStep) {
+          case 1:
+          // Step one
+          // auto right
+          shooterAndIntake.setAngle(57);
+          shooterAndIntake.shooter(0.33);
+          // Step 1 check
+          if (Math.abs(shooterAndIntake.returnAngle() - 57) <= 2){
+            // if shooter angle is close to 31
+            shooterAndIntake.angle(0);
+            timer.reset();
+            autoStep = 2;
+          }
+          break;
+          case 2:
+          // Step two
+          // auto right
+          // shoot
+          shooterAndIntake.intake(1);
+          shooterAndIntake.shooter(0.33);
+          // Step 2 check
+          if (timer.get() >= 2){
+            // if 2 or more seconds on step 2
+            shooterAndIntake.shooter(0);
+            shooterAndIntake.intake(0);
+            autoStep = 3;
+          }
+          break;
+          case 3:
+          // Step three
+          // auto right
+          // second position
+          shooterAndIntake.setAngle(25);
+          if (blue == true){
+            // drive to second position
+            swerveDrive.setDesiredPosistion(0.836, 4.1, 0);
+            swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+            // Step 3 check
+            if (Math.sqrt(((0.836 - swerveDrive.returnX())*(0.836 - swerveDrive.returnX())) + ((4.1 - swerveDrive.returnY())*(4.1 - swerveDrive.returnY()))) <= 0.05){
+              // if at 3rd position
+              autoStep = 4;
+            } 
+          } else {
+            // drive to second position
+            swerveDrive.setDesiredPosistion(0.836, 1.209, 0);
+            swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+            // Step 3 check
+            if (Math.sqrt(((0.836 - swerveDrive.returnX())*(0.836 - swerveDrive.returnX())) + ((1.209 - swerveDrive.returnY())*(1.209 - swerveDrive.returnY()))) <= 0.05){
+              // if at 3rd position
+              autoStep = 4;
+            } 
+          }
+     
+          break;
+          case 4:
+          // Step four
+          // auto right
+          // 3rd position and intake
+          shooterAndIntake.setAngle(25);
+          shooterAndIntake.intake(1);
+          if (blue == true){
+            // drive to note
+            swerveDrive.setDesiredPosistion(2.623, 4.1, 0);
+            swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+            // Step 4 check
+            if (Math.sqrt(((2.623 - swerveDrive.returnX())*(2.623 - swerveDrive.returnX())) + ((4.1 - swerveDrive.returnY())*(4.1 - swerveDrive.returnY()))) <= 0.05){
+              // if at 3rd position
+              shooterAndIntake.intake(0);
+              timer.reset();
+              autoStep = 5;
+            } 
+          } else {
+            // drive to note
+            swerveDrive.setDesiredPosistion(2.623, 2.656, 0);
+            swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+            // Step 4 check
+            if (Math.sqrt(((2.623 - swerveDrive.returnX())*(2.623 - swerveDrive.returnX())) + ((2.656 - swerveDrive.returnY())*(2.656 - swerveDrive.returnY()))) <= 0.05){
+              // if at 3rd position
+              shooterAndIntake.intake(0);
+              timer.reset();
+              autoStep = 5;
+            } 
+          }
+          break;
+          case 5:
+            // Step five
+            // auto right
+            // reverse intake
+            shooterAndIntake.intake(-1);
+            shooterAndIntake.setAngle(37);
+            if (blue){
+              swerveDrive.setDesiredPosistion(2.623, 4.1, -31);
+              swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+            } else {
+              swerveDrive.setDesiredPosistion(2.623, 2.656, -31);
+              swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+            }
+            // Step five check
+            if (timer.get() >= 0.5){
+              shooterAndIntake.intake(0);
+              autoStep = 6;
+            }
+          break;
+          case 6:
+          // Step six
+          // auto right
+          // line up to shoot
+          // power up shooter
+          shooterAndIntake.shooter(0.7);
+          // set shooter angle
+          shooterAndIntake.setAngle(33);
+          if (blue){
+              swerveDrive.setDesiredPosistion(2.623, 4.1, -31);
+              swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+            } else {
+              swerveDrive.setDesiredPosistion(2.623, 2.656, -31);
+              swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+            }
+          /* Back to subwoofer
+          if (blue){
+            swerveDrive.setDesiredPosistion(1.365, 5.548, 0);
+            swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+          } else {
+            swerveDrive.setDesiredPosistion(1.365, 2.656, 0);
+            swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+          }*/
+          // Step 6 check
+          if (Math.abs(shooterAndIntake.returnAngle() - 33) <= 2){
+            // if lined up
+            shooterAndIntake.angle(0);
+            timer.reset();
+            autoStep = 7;
+          } 
+          break;
+          case 7:
+          // Step seven
+          // auto right
+          // shoot second note
+          shooterAndIntake.intake(1);
+          shooterAndIntake.shooter(0.7);
+          // Step 7 check
+          if (timer.get() >= 2){
+            shooterAndIntake.angle(0);
+            shooterAndIntake.shooter(0);
+            shooterAndIntake.intake(0);
+            autoStep = 8;
+          }
+          break;
+          case 8:
+          // Step eight
+          // auto right
+          if (blue == true){
+            swerveDrive.setDesiredPosistion(3.623, 4.1, -31);
+            swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+          } else {
+            swerveDrive.setDesiredPosistion(3.623, 2.656, -31);
+            swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+          }
+          break;
         }
+       
         break;
       case kAutoLeft:
         // auto left
@@ -488,37 +679,37 @@ public class Robot extends TimedRobot {
       // Go to far source
       if (blue){
         swerveDrive.setDesiredPosistion(15.96, 1.274, 120);
-        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
       } else {
         swerveDrive.setDesiredPosistion(15.96, 6.93, -120);
-        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
       }
     } else if(joystick.getRawButtonPressed(3)){
       // Go to close source
       if (blue){
         swerveDrive.setDesiredPosistion(14.854, 0.636, 120);
-        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
       } else {
         swerveDrive.setDesiredPosistion(14.854, 4.568, -120);
-        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
       }
     } else if(joystick.getRawButtonPressed(4)){
       // Go to subwoofer
       if (blue){
         swerveDrive.setDesiredPosistion(1.365, 5.48, 0);
-        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
       } else {
         swerveDrive.setDesiredPosistion(1.365, 2.656, 0);
-        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
       }
     } else if(joystick.getRawButtonPressed(2)){
       // Go to amp
       if (blue){
         swerveDrive.setDesiredPosistion(1.842, 7.53, 90);
-        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
       } else {
         swerveDrive.setDesiredPosistion(1.842, 0.451, -90);
-        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw());
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
       }
     } else if (joystick.getPOV() == 0){
       //North
@@ -543,18 +734,19 @@ public class Robot extends TimedRobot {
     
 
     // Shooter angle
-    if (joystick.getRawButton(5) || joystick.getRawButton(3)){
+    if (controller.getXButton()){
+      // secondary driver override
+    } else if (joystick.getRawButton(5) || joystick.getRawButton(3)){
       // Source pick up
-      shooterAndIntake.setAngle(20);
-      shooterAndIntake.shooter(-0.5);
+      shooterAndIntake.setAngle(45);
     } else if(controller.getBButton()){
       // line up shooter for speaker
-      shooterAndIntake.setAngle(31);
+      shooterAndIntake.setAngle(56);
       //shooterAndIntake.shootInSpeaker(true, botposeInTargetspace);
     } else if(controller.getAButton()){
       // Amp
-      shooterAndIntake.setAngle(96);
-    } else if (Math.abs(controller.getLeftY()) > 0.02){
+      shooterAndIntake.setAngle(122);
+    } else if(Math.abs(controller.getLeftY()) > 0.02){
       shooterAndIntake.angle(controller.getLeftY());
     } else {
       shooterAndIntake.angle(0);
@@ -563,6 +755,7 @@ public class Robot extends TimedRobot {
     // Shooter
     if (joystick.getRawButton(5) || joystick.getRawButton(3)){
       // Source
+      shooterAndIntake.shooter(-0.5);
     } else if (controller.getYButton()){
       // Low power or variable shooter
       // 0.15 good low power
@@ -604,20 +797,24 @@ public class Robot extends TimedRobot {
       shooterAndIntake.intake(0);
     }
 
-    /*// intake
-    if (controller.getLeftTriggerAxis() == 1){
-      // Intake
+    /*// Intake
+    if(controller.getPOV()){
+
+    } else if (controller.getLeftTriggerAxis() >= 0.5){
       shooterAndIntake.intake(1);
-    } else if (controller.getLeftBumper()){
-      // Reverse intake
-      shooterAndIntake.intake(-1);
+      //swerveDrive.setTurnPoint(new Pose2d(0, 0, null)); 
+    } else if(controller.getLeftBumper()){
+      shooterAndIntake.intakeSpeed(Preferences.getDouble("IntakeTop", 0.7), Preferences.getDouble("IntakeBottom", 0.7));
+    }else {
+      shooterAndIntake.intake(0);
     }*/
+ 
 
     // climber
-    /*if (controller.getPOV() == 0){
-      climber.climb(1);
-    } else if (controller.getPOV() == 180) {
-      climber.climb(-1);
+    /*if (controller.getXButton()){
+      // secondary driver override
+    } else if (Math.abs(controller.getRightY()) >= 0.02){
+      climber.climb(controller.getRightY());
     }*/
 
     if (wheelJoystick.getRawButtonPressed(1)){

@@ -52,8 +52,6 @@ public class WheelDrive {
     double setPointAngle;
     double setPointAngleFlipped;
     double currentAngle;
-
-    
     
     //consider changing variable names
     public WheelDrive (int angleMotor, int speedMotor, int encoderNumber) {
@@ -72,10 +70,8 @@ public class WheelDrive {
 
         this.speedEncoder = this.speedMotor.getEncoder();
         this.speedEncoder.setPositionConversionFactor((102/13) / randomMultiplyer);
-        // set this number
         this.speedEncoder.setVelocityConversionFactor((102/13 / randomMultiplyer));
        
-
         this.absoluteEncoder = new DutyCycleEncoder(encoderNumber);
                 
         this.moduleState = new SwerveModuleState();
@@ -116,8 +112,7 @@ public class WheelDrive {
     }
 
     public void drive (double speed, double angle){
-
-        angleEncoder.getVelocity();
+        //angleEncoder.getVelocity();
 
         currentAngle = angleEncoder.getPosition();
         //speed = speed * 0.5;
@@ -129,7 +124,6 @@ public class WheelDrive {
         //speedMotor.set(speed);
 
         if (Math.abs(setPointAngle) < Math.abs(setPointAngleFlipped)){
-        
             if (Math.abs(speed) < 0.1){
                 m_pidController.setReference(currentAngle, CANSparkMax.ControlType.kPosition);
                 speedMotor.set(speed);
@@ -144,10 +138,8 @@ public class WheelDrive {
             } else {
                 m_pidController.setReference(angleSubtractor(currentAngle, setPointAngleFlipped), CANSparkMax.ControlType.kPosition);
                 speedMotor.set(-1 * speed);
-
             }
-        }
-        
+        } 
     }
 
     public void zeroEncoders(double offset){

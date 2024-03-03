@@ -36,10 +36,10 @@ public class Climber {
 
 
     }
-    public void climb(double direction){
+    public void climb(double speed){
 
-        climber1.set(TalonSRXControlMode.PercentOutput, direction);
-        climber3.set(TalonSRXControlMode.PercentOutput, direction);
+        climber1.set(TalonSRXControlMode.PercentOutput, speed);
+        climber3.set(TalonSRXControlMode.PercentOutput, speed);
        
     }
 

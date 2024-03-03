@@ -4,28 +4,13 @@
 
 package frc.robot;
 
-import java.text.BreakIterator;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-
-// add chassis speeds
-// Is our positive gyro speeds in the right angle
 
 /** Add your docs here. */
 public class SwerveDrive {
@@ -44,8 +29,8 @@ public class SwerveDrive {
     private static Translation2d translation2dbackRight = new Translation2d(-(width / 2), -(length / 2));
     private static Translation2d translation2dbackLeft = new Translation2d(-(width / 2), length / 2);
     
-    private static ChassisSpeeds chassisSpeeds = new ChassisSpeeds();
-    ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(2.0, 2.0, Math.PI / 2.0, Rotation2d.fromDegrees(45.0));
+    //private static ChassisSpeeds chassisSpeeds = new ChassisSpeeds();
+    //ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(2.0, 2.0, Math.PI / 2.0, Rotation2d.fromDegrees(45.0));
     //ChassisSpeeds speeds = ChassisSpeeds.fromRobotRelativeSpeeds(0, 0);
     //private final SwerveDriveOdometry odometry;
 
@@ -128,12 +113,9 @@ public class SwerveDrive {
     // drive method
     public void drive (double x1, double y1, double x2, double gyroAngle) {
         rotation = Math.sqrt((length * length) + (width * width));
-
-        y1 = y1;
         
         // Converts gyro angle into radians then Rotation2d
         gyroRotation2d = new Rotation2d(-(gyroAngle/360 * 2 * Math.PI));
-
 
         // Update the pose
         robotPose2d = odometry.update(gyroRotation2d,
@@ -141,7 +123,7 @@ public class SwerveDrive {
         
         
         // Convert to chassis speeds
-        ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
+        //ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
         
        /*/ if ((x2 > 0.1) || (x2 < -0.1)){
             desiredYaw = gyroAngle + (x2 * 10);       
@@ -293,20 +275,16 @@ public class SwerveDrive {
     // odometery drive to posistion
     public void driveToPosition (double x1, double y1, double x2, double gyroAngle) {
         rotation = Math.sqrt((length * length) + (width * width));
-
-        y1 = y1;
         
         // Converts gyro angle into radians then Rotation2d
         gyroRotation2d = new Rotation2d(-(gyroAngle/360 * 2 * Math.PI));
 
-
         // Update the pose
         robotPose2d = odometry.update(gyroRotation2d,
         new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()});
-
         
         // Convert to chassis speeds
-        ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
+        //ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
         
         //Computes turning value
         if (x2 >= -0.01 && x2 <=0.01){
@@ -379,8 +357,6 @@ public class SwerveDrive {
     public void robotOrientedDrive (double x1, double y1, double x2, double gyroAngle) {
         rotation = Math.sqrt((length * length) + (width * width));
 
-        y1 = y1;
-        
         // Converts gyro angle into radians then Rotation2d
         gyroRotation2d = new Rotation2d(-(gyroAngle/360 * 2 * Math.PI));
 
@@ -391,7 +367,7 @@ public class SwerveDrive {
         
         
         // Convert to chassis speeds
-        ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
+        //ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
         
 
         if (x2 >= -0.01 && x2 <=0.01){

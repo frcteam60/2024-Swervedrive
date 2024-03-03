@@ -15,11 +15,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.math.geometry.Pose2d;
-
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 /** Add your docs here. */
 public class ShooterAndIntake {
@@ -53,8 +49,8 @@ public class ShooterAndIntake {
         shooterAngle.setInverted(invertShooterAngle);
         angleEncoder = shooterAngle.getEncoder();
         angleEncoder.setPositionConversionFactor(360.0 / 500);
-        shooterAngle.setSoftLimit(SoftLimitDirection.kForward, 96);
-        shooterAngle.setSoftLimit(SoftLimitDirection.kReverse, 1f);
+        shooterAngle.setSoftLimit(SoftLimitDirection.kForward, 122);
+        shooterAngle.setSoftLimit(SoftLimitDirection.kReverse, 28);
         shooterAngle.enableSoftLimit(SoftLimitDirection.kForward, true);
         shooterAngle.enableSoftLimit(SoftLimitDirection.kReverse, true);
         angleLimitUpper = upperLimitAngle;
@@ -111,5 +107,9 @@ public class ShooterAndIntake {
     }
     double returnAngle(){
         return angleEncoder.getPosition();
+    }
+
+    void setAngleEncoder(double angle){
+        angleEncoder.setPosition(angle);
     }
 }
