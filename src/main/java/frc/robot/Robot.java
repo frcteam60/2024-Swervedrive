@@ -68,7 +68,7 @@ public class Robot extends TimedRobot {
   AHRS gyro = new AHRS(SPI.Port.kMXP);
   float yawOffset;
 
-  ColorSensorV3 colorSensor = new ColorSensorV3(Port.kMXP);
+  //ColorSensorV3 colorSensor = new ColorSensorV3(Port.kMXP);
 
   // Joystick
   private XboxController controller = new XboxController(0);
@@ -137,7 +137,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
 
     //CameraServer.startAutomaticCapture();
-    shooterAndIntake.setAngleEncoder(25);
+    shooterAndIntake.setAngleEncoder(21.8);
     
     // zeros angle encoders
     frontRight.zeroEncoders(0.675 * 360);
@@ -196,8 +196,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Yaw", gyro.getYaw() + yawOffset);
 
     // Color sensor
-    SmartDashboard.putNumber("Proximity", colorSensor.getProximity());
-    SmartDashboard.putNumber("IR", colorSensor.getIR());
+    //SmartDashboard.putNumber("Proximity", colorSensor.getProximity());
+    //SmartDashboard.putNumber("IR", colorSensor.getIR());
     //colorSensor.getColor();
 
     //Drive method
@@ -246,6 +246,7 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putNumber("Shooter Angle encoder", shooterAndIntake.returnAngle());
 
+    
    /*
     SmartDashboard.putString("rotation2d", swerveDrive.returnRotation().toString());
     SmartDashboard.putNumber("robot X", swerveDrive.returnX());
@@ -292,7 +293,7 @@ public class Robot extends TimedRobot {
           swerveDrive.setPosition(gyro.getYaw() + yawOffset, new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}, new Pose2d(1.365, 5.548, new Rotation2d(-(gyro.getYaw() + yawOffset)* 2 * Math.PI)));
         } else {
           yawOffset = 0;
-          swerveDrive.setPosition(gyro.getYaw() + yawOffset, null, new Pose2d(1.365, 2.656, new Rotation2d(-(gyro.getYaw() + yawOffset)* 2 * Math.PI)));
+          swerveDrive.setPosition(gyro.getYaw() + yawOffset, new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}, new Pose2d(1.365, 2.656, new Rotation2d(-(gyro.getYaw() + yawOffset)* 2 * Math.PI)));
         }
         break;
       case kAutoRight:
@@ -330,6 +331,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    m_autoSelected = m_chooser.getSelected();
+    SmartDashboard.putString("ghjkl", m_autoSelected);
+
     switch (m_autoSelected) {
       case kAutoMiddle:
         switch (autoStep) {
@@ -675,7 +679,7 @@ public class Robot extends TimedRobot {
       /*swerveDrive.setDesiredYaw(0);
       swerveDrive.drive(joystick.getX(), joystick.getY(), 0, gyro.getYaw() + yawOffset);*/
       // write variable linedUp
-    } else if(joystick.getRawButtonPressed(5)){
+    } else if(joystick.getRawButtonPressed(6)){
       // Go to far source
       if (blue){
         swerveDrive.setDesiredPosistion(15.96, 1.274, 120);
@@ -684,7 +688,7 @@ public class Robot extends TimedRobot {
         swerveDrive.setDesiredPosistion(15.96, 6.93, -120);
         swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
       }
-    } else if(joystick.getRawButtonPressed(3)){
+    } else if(joystick.getRawButtonPressed(4)){
       // Go to close source
       if (blue){
         swerveDrive.setDesiredPosistion(14.854, 0.636, 120);
@@ -693,7 +697,7 @@ public class Robot extends TimedRobot {
         swerveDrive.setDesiredPosistion(14.854, 4.568, -120);
         swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
       }
-    } else if(joystick.getRawButtonPressed(4)){
+    } else if(joystick.getRawButtonPressed(5)){
       // Go to subwoofer
       if (blue){
         swerveDrive.setDesiredPosistion(1.365, 5.48, 0);
@@ -702,7 +706,7 @@ public class Robot extends TimedRobot {
         swerveDrive.setDesiredPosistion(1.365, 2.656, 0);
         swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
       }
-    } else if(joystick.getRawButtonPressed(2)){
+    } else if(joystick.getRawButtonPressed(3)){
       // Go to amp
       if (blue){
         swerveDrive.setDesiredPosistion(1.842, 7.53, 90);
@@ -736,7 +740,7 @@ public class Robot extends TimedRobot {
     // Shooter angle
     if (controller.getXButton()){
       // secondary driver override
-    } else if (joystick.getRawButton(5) || joystick.getRawButton(3)){
+    } else if (joystick.getRawButton(6) || joystick.getRawButton(4)){
       // Source pick up
       shooterAndIntake.setAngle(45);
     } else if(controller.getBButton()){
@@ -753,7 +757,7 @@ public class Robot extends TimedRobot {
     }
 
     // Shooter
-    if (joystick.getRawButton(5) || joystick.getRawButton(3)){
+    if (joystick.getRawButton(6) || joystick.getRawButton(4)){
       // Source
       shooterAndIntake.shooter(-0.5);
     } else if (controller.getYButton()){
@@ -765,10 +769,10 @@ public class Robot extends TimedRobot {
       shooterAndIntake.shooter(0.33);
     } else if (controller.getAButton()){
       // amp shoot
-      shooterAndIntake.shooter(15);
+      shooterAndIntake.shooter(0.15);
       // If shooter at angle shoot in amp
       //shooterAndIntake.shootInAmp();
-    } else if (controller.getRightTriggerAxis() == 0.5){
+    } else if (controller.getRightTriggerAxis() >= 0.5){
       // Shoot out
       shooterAndIntake.shooter(controller.getRightTriggerAxis());
     } else if(controller.getRightBumper()){
@@ -817,12 +821,12 @@ public class Robot extends TimedRobot {
       climber.climb(controller.getRightY());
     }*/
 
-    if (wheelJoystick.getRawButtonPressed(1)){
+    if (wheelJoystick.getRawButtonPressed(2)){
       //left bumper
       gyro.reset();
     }
 
-    if (wheelJoystick.getRawButtonPressed(0)){
+    if (wheelJoystick.getRawButtonPressed(1)){
       // right bumper
       frontRight.resetInvert(false, false);
       frontLeft.resetInvert(true, false);
