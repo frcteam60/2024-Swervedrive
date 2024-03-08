@@ -41,6 +41,10 @@ public class ShooterAndIntake {
         // Shooter
         Rshooter.setInverted(invertRShooter);
         Lshooter.setInverted(invertLShooter);
+        Lshooter.setClosedLoopRampRate(3);
+        Lshooter.setOpenLoopRampRate(3);
+        Rshooter.setClosedLoopRampRate(3);
+        Rshooter.setOpenLoopRampRate(3);
         
         // Intake
         intakeLow.setInverted(invertIntakeLow);
@@ -67,7 +71,7 @@ public class ShooterAndIntake {
     }
 
     void setAngle(double desiredAngle){
-        shooterAngle.set((desiredAngle - angleEncoder.getPosition()) * 0.5);
+        shooterAngle.set((desiredAngle - angleEncoder.getPosition()) * 0.35);
     }
     void shootInSpeaker(boolean isRobotInPlace, double[] poseFromTarget){
         boolean angleLinedUp = false;
