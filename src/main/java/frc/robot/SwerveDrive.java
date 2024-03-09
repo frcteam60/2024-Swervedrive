@@ -77,7 +77,6 @@ public class SwerveDrive {
         this.frontRight = frontRight;
         this.frontLeft = frontLeft;
 
-
         gyroRotation2d = new Rotation2d(-(gyroAngle/360 * 2 * Math.PI));
         robotPose2d = new Pose2d(0, 0, gyroRotation2d);
     

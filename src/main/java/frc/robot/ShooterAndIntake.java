@@ -114,6 +114,15 @@ public class ShooterAndIntake {
         intakeLow.set(speedBottom);
     }
 
+    void shooterToSpeed(double desiredSpeed, double IR){
+        if (IR > 48){
+            // If note is infront of color sensor
+            intake(-1);
+        } else {
+            shooter(desiredSpeed);
+        }
+    }
+
     void zeroAngleEncoder(double position){
         angleEncoder.setPosition(position);
     }

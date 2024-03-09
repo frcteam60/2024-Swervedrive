@@ -121,6 +121,16 @@ public class Robot extends TimedRobot {
   SwerveModulePosition[] swervedrivepositions[];
   boolean blue;
 
+  double autoStartingPositionX;
+  double autoSecondPositionX;
+  double autoThirdPositionX;
+  double autoStartingPositionY;
+  double autoSecondPositionY;
+  double autoThirdPositionY;
+  double autoStartingPositionRotation;
+  double autoSecondPositionRotation;
+  double autoThirdPositionRotation;
+
 
 
 
@@ -283,9 +293,24 @@ public class Robot extends TimedRobot {
       }
     } 
 
-    m_autoSelected = m_chooser.getSelected();
+    /*m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
+    switch (m_autoSelected){
+      case kAutoMiddle:
+        autoStartingPositionX = ;
+        autoStartingPositionY = ;
+        autoStartingPositionRotation = ;
+
+        autoSecondPositionX = ;
+        autoSecondPositionY = ;
+        autoSecondPositionRotation = ;
+
+        autoThirdPositionX = ;
+        autoThirdPositionY = ;        
+        autoThirdPositionRotation = ;
+      break;
+    }*/
     switch (m_autoSelected) {
       case kAutoMiddle:
         // In the middle of the subwoofer
@@ -341,7 +366,7 @@ public class Robot extends TimedRobot {
           case 1:
           // Step one
           shooterAndIntake.setAngle(57);
-          shooterAndIntake.shooter(0.33);
+          shooterAndIntake.shooterToSpeed(colorSensor.getIR(), 0.33);
           // Step 1 check
           if (Math.abs(shooterAndIntake.returnAngle() - 57) <= 2){
           //if (timer.get() >= 3){
@@ -407,12 +432,14 @@ public class Robot extends TimedRobot {
             if (Math.sqrt(((2.623 - swerveDrive.returnX())*(2.623 - swerveDrive.returnX())) + ((2.56 - swerveDrive.returnY())*(2.56 - swerveDrive.returnY()))) <= 0.05){
               // if at 3rd position
               System.out.println("Start of step 5 second shot");
+              swerveDrive.drive(0, 0, 0, gyro.getYaw() + yawOffset);
               shooterAndIntake.intake(0);
               timer.reset();
               autoStep = 5;
             } 
           }
           break;
+          
           case 5:
             shooterAndIntake.intake(-1);
             shooterAndIntake.setAngle(37);
@@ -479,7 +506,7 @@ public class Robot extends TimedRobot {
           // Step one
           // auto right
           shooterAndIntake.setAngle(57);
-          shooterAndIntake.shooter(0.33);
+          shooterAndIntake.shooterToSpeed(colorSensor.getIR(), 0.33);
           // Step 1 check
           if (Math.abs(shooterAndIntake.returnAngle() - 57) <= 2){
             // if shooter angle is close to 31
@@ -643,7 +670,7 @@ public class Robot extends TimedRobot {
           // Step one
           // auto left
           shooterAndIntake.setAngle(57);
-          shooterAndIntake.shooter(0.33);
+          shooterAndIntake.shooterToSpeed(colorSensor.getIR(), 0.33);
           // Step 1 check
           if (Math.abs(shooterAndIntake.returnAngle() - 57) <= 2){
             // if shooter angle is close to 31
@@ -829,9 +856,10 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     
-    
-    
-    if (controller.getXButton()){
+    if (joystick.getRawButton(1)){
+      swerveDrive.setDesiredPosistion(1, 1, 0);
+      swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+    } else if (controller.getXButton()){
       // if override pressed
       swerveDrive.drive(controller.getLeftX(), controller.getLeftY(), controller.getRightX(), gyro.getYaw() + yawOffset);
 
@@ -956,7 +984,7 @@ public class Robot extends TimedRobot {
     // trap shot
     /*if(joystick.getRawButton(autoStep)){.l
       swerveDrive.setDesiredPosistion(hasTarget, hasTarget, hasTarget);
-      swerveDrive.drive(0, 0, 0, gyro.getYaw());
+      swerveDrive.drive(0, 0, 0, gyro.getYaw() + yawOffset);
       if (Math.abs(botposeInTargetspace[1] - 0.2) <= 0.03 && Math.abs(botposeInTargetspace[1] - 0.2) <= 0.03 ){
         shooterAndIntake.trapShot(true);
       } else {
