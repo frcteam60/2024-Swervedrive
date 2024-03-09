@@ -53,8 +53,9 @@ public class ShooterAndIntake {
         shooterAngle.setInverted(invertShooterAngle);
         angleEncoder = shooterAngle.getEncoder();
         angleEncoder.setPositionConversionFactor(360.0 / 500);
-        shooterAngle.setSoftLimit(SoftLimitDirection.kForward, 122);
-        shooterAngle.setSoftLimit(SoftLimitDirection.kReverse, 28);
+        shooterAngle.setSoftLimit(SoftLimitDirection.kForward, 122); 
+        // hardstop is aproximently 21.8
+        shooterAngle.setSoftLimit(SoftLimitDirection.kReverse, 25);
         shooterAngle.enableSoftLimit(SoftLimitDirection.kForward, true);
         shooterAngle.enableSoftLimit(SoftLimitDirection.kReverse, true);
         angleLimitUpper = upperLimitAngle;
@@ -77,6 +78,7 @@ public class ShooterAndIntake {
         boolean angleLinedUp = false;
         // Find desired shooter angle
         // shooter angle
+
         if (angleLinedUp == false) {
             //setAngle();
             // set angleLinedUp
@@ -91,7 +93,13 @@ public class ShooterAndIntake {
             shooter(0.15);
         }
     }
-
+    void trapShot(boolean robotLinedUp){
+        shooter(0.275);
+        setAngle(33.7);
+        if (angleEncoder.getPosition() - 33.7 <= 1 && robotLinedUp){
+            intakeHigh.set(1);
+        }
+    }
     void shootInSubwoofer(){
         if (angleEncoder.getPosition() == 31){
         shooter(0.15);

@@ -69,6 +69,8 @@ public class SwerveDrive {
     // SwerveDrive constructor
     public SwerveDrive (WheelDrive backRight, WheelDrive backLeft, WheelDrive frontRight, WheelDrive frontLeft, double gyroAngle){
         // This is the position of the swerve modules on our robot
+
+        System.out.println("constructing swerve");
         
         this.backRight = backRight;
         this.backLeft = backLeft;
@@ -76,8 +78,8 @@ public class SwerveDrive {
         this.frontLeft = frontLeft;
 
 
-        Rotation2d gyroRotation2d = new Rotation2d(-(gyroAngle/360 * 2 * Math.PI));
-        Pose2d robotPose2d = new Pose2d(0, 0, gyroRotation2d);
+        gyroRotation2d = new Rotation2d(-(gyroAngle/360 * 2 * Math.PI));
+        robotPose2d = new Pose2d(0, 0, gyroRotation2d);
     
         
         this.odometry = new SwerveDriveOdometry(kinematics, gyroRotation2d, new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}, robotPose2d);
@@ -117,10 +119,14 @@ public class SwerveDrive {
         // Converts gyro angle into radians then Rotation2d
         gyroRotation2d = new Rotation2d(-(gyroAngle/360 * 2 * Math.PI));
 
+        System.out.println("about to drive");
         // Update the pose
+        try {
         robotPose2d = odometry.update(gyroRotation2d,
         new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()});
-        
+        } catch (Error e) {
+            System.out.println("Odo error: " + e);
+        }
         
         // Convert to chassis speeds
         //ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
@@ -390,6 +396,7 @@ public class SwerveDrive {
         if (YError >= -0.01 && YError <= 0.01){
             YError = 0;
         } 
+        
         strafe = coerceToRange(YError * -1.2, -1, 1);
     
         // Desired x
@@ -555,6 +562,13 @@ public class SwerveDrive {
     public double returnDesiredY(){
         return desiredY;
     }
+    public double returnXError(){
+        return desiredX - robotPose2d.getX();
+    }
+    public double returnYError(){
+        return desiredY - robotPose2d.getY();
+    }
+
     public void resetPosition(float gyroAngle, SwerveModulePosition[] wheelPosistions, Pose2d botposeInTargetspace, Pose2d robotPose2d, double tv){
         newRobotAngle = gyroAngle;
         double targetAngle;
