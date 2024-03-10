@@ -70,7 +70,7 @@ public class SwerveDrive {
     public SwerveDrive (WheelDrive backRight, WheelDrive backLeft, WheelDrive frontRight, WheelDrive frontLeft, double gyroAngle){
         // This is the position of the swerve modules on our robot
 
-        System.out.println("constructing swerve");
+        //System.out.println("constructing swerve");
         
         this.backRight = backRight;
         this.backLeft = backLeft;
@@ -118,7 +118,7 @@ public class SwerveDrive {
         // Converts gyro angle into radians then Rotation2d
         gyroRotation2d = new Rotation2d(-(gyroAngle/360 * 2 * Math.PI));
 
-        System.out.println("about to drive");
+        //System.out.println("about to drive");
         // Update the pose
         try {
         robotPose2d = odometry.update(gyroRotation2d,

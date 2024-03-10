@@ -26,13 +26,13 @@ public class Climber {
         climber1.set(TalonSRXControlMode.PercentOutput, 0);
         climber3.set(TalonSRXControlMode.PercentOutput, 0);
         climber1.set(TalonSRXControlMode.Current, 0);
-        climber1.configContinuousCurrentLimit(0);
-        climber1.configPeakCurrentDuration(0);
-        climber1.configPeakCurrentLimit(0);
+        //climber1.configContinuousCurrentLimit(0);
+        //climber1.configPeakCurrentDuration(0);
+        //climber1.configPeakCurrentLimit(0);
         //climber1.config
 
-        climber2.follow(climber1);
-        climber4.follow(climber3);
+        /* climber2.follow(climber1);
+        climber4.follow(climber3); */
 
         climber1.setInverted(invertClimber1);
         climber2.setInverted(invertClimber2);
@@ -44,8 +44,19 @@ public class Climber {
     public void climb(double speed){
 
         climber1.set(TalonSRXControlMode.PercentOutput, speed);
+        climber2.set(TalonSRXControlMode.PercentOutput, speed);
         climber3.set(TalonSRXControlMode.PercentOutput, speed);
+        climber4.set(TalonSRXControlMode.PercentOutput, speed);
        
+    }
+    public void rightClimber(double speed){
+        climber3.set(TalonSRXControlMode.PercentOutput, speed);
+        climber4.set(TalonSRXControlMode.PercentOutput, speed);
+    }
+
+    public void leftClimber(double speed){
+        climber1.set(TalonSRXControlMode.PercentOutput, speed);
+        climber2.set(TalonSRXControlMode.PercentOutput, speed);
     }
 
 }

@@ -80,7 +80,7 @@ public class Robot extends TimedRobot {
   0, 1);
 
   // Climber
-  //Climber climber = new Climber(false, false, false, false);
+  Climber climber = new Climber(false, false, false, false);
 
   // Swerve drive
   private WheelDrive backLeft = new WheelDrive(2, 1,0);
@@ -1067,13 +1067,17 @@ public class Robot extends TimedRobot {
  
 
     // climber
-    /*if (controller.getXButton()){
+    if (controller.getXButton()){
       // secondary driver override
+    } else if((Math.abs(controller.getRightY()) >= 0.02) && controller.getPOV() == 90){
+      climber.rightClimber(controller.getRightY());
+    } else if((Math.abs(controller.getRightY()) >= 0.02) && controller.getPOV() == 270){
+      climber.leftClimber(controller.getRightY());
     } else if (Math.abs(controller.getRightY()) >= 0.02){
       climber.climb(controller.getRightY());
     } else {
-      climber.climb(0)
-    }*/
+      climber.climb(0);
+    }
 
     if (wheelJoystick.getRawButtonPressed(2)){
       //bumper
