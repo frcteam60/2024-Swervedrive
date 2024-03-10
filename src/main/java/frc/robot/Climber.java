@@ -25,6 +25,11 @@ public class Climber {
     public Climber (boolean invertClimber1, boolean invertClimber2, boolean invertClimber3, boolean invertClimber4){
         climber1.set(TalonSRXControlMode.PercentOutput, 0);
         climber3.set(TalonSRXControlMode.PercentOutput, 0);
+        climber1.set(TalonSRXControlMode.Current, 0);
+        climber1.configContinuousCurrentLimit(0);
+        climber1.configPeakCurrentDuration(0);
+        climber1.configPeakCurrentLimit(0);
+        //climber1.config
 
         climber2.follow(climber1);
         climber4.follow(climber3);

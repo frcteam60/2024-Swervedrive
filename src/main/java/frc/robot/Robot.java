@@ -130,9 +130,10 @@ public class Robot extends TimedRobot {
   double autoStartingPositionRotation;
   double autoSecondPositionRotation;
   double autoThirdPositionRotation;
-
-
-
+  
+  double autoShootingThirdPositionX;
+  double autoShootingThirdPositionY;
+  double autoShootingThirdPositionRotation;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -293,72 +294,122 @@ public class Robot extends TimedRobot {
       }
     } 
 
-    /*m_autoSelected = m_chooser.getSelected();
+    m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
+    // Sets positions on the field based on our auto selected and alliance color
     switch (m_autoSelected){
       case kAutoMiddle:
-        autoStartingPositionX = ;
-        autoStartingPositionY = ;
-        autoStartingPositionRotation = ;
-
-        autoSecondPositionX = ;
-        autoSecondPositionY = ;
-        autoSecondPositionRotation = ;
-
-        autoThirdPositionX = ;
-        autoThirdPositionY = ;        
-        autoThirdPositionRotation = ;
+        if (blue){
+        autoStartingPositionX = 1.365;
+        autoStartingPositionY = 5.548;
+        autoStartingPositionRotation = 0;
+        // Middle position doesn't have a second position
+        
+        autoThirdPositionX = 2.623;
+        autoThirdPositionY = 5.548;        
+        autoThirdPositionRotation = 0;
+        
+        autoShootingThirdPositionX = 2.623;
+        autoShootingThirdPositionY = 5.548;
+        autoShootingThirdPositionRotation = 0;
+        } else {
+        autoStartingPositionX = 1.365;
+        autoStartingPositionY = 2.656;
+        autoStartingPositionRotation = 0;
+        // Middle position doesn't have a second position
+        
+        autoThirdPositionX = 2.623;
+        autoThirdPositionY = 2.656;        
+        autoThirdPositionRotation = 0;
+        
+        autoShootingThirdPositionX = 2.623;
+        autoShootingThirdPositionY = 2.656;
+        autoShootingThirdPositionRotation = 0;
+        }
       break;
-    }*/
-    switch (m_autoSelected) {
-      case kAutoMiddle:
-        // In the middle of the subwoofer
-        if (blue){
-          yawOffset = 0;
-          swerveDrive.setPosition(gyro.getYaw() + yawOffset, new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}, new Pose2d(1.365, 5.548, new Rotation2d(-(gyro.getYaw() + yawOffset)* 2 * Math.PI)));
-        } else {
-          yawOffset = 0;
-          swerveDrive.setPosition(gyro.getYaw() + yawOffset, new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}, new Pose2d(1.365, 2.656, new Rotation2d(-(gyro.getYaw() + yawOffset)* 2 * Math.PI)));
-        }
-        break;
       case kAutoRight:
-        // auto right
-        // In the right of the subwoofer
         if (blue){
-          yawOffset = -60;
-          swerveDrive.setPosition(gyro.getYaw() + yawOffset, new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}, new Pose2d(0.683, 4.365, new Rotation2d(-(gyro.getYaw() + yawOffset)* 2 * Math.PI)));
-        } else {
-          yawOffset = -60;
-          swerveDrive.setPosition(gyro.getYaw() + yawOffset, new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}, new Pose2d(0.683, 1.474, new Rotation2d(-(gyro.getYaw() + yawOffset)* 2 * Math.PI)));
-        }
-        break;
-      case kAutoLeft:
-        // auto left
-        // On the left of the subwoofer
-        if (blue){
-          yawOffset = 60;
-          swerveDrive.setPosition(gyro.getYaw() + yawOffset, new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}, new Pose2d(0.683, 6.731, new Rotation2d(-(gyro.getYaw() + yawOffset)* 2 * Math.PI)));
-        } else {
-          yawOffset = 60;
-          swerveDrive.setPosition(gyro.getYaw() + yawOffset, new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}, new Pose2d(0.683, 3.839, new Rotation2d(-(gyro.getYaw() + yawOffset)* 2 * Math.PI)));
-        }
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        yawOffset = 0;
-        break;
-    }
+        autoStartingPositionX = 0.683;
+        autoStartingPositionY = 4.365;
+        autoStartingPositionRotation = -60;
+        
+        autoSecondPositionX = 0.836;
+        autoSecondPositionY = 4.1;
+        autoSecondPositionRotation = 0;
 
-    
+        autoThirdPositionX = 2.623;
+        autoThirdPositionY = 4.1;        
+        autoThirdPositionRotation = 0;
+        
+        autoShootingThirdPositionX = 2.623;
+        autoShootingThirdPositionY = 4.1;
+        autoShootingThirdPositionRotation = -31;
+        } else {
+        autoStartingPositionX = 0.683;
+        autoStartingPositionY = 1.474;
+        autoStartingPositionRotation = -60;
+       
+        autoSecondPositionX = 0.836;
+        autoSecondPositionY = 1.209;
+        autoSecondPositionRotation = 0;
+
+        autoThirdPositionX = 2.623;
+        autoThirdPositionY = 1.209;        
+        autoThirdPositionRotation = 0;
+        
+        autoShootingThirdPositionX = 2.623;
+        autoShootingThirdPositionY = 1.209;
+        autoShootingThirdPositionRotation = -31;
+        }
+      break;
+      case kAutoLeft:
+      if (blue){
+        autoStartingPositionX = 0.683;
+        autoStartingPositionY = 6.731;
+        autoStartingPositionRotation = 60;
+        
+        autoSecondPositionX = 0.836;
+        autoSecondPositionY = 6.996;
+        autoSecondPositionRotation = 0;
+
+        autoThirdPositionX = 2.623;
+        autoThirdPositionY = 6.996;        
+        autoThirdPositionRotation = 0;
+        
+        autoShootingThirdPositionX = 2.623;
+        autoShootingThirdPositionY = 6.996;
+        autoShootingThirdPositionRotation = 31;
+        } else {
+        autoStartingPositionX = 0.683;
+        autoStartingPositionY = 3.839;
+        autoStartingPositionRotation = 60;
+       
+        autoSecondPositionX = 0.836;
+        autoSecondPositionY = 4.104;
+        autoSecondPositionRotation = 0;
+
+        autoThirdPositionX = 2.623;
+        autoThirdPositionY = 4.104;        
+        autoThirdPositionRotation = 0;
+        
+        autoShootingThirdPositionX = 2.623;
+        autoShootingThirdPositionY = 4.104;
+        autoShootingThirdPositionRotation = 31;
+        }
+      break;
+    }
+    yawOffset = (float) autoStartingPositionRotation;
+    swerveDrive.setPosition(gyro.getYaw() + yawOffset, new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}, 
+    new Pose2d(autoStartingPositionX, autoStartingPositionY, new Rotation2d(-(gyro.getYaw() + yawOffset)* 2 * Math.PI)));
+
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
     m_autoSelected = m_chooser.getSelected();
-    SmartDashboard.putString("ghjkl", m_autoSelected);
+    SmartDashboard.putString("Auto selected", m_autoSelected);
 
     switch (m_autoSelected) {
       case kAutoMiddle:
@@ -439,7 +490,7 @@ public class Robot extends TimedRobot {
             } 
           }
           break;
-          
+          /*
           case 5:
             shooterAndIntake.intake(-1);
             shooterAndIntake.setAngle(37);
@@ -463,7 +514,7 @@ public class Robot extends TimedRobot {
           } else {
             swerveDrive.setDesiredPosistion(1.365, 2.656, 0);
             swerveDrive.driveToPositionTwo(0, 0, 0, gyro.getYaw() + yawOffset);
-          }*/
+          }*//*
           // Step 6 check
           if (Math.abs(shooterAndIntake.returnAngle() - 37) <= 2){
             // if lined up
@@ -496,7 +547,7 @@ public class Robot extends TimedRobot {
             //swerveDrive.setDesiredPosistion(3.623, 2.56, 0);
             //swerveDrive.driveToPositionTwo(0, 0, 0, gyro.getYaw() + yawOffset);
           }
-          break;
+          break;*/
         }
 
       case kAutoRight:
