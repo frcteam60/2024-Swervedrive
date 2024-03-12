@@ -99,7 +99,7 @@ public class Robot extends TimedRobot {
   NetworkTableEntry ta = table.getEntry("ta");
   NetworkTableEntry tv = table.getEntry("tv");
   NetworkTableEntry ledMode = table.getEntry("ledMode");
-  NetworkTableEntry robotPoseInTargetSpace = table.getEntry("botpose_targetspace");
+  NetworkTableEntry robotPoseInTargetSpace = table.getEntry("robotpose_targetspace");
 
 
   // limelight json
@@ -117,7 +117,7 @@ public class Robot extends TimedRobot {
   double ts;
   double botposeRed;
   double botposeBlue;
-  double botposeInTargetspace[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,};
+  double botposeInTargetspace[] = {0,0,0,0,0,0,0,0,0,0,0,0,0};
   SwerveModulePosition[] swervedrivepositions[];
   boolean blue;
 
@@ -1048,7 +1048,8 @@ public class Robot extends TimedRobot {
       shooterAndIntake.intake(1);
       //swerveDrive.setTurnPoint(new Pose2d(0, 0, null)); 
     } else if(controller.getLeftBumper()){
-      shooterAndIntake.intakeSpeed(Preferences.getDouble("IntakeTop", 0.7), Preferences.getDouble("IntakeBottom", 0.7));
+      shooterAndIntake.intake(-1);
+      //shooterAndIntake.intakeSpeed(Preferences.getDouble("IntakeTop", 0.7), Preferences.getDouble("IntakeBottom", 0.7));
     }else {
       shooterAndIntake.intake(0);
     }
