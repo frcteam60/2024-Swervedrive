@@ -568,6 +568,10 @@ public class SwerveDrive {
         return desiredY - robotPose2d.getY();
     }
 
+    /* public double compareFieldPositions(double firstX, double firstY, double secondX, double secondY){
+        return double
+    } */
+
     public void resetPosition(float gyroAngle, SwerveModulePosition[] wheelPosistions, Pose2d botposeInTargetspace, Pose2d robotPose2d, double tv){
         newRobotAngle = gyroAngle;
         double targetAngle;
@@ -614,6 +618,11 @@ public class SwerveDrive {
         return robotPose2d;
     }
     
-    
+    void offDrive(){
+        backRight.drive(0, 0);
+        backLeft.drive(0, 0);
+        frontRight.drive(0, 0);
+        frontLeft.drive(0, 0);
+    }
 }
 

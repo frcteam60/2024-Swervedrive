@@ -58,5 +58,10 @@ public class Climber {
         climber1.set(TalonSRXControlMode.PercentOutput, speed);
         climber2.set(TalonSRXControlMode.PercentOutput, speed);
     }
-
+    void offClimber(){
+        climber1.set(TalonSRXControlMode.PercentOutput, 0);
+        climber2.set(TalonSRXControlMode.PercentOutput, 0);
+        climber3.set(TalonSRXControlMode.PercentOutput, 0);
+        climber4.set(TalonSRXControlMode.PercentOutput, 0);
+    }
 }

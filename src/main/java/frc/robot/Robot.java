@@ -97,14 +97,19 @@ public class Robot extends TimedRobot {
   NetworkTableEntry tx = table.getEntry("tx");
   NetworkTableEntry ty = table.getEntry("ty");
   NetworkTableEntry ta = table.getEntry("ta");
+  // Whether the limelight has any valid targets
   NetworkTableEntry tv = table.getEntry("tv");
   NetworkTableEntry ledMode = table.getEntry("ledMode");
+  // ID of primary april tag
+  NetworkTableEntry IDNum = table.getEntry("tid");
+  long primaryTagID;
   NetworkTableEntry robotPoseInTargetSpace = table.getEntry("robotpose_targetspace");
 
 
   // limelight json
   LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults("limelight");
   double[] botpose2 = LimelightHelpers.getBotPose("limelight");
+  //double[] botposeInTargetspace = LimelightHelpers.getBotPo("limelight");  
 
   //double[] botposeRed = llresults.results.botpose_wpired;  
 
@@ -195,7 +200,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("X error", swerveDrive.returnXError());
     SmartDashboard.putNumber(" eYrror", swerveDrive.returnYError());
     SwerveModulePosition[] modulePositions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
-    swerveDrive.resetPosition((gyro.getYaw() + yawOffset), modulePositions, new Pose2d(botposeInTargetspace[0], botposeInTargetspace[1], new Rotation2d(-(botposeInTargetspace[5]/360 * 2 * Math.PI))), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5]/360 * 2 * Math.PI))), hasTarget); 
+    //swerveDrive.resetPosition((gyro.getYaw() + yawOffset), modulePositions, new Pose2d(botposeInTargetspace[0], botposeInTargetspace[1], new Rotation2d(-(botposeInTargetspace[5]/360 * 2 * Math.PI))), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5]/360 * 2 * Math.PI))), hasTarget); 
     // Relative Encoders
     SmartDashboard.putNumber("backLeft relative encoder", backLeft.returnRelative());
     SmartDashboard.putNumber("backRight relative encoder", backRight.returnRelative());
@@ -246,6 +251,10 @@ public class Robot extends TimedRobot {
     area = ta.getDouble(0.0);
     hasTarget = tv.getDouble(0);
     SmartDashboard.putNumber("tv", hasTarget);
+
+    // Gets the value of the primary april tag we are detecting
+    primaryTagID = IDNum.getInteger(autoStep);
+    //SmartDashboard.putNumber("April tag ID", primaryTagID);
 
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(0);
 
@@ -1033,15 +1042,37 @@ public class Robot extends TimedRobot {
     }*/
 
     // trap shot
-    /*if(joystick.getRawButton(autoStep)){.l
-      swerveDrive.setDesiredPosistion(hasTarget, hasTarget, hasTarget);
-      swerveDrive.drive(0, 0, 0, gyro.getYaw() + yawOffset);
-      if (Math.abs(botposeInTargetspace[1] - 0.2) <= 0.03 && Math.abs(botposeInTargetspace[1] - 0.2) <= 0.03 ){
-        shooterAndIntake.trapShot(true);
-      } else {
-        shooterAndIntake.trapShot(false);
-      } 
-    }*/
+    /* if(joystick.getRawButton(6)){
+      switch ((int)primaryTagID) {
+      case 15:
+      case 11:
+      // left stage
+        swerveDrive.setDesiredPosistion(4.248, 5.18, 120);
+        swerveDrive.drive(0, 0, 0, gyro.getYaw() + yawOffset);
+        if (Math.abs(botposeInTargetspace[1] - 0.2) <= 0.03 && Math.abs(botposeInTargetspace[1] - 0.2) <= 0.03 ){
+          shooterAndIntake.trapShot(true);
+        } else {
+          shooterAndIntake.trapShot(false);
+        }
+      break;
+      case 14:
+      case 13:
+      // far middle
+        swerveDrive.setDesiredPosistion(6.108, 4.105, 0);
+        swerveDrive.drive(0, 0, 0, gyro.getYaw() + yawOffset);
+      break;
+      case 16:
+      case 12:
+      // right
+        swerveDrive.setDesiredPosistion(4.248, 3.031,-120);
+        swerveDrive.drive(0, 0, 0, gyro.getYaw() + yawOffset);
+      break;
+      default:
+      (Math.abs(botposeInTargetspace[1] - 0.2) <= 0.03 && Math.abs(botposeInTargetspace[1] - 0.2) <= 0.03 )
+      break;
+
+      }
+    } */
     
     // Intake
     if (controller.getLeftTriggerAxis() >= 0.5){
@@ -1097,7 +1128,11 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    swerveDrive.offDrive();
+    shooterAndIntake.offShooterAndIntake();
+    climber.offClimber();
+  }
 
   /** This function is called periodically when disabled. */
   @Override

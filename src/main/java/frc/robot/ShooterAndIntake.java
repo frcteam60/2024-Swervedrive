@@ -95,7 +95,7 @@ public class ShooterAndIntake {
     }
     void trapShot(boolean robotLinedUp){
         shooter(0.275);
-        setAngle(33.7);
+        setAngle(58);
         if (angleEncoder.getPosition() - 33.7 <= 1 && robotLinedUp){
             intakeHigh.set(1);
         }
@@ -132,5 +132,12 @@ public class ShooterAndIntake {
 
     void setAngleEncoder(double angle){
         angleEncoder.setPosition(angle);
+    }
+    void offShooterAndIntake(){
+        Rshooter.set(0);
+        Lshooter.set(0);
+        intakeHigh.set(0);
+        intakeLow.set(0);
+        shooterAngle.set(0);
     }
 }
