@@ -8,6 +8,7 @@
 // shooter robot lineup
 package frc.robot;
 // Important !! new Robot!
+//set has target to 0
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -66,7 +67,7 @@ public class Robot extends TimedRobot {
   //private WPI_CANCoder CANCoder = new 
 
   AHRS gyro = new AHRS(SPI.Port.kMXP);
-  float yawOffset;
+  float yawOffset = 0;
 
   ColorSensorV3 colorSensor = new ColorSensorV3(Port.kMXP);
 
@@ -118,7 +119,7 @@ public class Robot extends TimedRobot {
   double y;
   double area;
   double v;
-  double hasTarget;
+  double hasTarget = 0;
   double ts;
   double botposeRed;
   double botposeBlue;
@@ -199,7 +200,16 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     SmartDashboard.putNumber("X error", swerveDrive.returnXError());
     SmartDashboard.putNumber(" eYrror", swerveDrive.returnYError());
-    SwerveModulePosition[] modulePositions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
+    // Limelight  
+    if (blue){
+      botpose2 = LimelightHelpers.getBotPose_wpiBlue("limelight");
+      SmartDashboard.putString("botpose2", Arrays.toString(botpose2));
+
+    } else {
+      botpose2 = LimelightHelpers.getBotPose_wpiRed("limelight");
+      SmartDashboard.putString("botpose2", Arrays.toString(botpose2));
+    }
+    //SwerveModulePosition[] modulePositions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
     //swerveDrive.resetPosition((gyro.getYaw() + yawOffset), modulePositions, new Pose2d(botposeInTargetspace[0], botposeInTargetspace[1], new Rotation2d(-(botposeInTargetspace[5]/360 * 2 * Math.PI))), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5]/360 * 2 * Math.PI))), hasTarget); 
     // Relative Encoders
     SmartDashboard.putNumber("backLeft relative encoder", backLeft.returnRelative());
@@ -234,15 +244,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("desiredYaw", swerveDrive.returnDesiredYaw());
     SmartDashboard.putNumber("currentAngle",backRight.returncurrentAngle());
 
-    // Limelight  
-    if (blue){
-      botpose2 = LimelightHelpers.getBotPose_wpiBlue("limelight");
-      SmartDashboard.putString("botpose2", Arrays.toString(botpose2));
-
-    } else {
-      botpose2 = LimelightHelpers.getBotPose_wpiRed("limelight");
-      SmartDashboard.putString("botpose2", Arrays.toString(botpose2));
-    }
+    
 
 
     //read values periodically
@@ -250,7 +252,7 @@ public class Robot extends TimedRobot {
     y = ty.getDouble(0.0);
     area = ta.getDouble(0.0);
     hasTarget = tv.getDouble(0);
-    SmartDashboard.putNumber("tv", hasTarget);
+    SmartDashboard.putNumber("Has target", hasTarget);
 
     // Gets the value of the primary april tag we are detecting
     primaryTagID = IDNum.getInteger(autoStep);
@@ -1041,17 +1043,20 @@ public class Robot extends TimedRobot {
       shooterAndIntake.shooter(0);
     }*/
 
-    // trap shot
-    /* if(joystick.getRawButton(6)){
+    /* // trap shot
+    if(joystick.getRawButton(6)){
       switch ((int)primaryTagID) {
       case 15:
       case 11:
       // left stage
         swerveDrive.setDesiredPosistion(4.248, 5.18, 120);
-        swerveDrive.drive(0, 0, 0, gyro.getYaw() + yawOffset);
-        if (Math.abs(botposeInTargetspace[1] - 0.2) <= 0.03 && Math.abs(botposeInTargetspace[1] - 0.2) <= 0.03 ){
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+        // If lined up at trap
+        if (swerveDrive.compareFieldPositions(4.248, 5.18, swerveDrive.returnX(), swerveDrive.returnY()) <= 0.03 ){
+          // shoot into trap
           shooterAndIntake.trapShot(true);
         } else {
+          // set correct shooter speed and angle
           shooterAndIntake.trapShot(false);
         }
       break;
@@ -1059,20 +1064,36 @@ public class Robot extends TimedRobot {
       case 13:
       // far middle
         swerveDrive.setDesiredPosistion(6.108, 4.105, 0);
-        swerveDrive.drive(0, 0, 0, gyro.getYaw() + yawOffset);
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+        // If lined up at trap
+        if (swerveDrive.compareFieldPositions(6.108, 4.105, swerveDrive.returnX(), swerveDrive.returnY()) <= 0.03 ){
+          // shoot into trap
+          shooterAndIntake.trapShot(true);
+        } else {
+          // set correct shooter speed and angle
+          shooterAndIntake.trapShot(false);
+        }
       break;
       case 16:
       case 12:
       // right
-        swerveDrive.setDesiredPosistion(4.248, 3.031,-120);
-        swerveDrive.drive(0, 0, 0, gyro.getYaw() + yawOffset);
+        swerveDrive.setDesiredPosistion(4.248, 3.031, -120);
+        swerveDrive.driveToPosition(0, 0, 0, gyro.getYaw() + yawOffset);
+        // If lined up at trap
+        if (swerveDrive.compareFieldPositions(4.248, 3.031, swerveDrive.returnX(), swerveDrive.returnY()) <= 0.03 ){
+          // shoot into trap
+          shooterAndIntake.trapShot(true);
+        } else {
+          // set correct shooter speed and angle
+          shooterAndIntake.trapShot(false);
+        }
       break;
       default:
-      (Math.abs(botposeInTargetspace[1] - 0.2) <= 0.03 && Math.abs(botposeInTargetspace[1] - 0.2) <= 0.03 )
+      // default
       break;
 
       }
-    } */
+    }  */
     
     // Intake
     if (controller.getLeftTriggerAxis() >= 0.5){
