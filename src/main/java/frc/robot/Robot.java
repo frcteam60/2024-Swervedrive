@@ -160,7 +160,7 @@ public class Robot extends TimedRobot {
     frontRight.zeroEncoders(0.675 * 360);
     frontLeft.zeroEncoders(0.37 * 360);
     backRight.zeroEncoders(0.4763 * 360);
-    backLeft.zeroEncoders(0.4177 * 360);
+    backLeft.zeroEncoders(0.275 * 360);
     
     // Inverts drive motors
     frontRight.invertDriveMotor(false);
@@ -209,8 +209,11 @@ public class Robot extends TimedRobot {
       botpose2 = LimelightHelpers.getBotPose_wpiRed("limelight");
       SmartDashboard.putString("botpose2", Arrays.toString(botpose2));
     }
-    //SwerveModulePosition[] modulePositions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
-    //swerveDrive.resetPosition((gyro.getYaw() + yawOffset), modulePositions, new Pose2d(botposeInTargetspace[0], botposeInTargetspace[1], new Rotation2d(-(botposeInTargetspace[5]/360 * 2 * Math.PI))), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5]/360 * 2 * Math.PI))), hasTarget); 
+    if (hasTarget == 1){
+      //SwerveModulePosition[] modulePositions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
+      //swerveDrive.resetPosition((gyro.getYaw() + yawOffset), modulePositions, new Pose2d(botposeInTargetspace[0], botposeInTargetspace[1], new Rotation2d(-(botposeInTargetspace[5]/360 * 2 * Math.PI))), new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5]/360 * 2 * Math.PI))), hasTarget); 
+    }
+
     // Relative Encoders
     SmartDashboard.putNumber("backLeft relative encoder", backLeft.returnRelative());
     SmartDashboard.putNumber("backRight relative encoder", backRight.returnRelative());
@@ -243,9 +246,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("desiredY", swerveDrive.returnDesiredY());
     SmartDashboard.putNumber("desiredYaw", swerveDrive.returnDesiredYaw());
     SmartDashboard.putNumber("currentAngle",backRight.returncurrentAngle());
-
-    
-
 
     //read values periodically
     x = tx.getDouble(0.0);
@@ -291,6 +291,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     timer.stop();
     timer.start();
+    //autoStep = 1;
+    autoStep = 0;
     Optional<Alliance> ally = DriverStation.getAlliance();
     if (ally.isPresent()) {
       if (ally.get() == Alliance.Red) {
@@ -343,7 +345,7 @@ public class Robot extends TimedRobot {
         if (blue){
         autoStartingPositionX = 0.683;
         autoStartingPositionY = 4.365;
-        autoStartingPositionRotation = -60;
+        autoStartingPositionRotation = 60;
         
         autoSecondPositionX = 0.836;
         autoSecondPositionY = 4.1;
@@ -378,7 +380,7 @@ public class Robot extends TimedRobot {
       if (blue){
         autoStartingPositionX = 0.683;
         autoStartingPositionY = 6.731;
-        autoStartingPositionRotation = 60;
+        autoStartingPositionRotation = -60;
         
         autoSecondPositionX = 0.836;
         autoSecondPositionY = 6.996;
@@ -425,6 +427,10 @@ public class Robot extends TimedRobot {
     switch (m_autoSelected) {
       case kAutoMiddle:
         switch (autoStep) {
+          case 0:
+          swerveDrive.setDesiredPosistion(0, 0, 0);
+          swerveDrive.driveToPositionTwo(0, 0, 0, gyro.getYaw() + yawOffset);
+          break;
           case 1:
           // Step one
           shooterAndIntake.setAngle(57);
