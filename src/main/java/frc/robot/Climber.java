@@ -24,12 +24,27 @@ public class Climber {
     // SwerveDrive constructor
     public Climber (boolean invertClimber1, boolean invertClimber2, boolean invertClimber3, boolean invertClimber4){
         climber1.set(TalonSRXControlMode.PercentOutput, 0);
+        climber2.set(TalonSRXControlMode.PercentOutput, 0);
         climber3.set(TalonSRXControlMode.PercentOutput, 0);
-        climber1.set(TalonSRXControlMode.Current, 0);
-        //climber1.configContinuousCurrentLimit(0);
-        //climber1.configPeakCurrentDuration(0);
-        //climber1.configPeakCurrentLimit(0);
-        //climber1.config
+        climber4.set(TalonSRXControlMode.PercentOutput, 0);
+
+        climber1.configContinuousCurrentLimit(10);
+        climber1.configPeakCurrentDuration(1000);
+        climber1.configPeakCurrentLimit(15);
+
+        climber2.configContinuousCurrentLimit(10);
+        climber2.configPeakCurrentDuration(1000);
+        climber2.configPeakCurrentLimit(15);
+
+        climber3.configContinuousCurrentLimit(10);
+        climber3.configPeakCurrentDuration(1000);
+        climber3.configPeakCurrentLimit(15);
+
+        climber4.configContinuousCurrentLimit(10);
+        climber4.configPeakCurrentDuration(1000);
+        climber4.configPeakCurrentLimit(15);
+        
+        //peak 10 for 1 sec cont 5
 
         /* climber2.follow(climber1);
         climber4.follow(climber3); */
@@ -38,8 +53,7 @@ public class Climber {
         climber2.setInverted(invertClimber2);
         climber3.setInverted(invertClimber3);
         climber4.setInverted(invertClimber4);
-
-
+        
     }
     public void climb(double speed){
 

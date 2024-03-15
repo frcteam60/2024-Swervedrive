@@ -2,10 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-// Intake to match paper
-// auto starting posistion
-// desired positions for sources and amp
-// shooter robot lineup
+// check zeroYaw works
 package frc.robot;
 // Important !! new Robot!
 
@@ -19,6 +16,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 // Network table for Limelight
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -81,7 +79,7 @@ public class Robot extends TimedRobot {
       0, 1);
 
   // Climber
-  Climber climber = new Climber(false, false, false, false);
+  Climber climber = new Climber(true, true, false, false);
 
   // Swerve drive
   private WheelDrive backLeft = new WheelDrive(2, 1, 0);
@@ -89,7 +87,7 @@ public class Robot extends TimedRobot {
   private WheelDrive frontLeft = new WheelDrive(8, 7, 3);
   private WheelDrive frontRight = new WheelDrive(6, 5, 2);
   private SwerveDrive swerveDrive = new SwerveDrive(backRight, backLeft, frontRight, frontLeft,
-      gyro.getYaw() + yawOffset);
+  gyro.getYaw() + yawOffset);
 
   // Limelight
 
@@ -109,12 +107,12 @@ public class Robot extends TimedRobot {
 
   // limelight json
   LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults("limelight");
+  //double[] botpose2 = LimelightHelpers.getBotPose("limelight");
   double[] botpose2 = LimelightHelpers.getBotPose("limelight");
-  // double[] botposeInTargetspace = LimelightHelpers.getBotPo("limelight");
+
 
   // double[] botposeRed = llresults.results.botpose_wpired;
 
-  //
   double x;
   double y;
   double area;
@@ -174,6 +172,9 @@ public class Robot extends TimedRobot {
     backRight.invertAngleMotor(false);
     backLeft.invertAngleMotor(false);
 
+    swerveDrive.periodicOdometry(gyro.getYaw() + yawOffset);
+
+
     Optional<Alliance> ally = DriverStation.getAlliance();
     if (ally.isPresent()) {
       if (ally.get() == Alliance.Red) {
@@ -202,6 +203,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    swerveDrive.periodicOdometry(gyro.getYaw() + yawOffset);
     SmartDashboard.putNumber("X error", swerveDrive.returnXError());
     SmartDashboard.putNumber(" eYrror", swerveDrive.returnYError());
     // Limelight
@@ -214,13 +216,13 @@ public class Robot extends TimedRobot {
       SmartDashboard.putString("botpose2", Arrays.toString(botpose2));
     }
     if (hasTarget == 1) {
-      // SwerveModulePosition[] modulePositions = {frontLeft.getPosition(),
-      // frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
-      // swerveDrive.resetPosition((gyro.getYaw() + yawOffset), modulePositions, new
-      // Pose2d(botposeInTargetspace[0], botposeInTargetspace[1], new
-      // Rotation2d(-(botposeInTargetspace[5]/360 * 2 * Math.PI))), new
-      // Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5]/360 * 2 *
-      // Math.PI))), hasTarget);
+      SwerveModulePosition[] modulePositions = {frontLeft.getPosition(),
+      frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
+      swerveDrive.resetPosition((gyro.getYaw() + yawOffset), modulePositions, new
+      Pose2d(botposeInTargetspace[0], botposeInTargetspace[1], new
+      Rotation2d(-(botposeInTargetspace[5]/360 * 2 * Math.PI))), new
+      Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5]/360 * 2 *
+      Math.PI))), hasTarget);
     }
 
     // Relative Encoders
@@ -304,8 +306,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     timer.stop();
     timer.start();
-    // autoStep = 1;
-    autoStep = 0;
+    autoStep = 1;
+    //autoStep = 0;
     Optional<Alliance> ally = DriverStation.getAlliance();
     if (ally.isPresent()) {
       if (ally.get() == Alliance.Red) {
@@ -319,7 +321,7 @@ public class Robot extends TimedRobot {
         // NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
       }
     }
-
+    gyro.zeroYaw();
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
@@ -1166,7 +1168,7 @@ public class Robot extends TimedRobot {
      * shooterAndIntake.intakeSpeed(Preferences.getDouble("IntakeTop", 0.7),
      * Preferences.getDouble("IntakeBottom", 0.7));
      * }else {
-     * shooterAndIntake.intake(0);
+     * shooterAndIntake.intake(0);m
      * }
      */
 
@@ -1185,7 +1187,8 @@ public class Robot extends TimedRobot {
 
     if (wheelJoystick.getRawButtonPressed(2)) {
       // bumper
-      gyro.reset();
+      yawOffset = 0;
+      gyro.zeroYaw();
     }
 
     if (wheelJoystick.getRawButtonPressed(1)) {

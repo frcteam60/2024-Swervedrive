@@ -60,7 +60,7 @@ public class SwerveDrive {
     Rotation2d gyroRotation2d;
     Pose2d robotPose2d;
     
-
+    
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(translation2dfrontLeft, translation2dfrontRight, translation2dbackLeft, translation2dbackRight);
 
     private final SwerveDriveOdometry odometry;
@@ -82,6 +82,7 @@ public class SwerveDrive {
     
         
         this.odometry = new SwerveDriveOdometry(kinematics, gyroRotation2d, new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}, robotPose2d);
+        
         //new SwerveDriveOdometry(kinematics, desiredYaw, new SwerveModulePosition[] {backRight.getPosition(), backLeft.getPosition(), frontRight.getPosition(), frontLeft.getPosition()});
 
     }
@@ -115,17 +116,17 @@ public class SwerveDrive {
     public void drive (double x1, double y1, double x2, double gyroAngle) {
         rotation = Math.sqrt((length * length) + (width * width));
         
-        // Converts gyro angle into radians then Rotation2d
+        /*// Converts gyro angle into radians then Rotation2d
         gyroRotation2d = new Rotation2d(-(gyroAngle/360 * 2 * Math.PI));
 
         //System.out.println("about to drive");
         // Update the pose
-        try {
+        /* try {
         robotPose2d = odometry.update(gyroRotation2d,
         new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()});
         } catch (Error e) {
             System.out.println("Odo error: " + e);
-        }
+        } */
         
         // Convert to chassis speeds
         //ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
@@ -281,33 +282,23 @@ public class SwerveDrive {
     public void driveToPosition (double x1, double y1, double x2, double gyroAngle) {
         rotation = Math.sqrt((length * length) + (width * width));
         
-        // Converts gyro angle into radians then Rotation2d
+        /*// Converts gyro angle into radians then Rotation2d
         gyroRotation2d = new Rotation2d(-(gyroAngle/360 * 2 * Math.PI));
 
         // Update the pose
         robotPose2d = odometry.update(gyroRotation2d,
-        new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()});
+        new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}); */
         
         // Convert to chassis speeds
         //ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
         
         //Computes turning value
-        if (x2 >= -0.01 && x2 <=0.01){
-            YawError = angleSubtractor(desiredYaw, gyroAngle);
-            if (YawError >= -3 && YawError <= 3){
-                YawError = 0;
-            } 
-            turning = coerceToRange((YawError) * 0.015, -1, 1);
+        // Desired Yaw
+        YawError = angleSubtractor(desiredYaw, gyroAngle);
+        if (YawError >= -3 && YawError <= 3){
+            YawError = 0;
         } 
-        
-        else {
-            desiredYaw = gyroAngle + (x2 * 10);
-            YawError = angleSubtractor(desiredYaw, gyroAngle);
-            if (YawError >= -3 && YawError <= 3){
-                YawError = 0;
-            } 
-            turning = coerceToRange((YawError) * 0.06, -1, 1);
-        }
+        turning = coerceToRange((YawError) * 0.015, -1, 1);
 
         // Desired Y
         YError = desiredY - robotPose2d.getY();
@@ -362,33 +353,23 @@ public class SwerveDrive {
     public void driveToPositionTwo (double x1, double y1, double x2, double gyroAngle) {
         rotation = Math.sqrt((length * length) + (width * width));
         
-        // Converts gyro angle into radians then Rotation2d
+        /*// Converts gyro angle into radians then Rotation2d
         gyroRotation2d = new Rotation2d(-(gyroAngle/360 * 2 * Math.PI));
 
         // Update the pose
         robotPose2d = odometry.update(gyroRotation2d,
-        new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()});
+        new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}); */
         
         // Convert to chassis speeds
         //ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
         
         //Computes turning value
-        if (x2 >= -0.01 && x2 <=0.01){
-            YawError = angleSubtractor(desiredYaw, gyroAngle);
-            if (YawError >= -3 && YawError <= 3){
-                YawError = 0;
-            } 
-            turning = coerceToRange((YawError) * 0.015, -1, 1);
+        // Desired Yaw
+        YawError = angleSubtractor(desiredYaw, gyroAngle);
+        if (YawError >= -3 && YawError <= 3){
+            YawError = 0;
         } 
-        
-        else {
-            desiredYaw = gyroAngle + (x2 * 10);
-            YawError = angleSubtractor(desiredYaw, gyroAngle);
-            if (YawError >= -3 && YawError <= 3){
-                YawError = 0;
-            } 
-            turning = coerceToRange((YawError) * 0.06, -1, 1);
-        }
+        turning = coerceToRange((YawError) * 0.015, -1, 1);
 
         // Desired Y
         YError = desiredY - robotPose2d.getY();
@@ -445,13 +426,12 @@ public class SwerveDrive {
     public void robotOrientedDrive (double x1, double y1, double x2, double gyroAngle) {
         rotation = Math.sqrt((length * length) + (width * width));
 
-        // Converts gyro angle into radians then Rotation2d
+        /*// Converts gyro angle into radians then Rotation2d
         gyroRotation2d = new Rotation2d(-(gyroAngle/360 * 2 * Math.PI));
-
 
         // Update the pose
         robotPose2d = odometry.update(gyroRotation2d,
-        new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()});
+        new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}); */
         
         
         // Convert to chassis speeds
@@ -572,7 +552,7 @@ public class SwerveDrive {
        return ((firstX - secondX) * (firstX - secondX) + (firstY - secondY) * (firstY - secondY));
     }
 
-    public void resetPosition(float gyroAngle, SwerveModulePosition[] wheelPosistions, Pose2d botposeInTargetspace, Pose2d robotPose2d, double tv){
+    public void resetPosition(float gyroAngle, SwerveModulePosition[] wheelPosistions, Pose2d botposeInTargetspace, Pose2d robotPose2dInFieldspace, double tv){
         newRobotAngle = gyroAngle;
         double targetAngle;
         targetAngle = 180;
@@ -585,8 +565,8 @@ public class SwerveDrive {
             //if robot is less than 120 inches from target, and robot is more than 7 degrees off from line normal to target, and target is seen
             if ((Math.sqrt(botposeInTargetspace.getX() * botposeInTargetspace.getX() + botposeInTargetspace.getY() * botposeInTargetspace.getY()) <= (120 * 0.0254)) && Math.abs(botposeInTargetspace.getRotation().getDegrees()) >= 7 && tv == 1){
                 // our new x and y pose equal the values from the limelight
-                newX = robotPose2d.getX();
-                newY = robotPose2d.getY();
+                newX = robotPose2dInFieldspace.getX();
+                newY = robotPose2dInFieldspace.getY();
                 //System.out.println(newX);
                 //System.out.println(newY);
 
@@ -623,6 +603,13 @@ public class SwerveDrive {
         backLeft.drive(0, 0);
         frontRight.drive(0, 0);
         frontLeft.drive(0, 0);
+    }
+    void periodicOdometry(double yaw){
+        // Converts gyro angle into radians then Rotation2d
+        gyroRotation2d = new Rotation2d(-(yaw/360 * 2 * Math.PI));
+        // Update the pose
+        robotPose2d = odometry.update(gyroRotation2d,
+        new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()});
     }
 
 }
