@@ -44,10 +44,10 @@ public class ShooterAndIntake {
         // Shooter
         Rshooter.setInverted(invertRShooter);
         Lshooter.setInverted(invertLShooter);
-        Lshooter.setClosedLoopRampRate(3);
-        Lshooter.setOpenLoopRampRate(3);
-        Rshooter.setClosedLoopRampRate(3);
-        Rshooter.setOpenLoopRampRate(3);
+        Lshooter.setClosedLoopRampRate(2);
+        Lshooter.setOpenLoopRampRate(2);
+        Rshooter.setClosedLoopRampRate(2);
+        Rshooter.setOpenLoopRampRate(2);
 
         // Intake
         intakeLow.setInverted(invertIntakeLow);
