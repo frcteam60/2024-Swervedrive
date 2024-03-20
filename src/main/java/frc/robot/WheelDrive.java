@@ -115,6 +115,7 @@ public class WheelDrive {
         //angleEncoder.getVelocity();
 
         currentAngle = angleEncoder.getPosition();
+        /*** if robot turns the wrong direction, then this may need to be inversed */
         //speed = speed * 0.5;
 
         setPointAngle = angleSubtractor(currentAngle, angle);

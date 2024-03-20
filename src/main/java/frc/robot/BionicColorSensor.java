@@ -22,6 +22,7 @@ public class BionicColorSensor {
 
     boolean sensesNote() {
         return colorSensor.getIR() > 48;
+        // return colorSensor.getIR() > 49;
     }
 
     void updateDashboard() {
