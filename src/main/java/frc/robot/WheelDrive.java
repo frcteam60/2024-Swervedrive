@@ -144,11 +144,14 @@ public class WheelDrive {
     }
 
     public void zeroEncoders(double offset){
-        angleEncoder.setPosition(-1 * (absoluteEncoder.getAbsolutePosition() * 360 - offset));  
+        angleEncoder.setPosition(absoluteEncoder.getAbsolutePosition() * 360 - offset);  
     }   
 
     public double returnRelative(){
         return angleEncoder.getPosition()%360;
+    }
+    double returnDrivePosition(){
+        return speedEncoder.getPosition();
     }
 
     public double returnsetPointAngle(){
@@ -177,12 +180,8 @@ public class WheelDrive {
     }
 
     public SwerveModulePosition getPosition() {
-        // need rotation2d to be in radians
-        return new SwerveModulePosition(speedEncoder.getPosition() * wheelCirc, new Rotation2d(-angleEncoder.getPosition()/360 * 2 * Math.PI));
-    }
-
-    public SwerveModuleState getState() {
-        return new SwerveModuleState((speedEncoder.getVelocity() * wheelCirc) / 60, new Rotation2d(-angleEncoder.getPosition()/360 * 2 * Math.PI));
+        // speed encoders read negative when driving the robot forward
+        return new SwerveModulePosition(speedEncoder.getPosition() * wheelCirc, new Rotation2d(angleEncoder.getPosition()/360 * 2 * Math.PI));
     }
 
     // Set desired state?
