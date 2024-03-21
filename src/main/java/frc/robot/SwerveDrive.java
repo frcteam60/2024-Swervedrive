@@ -148,7 +148,7 @@ public class SwerveDrive {
     // ***
     public void drive (double forwardSpeed, double strafeSpeed, double turningSpeed) {
         diagonal = Math.sqrt((length * length) + (width * width));
-        
+                
         // Convert to chassis speeds
         //ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
 
@@ -202,14 +202,14 @@ public class SwerveDrive {
 
     void driveTeleop(double joystickForward, double joystickSideways, double joystickTurning){
         if (joystickTurning >= -0.03 && joystickTurning <=0.03){
-            YawError = angleSubtractor(getGyroRobotYaw(), desiredYaw);
+            YawError = angleSubtractor(desiredYaw,getGyroRobotYaw());
             if (YawError >= -3 && YawError <= 3){
                 YawError = 0;
             } 
             joystickTurning = coerceToRange((YawError) * 0.020, -1, 1);
         } else {
             desiredYaw = getGyroRobotYaw() + (joystickTurning * 10);
-            YawError = angleSubtractor(getGyroRobotYaw(), desiredYaw);
+            YawError = angleSubtractor(desiredYaw, getGyroRobotYaw());
             if (YawError >= -2 && YawError <= 2){
                 YawError = 0;
             } 
@@ -219,7 +219,7 @@ public class SwerveDrive {
         if (joystickForward >= -0.01 && joystickForward <= 0.01) {
             joystickForward = 0;
         } else {
-            joystickForward = joystickForward * -1;
+            joystickForward = joystickForward;
         }
 
         if (joystickSideways >= -0.01 && joystickSideways <= 0.01){
@@ -227,8 +227,9 @@ public class SwerveDrive {
         } else {
             joystickSideways = joystickSideways;
         }
-        
+         
         drive(joystickForward, joystickSideways, joystickTurning);
+        
 
     }
 
@@ -259,7 +260,7 @@ public class SwerveDrive {
         if (YError >= -0.01 && YError <= 0.01){
             YError = 0;
         } 
-        strafe = coerceToRange(YError * -1.2, -1, 1);
+        strafe = coerceToRange(YError * 1.2, -1, 1);
     
         // Desired x
         XError = desiredX - robotPose2d.getX();
@@ -273,18 +274,8 @@ public class SwerveDrive {
     }
 
     // odometery drive to posistion two
-    public void driveToPositionTwo (double x1, double y1, double x2) {
+    public void driveToPositionTwo () {
         diagonal = Math.sqrt((length * length) + (width * width));
-        
-        /*// Converts gyro angle into radians then Rotation2d
-        gyroRotation2d = new Rotation2d(-(getGyroRobotYaw()/360 * 2 * Math.PI));
-
-        // Update the pose
-        robotPose2d = odometry.update(gyroRotation2d,
-        new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}); */
-        
-        // Convert to chassis speeds
-        //ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
         
         //Computes turning value
         // Desired Yaw
@@ -300,16 +291,18 @@ public class SwerveDrive {
             YError = 0;
         } 
         
-        strafe = coerceToRange(YError * -1.2, -1, 1);
+        strafe = coerceToRange(YError, -1, 1);
+        //1.2
     
         // Desired x
         XError = desiredX - robotPose2d.getX();
         if (XError >= -0.01 && XError <= 0.01){
             XError = 0;
         } 
-        forward = coerceToRange(XError * 1.2, -1, 1);
+        forward = coerceToRange(XError, -1, 1);
+        //1.2
     
-        drive(forward, strafe, turning);
+        drive(forward * 0.3, strafe * 0.3, turning * 0.3);
         
     }
     

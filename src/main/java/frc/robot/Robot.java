@@ -262,6 +262,12 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("backRight AbsoluteEncoder", backRight.returnabsolute());
     SmartDashboard.putNumber("frontLeft AbsoluteEncoder", frontLeft.returnabsolute());
     SmartDashboard.putNumber("frontRight AbsoluteEncoder", frontRight.returnabsolute());
+    // speed motors
+    // Relative Encoders
+    SmartDashboard.putNumber("backLeft drive encoder", backLeft.returnDrivePosition());
+    SmartDashboard.putNumber("backRight drive encoder", backRight.returnDrivePosition());
+    SmartDashboard.putNumber("frontRight drive encoder", frontRight.returnDrivePosition());
+    SmartDashboard.putNumber("frontLeft drive encoder", frontLeft.returnDrivePosition());
 
     // Gyro angle
     SmartDashboard.putNumber("Yaw", swerveDrive.getGyroRobotYaw());
@@ -526,7 +532,7 @@ public class Robot extends TimedRobot {
               System.out.println("blue");
               // drive to note
               swerveDrive.setDesiredPosistion(2.623, 5.548, 0);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
               // Step 4 check
               if (Math.sqrt(((2.623 - swerveDrive.returnX()) * (2.623 - swerveDrive.returnX()))
                   + ((5.548 - swerveDrive.returnY()) * (5.548 - swerveDrive.returnY()))) <= 0.05) {
@@ -539,7 +545,7 @@ public class Robot extends TimedRobot {
             } else {
               // drive to note
               swerveDrive.setDesiredPosistion(2.623, 2.56, 0);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
               // Step 4 check
               if (Math.sqrt(((2.623 - swerveDrive.returnX()) * (2.623 - swerveDrive.returnX()))
                   + ((2.56 - swerveDrive.returnY()) * (2.56 - swerveDrive.returnY()))) <= 0.05) {
@@ -572,10 +578,10 @@ public class Robot extends TimedRobot {
            /* Back to subwoofer
            if (blue){
            * swerveDrive.setDesiredPosistion(1.365, 5.548, 0);
-           * swerveDrive.driveToPositionTwo(0, 0, 0);
+           * swerveDrive.driveToPositionTwo();
            * } else {
            * swerveDrive.setDesiredPosistion(1.365, 2.656, 0);
-           * swerveDrive.driveToPositionTwo(0, 0, 0);
+           * swerveDrive.driveToPositionTwo();
            * }
            */
           
@@ -607,7 +613,7 @@ public class Robot extends TimedRobot {
           if (blue == true){
             swerveDrive.driveTeleop(0, 0, 0);
             //swerveDrive.setDesiredPosistion(3.623, 5.548, 0);
-            //swerveDrive.driveToPositionTwo(0, 0, 0);
+            //swerveDrive.driveToPositionTwo();
           } else {
             swerveDrive.driveTeleop(0, 0, 0);
           }
@@ -656,7 +662,7 @@ public class Robot extends TimedRobot {
             if (blue == true) {
               // drive to second position
               swerveDrive.setDesiredPosistion(0.836, 4.1, 0);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
               // Step 3 check
               if (Math.sqrt(((0.836 - swerveDrive.returnX()) * (0.836 - swerveDrive.returnX()))
                   + ((4.1 - swerveDrive.returnY()) * (4.1 - swerveDrive.returnY()))) <= 0.05) {
@@ -666,7 +672,7 @@ public class Robot extends TimedRobot {
             } else {
               // drive to second position
               swerveDrive.setDesiredPosistion(0.836, 1.209, 0);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
               // Step 3 check
               if (Math.sqrt(((0.836 - swerveDrive.returnX()) * (0.836 - swerveDrive.returnX()))
                   + ((1.209 - swerveDrive.returnY()) * (1.209 - swerveDrive.returnY()))) <= 0.05) {
@@ -685,7 +691,7 @@ public class Robot extends TimedRobot {
             if (blue == true) {
               // drive to note
               swerveDrive.setDesiredPosistion(2.623, 4.1, 0);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
               // Step 4 check
               if (Math.sqrt(((2.623 - swerveDrive.returnX()) * (2.623 - swerveDrive.returnX()))
                   + ((4.1 - swerveDrive.returnY()) * (4.1 - swerveDrive.returnY()))) <= 0.05) {
@@ -697,7 +703,7 @@ public class Robot extends TimedRobot {
             } else {
               // drive to note
               swerveDrive.setDesiredPosistion(2.623, 2.656, 0);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
               // Step 4 check
               if (Math.sqrt(((2.623 - swerveDrive.returnX()) * (2.623 - swerveDrive.returnX()))
                   + ((2.656 - swerveDrive.returnY()) * (2.656 - swerveDrive.returnY()))) <= 0.05) {
@@ -716,10 +722,10 @@ public class Robot extends TimedRobot {
             shooterAndIntake.setAngle(37);
             if (blue) {
               swerveDrive.setDesiredPosistion(2.623, 4.1, -31);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
             } else {
               swerveDrive.setDesiredPosistion(2.623, 2.656, -31);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
             }
             // Step five check
             if (timer.get() >= 0.5) {
@@ -737,10 +743,10 @@ public class Robot extends TimedRobot {
             shooterAndIntake.setAngle(33);
             if (blue) {
               swerveDrive.setDesiredPosistion(2.623, 4.1, -31);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
             } else {
               swerveDrive.setDesiredPosistion(2.623, 2.656, -31);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
             }
             /*
              * Back to subwoofer
@@ -779,10 +785,10 @@ public class Robot extends TimedRobot {
             // auto right
             if (blue == true) {
               swerveDrive.setDesiredPosistion(3.623, 4.1, -31);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
             } else {
               swerveDrive.setDesiredPosistion(3.623, 2.656, -31);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
             }
             break;
         }
@@ -828,7 +834,7 @@ public class Robot extends TimedRobot {
             if (blue == true) {
               // drive to second position
               swerveDrive.setDesiredPosistion(0.836, 6.996, 0);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
               // Step 3 check
               if (Math.sqrt(((0.836 - swerveDrive.returnX()) * (0.836 - swerveDrive.returnX()))
                   + ((6.996 - swerveDrive.returnY()) * (6.996 - swerveDrive.returnY()))) <= 0.05) {
@@ -838,7 +844,7 @@ public class Robot extends TimedRobot {
             } else {
               // drive to second position
               swerveDrive.setDesiredPosistion(0.836, 4.104, 0);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
               // Step 3 check
               if (Math.sqrt(((0.836 - swerveDrive.returnX()) * (0.836 - swerveDrive.returnX()))
                   + ((4.104 - swerveDrive.returnY()) * (4.104 - swerveDrive.returnY()))) <= 0.05) {
@@ -857,7 +863,7 @@ public class Robot extends TimedRobot {
             if (blue == true) {
               // drive to note
               swerveDrive.setDesiredPosistion(2.623, 6.996, 0);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
               // Step 4 check
               if (Math.sqrt(((2.623 - swerveDrive.returnX()) * (2.623 - swerveDrive.returnX()))
                   + ((6.996 - swerveDrive.returnY()) * (6.996 - swerveDrive.returnY()))) <= 0.05) {
@@ -869,7 +875,7 @@ public class Robot extends TimedRobot {
             } else {
               // drive to note
               swerveDrive.setDesiredPosistion(2.623, 4.104, 0);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
               // Step 4 check
               if (Math.sqrt(((2.623 - swerveDrive.returnX()) * (2.623 - swerveDrive.returnX()))
                   + ((4.104 - swerveDrive.returnY()) * (4.104 - swerveDrive.returnY()))) <= 0.05) {
@@ -888,10 +894,10 @@ public class Robot extends TimedRobot {
             shooterAndIntake.setAngle(37);
             if (blue) {
               swerveDrive.setDesiredPosistion(2.623, 6.996, 31);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
             } else {
               swerveDrive.setDesiredPosistion(2.623, 4.104, 31);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
             }
             // Step five check
             if (timer.get() >= 0.5) {
@@ -909,19 +915,19 @@ public class Robot extends TimedRobot {
             shooterAndIntake.setAngle(33);
             if (blue) {
               swerveDrive.setDesiredPosistion(2.623, 6.996, 31);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
             } else {
               swerveDrive.setDesiredPosistion(2.623, 4.104, 31);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
             }
             /*
              * Back to subwoofer
              * if (blue){
              * swerveDrive.setDesiredPosistion(1.365, 5.548, 0);
-             * swerveDrive.driveToPositionTwo(0, 0, 0);
+             * swerveDrive.driveToPositionTwo();
              * } else {
              * swerveDrive.setDesiredPosistion(1.365, 2.656, 0);
-             * swerveDrive.driveToPositionTwo(0, 0, 0);
+             * swerveDrive.driveToPositionTwo();
              * }
              */
             // Step 6 check
@@ -951,10 +957,10 @@ public class Robot extends TimedRobot {
             // auto left
             if (blue) {
               swerveDrive.setDesiredPosistion(2.623, 6.996, 31);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
             } else {
               swerveDrive.setDesiredPosistion(2.623, 4.104, 31);
-              swerveDrive.driveToPositionTwo(0, 0, 0);
+              swerveDrive.driveToPositionTwo();
             }
         }
       case kDefaultAuto:
@@ -1065,7 +1071,7 @@ public class Robot extends TimedRobot {
     } */
     else {
       // primary driver inputs
-      swerveDrive.driveTeleop(joystick.getY(), joystick.getX(), wheelJoystick.getRawAxis(0));
+      swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), getSteeringWheelAxis());
     }
 
     // Shooter angle
