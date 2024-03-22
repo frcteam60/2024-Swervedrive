@@ -70,7 +70,7 @@ public class ShooterAndIntake {
 
     void shooter(double speed) {
         Rshooter.set(speed);
-        Lshooter.set(-speed);
+        Lshooter.set(speed);
     }
 
     void angle(double direction) {
