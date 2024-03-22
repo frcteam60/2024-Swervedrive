@@ -206,7 +206,8 @@ public class SwerveDrive {
             if (YawError >= -3 && YawError <= 3){
                 YawError = 0;
             } 
-            joystickTurning = coerceToRange((YawError) * 0.020, -1, 1);
+            joystickTurning = coerceToRange((YawError) * 0.010, -1, 1);
+            // 0.020
         } else {
             desiredYaw = getGyroRobotYaw() + (joystickTurning * 10);
             YawError = angleSubtractor(desiredYaw, getGyroRobotYaw());
@@ -292,7 +293,7 @@ public class SwerveDrive {
         forward = coerceToRange(XError, -1, 1);
         //1.2
     
-        drive(forward * 0.3, strafe * 0.3, turning * 0.3);
+        drive(forward * 0.5, strafe * 0.5, turning * 0.3);
         
     }
     
@@ -446,6 +447,7 @@ public class SwerveDrive {
                 newY = robotPose2dInFieldspace.getY();
                 //System.out.println(newX);
                 //System.out.println(newY);
+                System.out.println("updated postion by april tag");
 
                 odometry.resetPosition(new Rotation2d(degreesToRadians(getGyroRobotYaw())), wheelPosistions, new Pose2d(newX, newY, new Rotation2d(degreesToRadians(getGyroRobotYaw()))));
         
