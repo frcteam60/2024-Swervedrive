@@ -537,38 +537,21 @@ public class Robot extends TimedRobot {
             // 3rd position and intake
             shooterAndIntake.setAngle(25);
             shooterAndIntake.intake(1);
-            if (blue == true) {
-              System.out.println("blue");
-              // drive to note
-              swerveDrive.setDesiredPosistion(autoThirdPositionX, autoThirdPositionY, 0);
-              swerveDrive.driveToPositionTwo();
-              // Step 4 check
-              if (Math
-                  .sqrt(((autoThirdPositionX - swerveDrive.returnX()) * (autoThirdPositionX - swerveDrive.returnX()))
-                      + ((autoThirdPositionY - swerveDrive.returnY())
-                          * (autoThirdPositionY - swerveDrive.returnY()))) <= 0.05) {
-                // if at 3rd position
-                System.out.println("Start of step 5 second shot");
-                shooterAndIntake.intake(0);
-                timer.reset();
-                autoStep = 5;
-              }
-            } else {
-              // drive to note
-              swerveDrive.setDesiredPosistion(autoThirdPositionX, autoThirdPositionY, 0);
-              swerveDrive.driveToPositionTwo();
-              // Step 4 check
-              if (Math
-                  .sqrt(((autoThirdPositionX - swerveDrive.returnX()) * (autoThirdPositionX - swerveDrive.returnX()))
-                      + ((autoThirdPositionY - swerveDrive.returnY())
-                          * (autoThirdPositionY - swerveDrive.returnY()))) <= 0.05) {
-                // if at 3rd position
-                System.out.println("Start of step 5 second shot");
-                swerveDrive.driveTeleop(0, 0, 0);
-                shooterAndIntake.intake(0);
-                timer.reset();
-                autoStep = 5;
-              }
+            System.out.println(blue ? "blue" : "red");
+            // drive to note
+            swerveDrive.setDesiredPosistion(autoThirdPositionX, autoThirdPositionY, autoThirdPositionRotation);
+            swerveDrive.driveToPositionTwo();
+            // Step 4 check
+            if (Math
+                .sqrt(((autoThirdPositionX - swerveDrive.returnX()) * (autoThirdPositionX - swerveDrive.returnX()))
+                    + ((autoThirdPositionY - swerveDrive.returnY())
+                        * (autoThirdPositionY - swerveDrive.returnY()))) <= 0.05) {
+              // if at 3rd position
+              System.out.println("Start of step 5 second shot");
+              swerveDrive.driveTeleop(0, 0, 0);
+              shooterAndIntake.intake(0);
+              timer.reset();
+              autoStep = 5;
             }
             break;
 
@@ -624,13 +607,10 @@ public class Robot extends TimedRobot {
             break;
           case 8:
             // Step eight
-            if (blue == true) {
-              swerveDrive.driveTeleop(0, 0, 0);
-              // swerveDrive.setDesiredPosistion(3.623, 5.548, 0);
-              // swerveDrive.driveToPositionTwo();
-            } else {
-              swerveDrive.driveTeleop(0, 0, 0);
-            }
+            swerveDrive.driveTeleop(0, 0, 0);
+            // swerveDrive.setDesiredPosistion(3.623, 5.548, 0);
+            // swerveDrive.driveToPositionTwo();
+
             break;
         }
 
@@ -673,26 +653,14 @@ public class Robot extends TimedRobot {
             // auto right
             // second position
             shooterAndIntake.setAngle(25);
-            if (blue == true) {
-              // drive to second position
-              swerveDrive.setDesiredPosistion(autoSecondPositionX, autoSecondPositionY, 0);
-              swerveDrive.driveToPositionTwo();
-              // Step 3 check
-              if (Math.hypot(autoSecondPositionX - swerveDrive.returnX(),
-                  autoSecondPositionY - swerveDrive.returnY()) <= 0.09) {
-                // if at 3rd position
-                autoStep = 4;
-              }
-            } else {
-              // drive to second position
-              swerveDrive.setDesiredPosistion(autoSecondPositionX, autoSecondPositionY, 0);
-              swerveDrive.driveToPositionTwo();
-              // Step 3 check
-              if (Math.hypot(autoSecondPositionX - swerveDrive.returnX(),
-                  autoSecondPositionY - swerveDrive.returnY()) <= 0.09) {
-                // if at 3rd position
-                autoStep = 4;
-              }
+            // drive to second position
+            swerveDrive.setDesiredPosistion(autoSecondPositionX, autoSecondPositionY, autoSecondPositionRotation);
+            swerveDrive.driveToPositionTwo();
+            // Step 3 check
+            if (Math.hypot(autoSecondPositionX - swerveDrive.returnX(),
+                autoSecondPositionY - swerveDrive.returnY()) <= 0.09) {
+              // if at 3rd position
+              autoStep = 4;
             }
 
             break;
@@ -702,34 +670,18 @@ public class Robot extends TimedRobot {
             // 3rd position and intake
             shooterAndIntake.setAngle(25);
             shooterAndIntake.intake(1);
-            if (blue == true) {
-              // drive to note
-              swerveDrive.setDesiredPosistion(autoThirdPositionX, autoThirdPositionY, autoThirdPositionRotation);
-              swerveDrive.driveToPositionTwo();
-              // Step 4 check
-              if (Math
-                  .sqrt(((autoThirdPositionX - swerveDrive.returnX()) * (autoThirdPositionX - swerveDrive.returnX()))
-                      + ((autoThirdPositionY - swerveDrive.returnY())
-                          * (autoThirdPositionY - swerveDrive.returnY()))) <= 0.05) {
-                // if at 3rd position
-                shooterAndIntake.intake(0);
-                timer.reset();
-                autoStep = 5;
-              }
-            } else {
-              // drive to note
-              swerveDrive.setDesiredPosistion(autoThirdPositionX, autoThirdPositionY, autoThirdPositionRotation);
-              swerveDrive.driveToPositionTwo();
-              // Step 4 check
-              if (Math
-                  .sqrt(((autoThirdPositionX - swerveDrive.returnX()) * (autoThirdPositionX - swerveDrive.returnX()))
-                      + ((autoThirdPositionY - swerveDrive.returnY())
-                          * (autoThirdPositionY - swerveDrive.returnY()))) <= 0.05) {
-                // if at 3rd position
-                shooterAndIntake.intake(0);
-                timer.reset();
-                autoStep = 5;
-              }
+            // drive to note
+            swerveDrive.setDesiredPosistion(autoThirdPositionX, autoThirdPositionY, autoThirdPositionRotation);
+            swerveDrive.driveToPositionTwo();
+            // Step 4 check
+            if (Math
+                .sqrt(((autoThirdPositionX - swerveDrive.returnX()) * (autoThirdPositionX - swerveDrive.returnX()))
+                    + ((autoThirdPositionY - swerveDrive.returnY())
+                        * (autoThirdPositionY - swerveDrive.returnY()))) <= 0.05) {
+              // if at 3rd position
+              shooterAndIntake.intake(0);
+              timer.reset();
+              autoStep = 5;
             }
             break;
           case 5:
@@ -738,15 +690,9 @@ public class Robot extends TimedRobot {
             // reverse intake
             shooterAndIntake.intake(-1);
             shooterAndIntake.setAngle(37);
-            if (blue) {
-              swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
-                  autoShootingThirdPositionRotation);
-              swerveDrive.driveToPositionTwo();
-            } else {
-              swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
-                  autoShootingThirdPositionRotation);
-              swerveDrive.driveToPositionTwo();
-            }
+            swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
+                autoShootingThirdPositionRotation);
+            swerveDrive.driveToPositionTwo();
             // Step five check
             if (timer.get() >= 0.5) {
               shooterAndIntake.intake(0);
@@ -761,15 +707,9 @@ public class Robot extends TimedRobot {
             shooterAndIntake.shooter(0.7);
             // set shooter angle
             shooterAndIntake.setAngle(33);
-            if (blue) {
-              swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
-                  autoShootingThirdPositionRotation);
-              swerveDrive.driveToPositionTwo();
-            } else {
-              swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
-                  autoShootingThirdPositionRotation);
-              swerveDrive.driveToPositionTwo();
-            }
+            swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
+                autoShootingThirdPositionRotation);
+            swerveDrive.driveToPositionTwo();
             /*
              * Back to subwoofer
              * if (blue){
@@ -805,15 +745,9 @@ public class Robot extends TimedRobot {
           case 8:
             // Step eight
             // auto right
-            if (blue == true) {
-              swerveDrive.setDesiredPosistion(autoShootingThirdPositionX + 1, autoShootingThirdPositionY,
-                  autoShootingThirdPositionRotation);
-              swerveDrive.driveToPositionTwo();
-            } else {
-              swerveDrive.setDesiredPosistion(autoShootingThirdPositionX + 1, autoShootingThirdPositionY,
-                  autoShootingThirdPositionRotation);
-              swerveDrive.driveToPositionTwo();
-            }
+            swerveDrive.setDesiredPosistion(autoShootingThirdPositionX + 1, autoShootingThirdPositionY,
+                autoShootingThirdPositionRotation);
+            swerveDrive.driveToPositionTwo();
             break;
         }
 
@@ -857,28 +791,15 @@ public class Robot extends TimedRobot {
             // auto left
             // second position
             shooterAndIntake.setAngle(25);
-            if (blue == true) {
-              // drive to second position
-              swerveDrive.setDesiredPosistion(autoSecondPositionX, autoSecondPositionY, autoSecondPositionRotation);
-              swerveDrive.driveToPositionTwo();
-              // Step 3 check
-              if (Math.hypot(autoSecondPositionX - swerveDrive.returnX(),
-                  autoSecondPositionY - swerveDrive.returnY()) <= 0.09) {
-                // if at 3rd position
-                System.out.println("start of step 4");
-                autoStep = 4;
-              }
-            } else {
-              // drive to second position
-              swerveDrive.setDesiredPosistion(autoSecondPositionX, autoSecondPositionY, autoSecondPositionRotation);
-              swerveDrive.driveToPositionTwo();
-              // Step 3 check
-              if (Math.hypot(autoSecondPositionX - swerveDrive.returnX(),
-                  autoSecondPositionY - swerveDrive.returnY()) <= 0.09) {
-                // if at 3rd position
-                System.out.println("start of step 4");
-                autoStep = 4;
-              }
+            // drive to second position
+            swerveDrive.setDesiredPosistion(autoSecondPositionX, autoSecondPositionY, autoSecondPositionRotation);
+            swerveDrive.driveToPositionTwo();
+            // Step 3 check
+            if (Math.hypot(autoSecondPositionX - swerveDrive.returnX(),
+                autoSecondPositionY - swerveDrive.returnY()) <= 0.09) {
+              // if at 3rd position
+              System.out.println("start of step 4");
+              autoStep = 4;
             }
 
             break;
@@ -888,32 +809,17 @@ public class Robot extends TimedRobot {
             // 3rd position and intake
             shooterAndIntake.setAngle(25);
             shooterAndIntake.intake(1);
-            if (blue == true) {
-              // drive to note
-              swerveDrive.setDesiredPosistion(autoThirdPositionX, autoThirdPositionY, autoThirdPositionRotation);
-              swerveDrive.driveToPositionTwo();
-              // Step 4 check
-              if (Math.hypot(autoThirdPositionX - swerveDrive.returnX(),
-                  autoThirdPositionY - swerveDrive.returnY()) <= 0.09) {
-                // if at 3rd position
-                System.out.println("start of step 5");
-                shooterAndIntake.intake(0);
-                timer.reset();
-                autoStep = 5;
-              }
-            } else {
-              // drive to note
-              swerveDrive.setDesiredPosistion(autoThirdPositionX, autoThirdPositionY, autoThirdPositionRotation);
-              swerveDrive.driveToPositionTwo();
-              // Step 4 check
-              if (Math.hypot(autoThirdPositionX - swerveDrive.returnX(),
-                  autoThirdPositionY - swerveDrive.returnY()) <= 0.09) {
-                // if at 3rd position
-                System.out.println("start of step 5");
-                shooterAndIntake.intake(0);
-                timer.reset();
-                autoStep = 5;
-              }
+            // drive to note
+            swerveDrive.setDesiredPosistion(autoThirdPositionX, autoThirdPositionY, autoThirdPositionRotation);
+            swerveDrive.driveToPositionTwo();
+            // Step 4 check
+            if (Math.hypot(autoThirdPositionX - swerveDrive.returnX(),
+                autoThirdPositionY - swerveDrive.returnY()) <= 0.09) {
+              // if at 3rd position
+              System.out.println("start of step 5");
+              shooterAndIntake.intake(0);
+              timer.reset();
+              autoStep = 5;
             }
             break;
           case 5:
@@ -922,15 +828,9 @@ public class Robot extends TimedRobot {
             // reverse intake
             shooterAndIntake.intake(-1);
             shooterAndIntake.setAngle(37);
-            if (blue) {
-              swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
-                  autoShootingThirdPositionRotation);
-              swerveDrive.driveToPositionTwo();
-            } else {
-              swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
-                  autoShootingThirdPositionRotation);
-              swerveDrive.driveToPositionTwo();
-            }
+            swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
+                autoShootingThirdPositionRotation);
+            swerveDrive.driveToPositionTwo();
             // Step five check
             if (timer.get() >= 0.5) {
               System.out.println("start of step 6");
@@ -946,15 +846,9 @@ public class Robot extends TimedRobot {
             shooterAndIntake.shooter(0.7);
             // set shooter angle
             shooterAndIntake.setAngle(33);
-            if (blue) {
-              swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
-                  autoShootingThirdPositionRotation);
-              swerveDrive.driveToPositionTwo();
-            } else {
-              swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
-                  autoShootingThirdPositionRotation);
-              swerveDrive.driveToPositionTwo();
-            }
+            swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
+                autoShootingThirdPositionRotation);
+            swerveDrive.driveToPositionTwo();
             /*
              * Back to subwoofer
              * if (blue){
@@ -990,15 +884,9 @@ public class Robot extends TimedRobot {
           case 8:
             // Step eight
             // auto left
-            if (blue) {
-              swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
-                  autoShootingThirdPositionRotation);
-              swerveDrive.driveToPositionTwo();
-            } else {
-              swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
-                  autoShootingThirdPositionRotation);
-              swerveDrive.driveToPositionTwo();
-            }
+            swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
+                autoShootingThirdPositionRotation);
+            swerveDrive.driveToPositionTwo();
         }
       case kDefaultAuto:
       default:
