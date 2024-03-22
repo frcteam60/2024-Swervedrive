@@ -529,4 +529,8 @@ public class SwerveDrive {
                         backRight.getPosition() });
     }
 
+    void pointToSpeaker() {
+        setTurnPoint(PositionHelpers.getSpeakerPosition());
+    }
+
 }

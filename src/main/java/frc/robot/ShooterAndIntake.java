@@ -168,4 +168,9 @@ public class ShooterAndIntake {
     void updateDashboardForColorSensor() {
         colorSensor.updateDashboard();
     }
+
+    void setAngleForSpeaker() {
+        double distance = PositionHelpers.getSpeakerDistance();
+        // TODO convert the distance into an angle for the arm
+    }
 }
