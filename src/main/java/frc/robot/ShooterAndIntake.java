@@ -69,6 +69,10 @@ public class ShooterAndIntake {
     }
 
     void shooter(double speed) {
+        double intakeSpeed = -0.1;
+        if (speed < intakeSpeed) {
+            speed = intakeSpeed;
+        }
         Rshooter.set(speed);
         Lshooter.set(speed);
     }

@@ -13,7 +13,7 @@ public class BionicColorSensor {
 
     ColorSensorV3 colorSensor = new ColorSensorV3(Port.kMXP);
 
-    Queue<Integer> past10Proxs = new LinkedList<>();
+    Queue<Integer> pastXProxs = new LinkedList<>();
 
     BionicColorSensor() {
     }
@@ -35,13 +35,13 @@ public class BionicColorSensor {
         // SmartDashboard.putNumber("Proximity", colorSensor.getProximity());
         SmartDashboard.putNumber("IR", colorSensor.getIR());
 
-        past10Proxs.add(colorSensor.getProximity());
-        if (past10Proxs.size() > 10) {
-            past10Proxs.remove();
+        pastXProxs.add(colorSensor.getProximity());
+        if (pastXProxs.size() > 25) {
+            pastXProxs.remove();
         }
-        int lowest = past10Proxs.peek();
-        int highest = past10Proxs.peek();
-        for (Iterator<Integer> itr = past10Proxs.iterator(); itr.hasNext();) {
+        int lowest = pastXProxs.peek();
+        int highest = pastXProxs.peek();
+        for (Iterator<Integer> itr = pastXProxs.iterator(); itr.hasNext();) {
             int val = itr.next();
             if (val < lowest)
                 lowest = val;
