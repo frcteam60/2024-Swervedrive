@@ -485,414 +485,165 @@ public class Robot extends TimedRobot {
     m_autoSelected = m_chooser.getSelected();
     SmartDashboard.putString("Auto selected", m_autoSelected);
 
-    switch (m_autoSelected) {
-      case kAutoMiddle:
-        switch (autoStep) {
-          case 1:
-            // Step one
-            shooterAndIntake.setAngle(autoInitialShooterAngle);
-            shooterAndIntake.shooterToSpeed(0.33);
-            // Step 1 check
-            if (timer.get() >= 3) {
-              // if (Math.abs(shooterAndIntake.returnAngle() - 57) <= 2) {
-              // if (timer.get() >= 3){
-              // if shooter angle is close to 3
-              System.out.println("Start of step 2");
-              shooterAndIntake.angle(0);
-              timer.reset();
-              autoStep = 2;
-            }
-            break;
-          case 2:
-            // Step two
-            // shoot
-            shooterAndIntake.intake(1);
-            shooterAndIntake.shooter(0.33);
-            // Step 2 check
-            if (timer.get() >= 2) {
-              System.out.println("Start of step 3");
-              // if 2 or more seconds on step 2
-              shooterAndIntake.shooter(0);
-              shooterAndIntake.intake(0);
-              autoStep = 3;
-            }
-            break;
-          case 3:
-            // Step three
-            // middle doesn't have 2nd position
-            if (blue == true) {
-              // Blue
-            } else {
-              // Red
-            }
-            // Step 3 check
-            if (true) {
-              System.out.println("Start of step 4");
-              // if at 2nd position
-              autoStep = 4;
-            }
-            break;
-          case 4:
-            // Step four
-            // 3rd position and intake
-            shooterAndIntake.setAngle(25);
-            shooterAndIntake.intake(1);
-            System.out.println(blue ? "blue" : "red");
-            // drive to note
-            swerveDrive.setDesiredPosistion(autoThirdPositionX, autoThirdPositionY, autoThirdPositionRotation);
-            swerveDrive.driveToPositionTwo();
-            // Step 4 check
-            if (Math
-                .sqrt(((autoThirdPositionX - swerveDrive.returnX()) * (autoThirdPositionX - swerveDrive.returnX()))
-                    + ((autoThirdPositionY - swerveDrive.returnY())
-                        * (autoThirdPositionY - swerveDrive.returnY()))) <= 0.05) {
-              // if at 3rd position
-              System.out.println("Start of step 5 second shot");
-              swerveDrive.driveTeleop(0, 0, 0);
-              shooterAndIntake.intake(0);
-              timer.reset();
-              autoStep = 5;
-            }
-            break;
+    // If default is selected, don't do anything
+    if (m_autoSelected == kDefaultAuto) {
+      return;
+    }
 
-          case 5:
-            shooterAndIntake.intake(-1);
-            shooterAndIntake.setAngle(37);
-            if (timer.get() >= 0.5) {
-              System.out.println("Start of step 6");
-              shooterAndIntake.intake(0);
-              autoStep = 6;
-            }
-            break;
-          case 6:
-            // Step six
-            // line up to shoot
-            // power up shooter
-            shooterAndIntake.shooter(0.7);
-            // set shooter angle
-            shooterAndIntake.setAngle(37);
-            /*
-             * Back to subwoofer
-             * if (blue){
-             * swerveDrive.setDesiredPosistion(1.365, 5.548, 0);
-             * swerveDrive.driveToPositionTwo();
-             * } else {
-             * swerveDrive.setDesiredPosistion(1.365, 2.656, 0);
-             * swerveDrive.driveToPositionTwo();
-             * }
-             */
-
-            // Step 6 check
-            if (Math.abs(shooterAndIntake.returnAngle() - 37) <= 2) {
-              // if lined up
-              System.out.println("Start of step 7");
-              shooterAndIntake.angle(0);
-              timer.reset();
-              autoStep = 7;
-            }
-            break;
-          case 7:
-            // Step seven
-            // shoot second note
-            shooterAndIntake.intake(1);
-            shooterAndIntake.shooter(0.7);
-            // Step 7 check
-            if (timer.get() >= 2) {
-              System.out.println("Start of step 8");
-              shooterAndIntake.angle(0);
-              shooterAndIntake.shooter(0);
-              shooterAndIntake.intake(0);
-              autoStep = 8;
-            }
-            break;
-          case 8:
-            // Step eight
-            swerveDrive.driveTeleop(0, 0, 0);
-            // swerveDrive.setDesiredPosistion(3.623, 5.548, 0);
-            // swerveDrive.driveToPositionTwo();
-
-            break;
+    switch (autoStep) {
+      case 1:
+        // Step one
+        shooterAndIntake.setAngle(autoInitialShooterAngle);
+        shooterAndIntake.shooterToSpeed(0.33);
+        // Step 1 check
+        if (timer.get() >= 3) {
+          // if (Math.abs(shooterAndIntake.returnAngle() - 57) <= 2) {
+          // if (timer.get() >= 3){
+          // if shooter angle is close to 3
+          System.out.println("Start of step 2");
+          shooterAndIntake.angle(0);
+          timer.reset();
+          autoStep = 2;
         }
-
+        break;
+      case 2:
+        // Step two
+        // shoot
+        shooterAndIntake.intake(1);
+        shooterAndIntake.shooter(0.33);
+        // Step 2 check
+        if (timer.get() >= 2) {
+          System.out.println("Start of step 3");
+          // if 2 or more seconds on step 2
+          shooterAndIntake.shooter(0);
+          shooterAndIntake.intake(0);
+          autoStep = 3;
+        }
+        break;
+      case 3:
+        // Step three
+        // middle doesn't have 2nd position
+        if (m_autoSelected == kAutoMiddle) {
+          System.out.println("Start of step 4");
+          // if at 2nd position
+          autoStep = 4;
+          break;
+        }
+        // second position
+        shooterAndIntake.setAngle(25);
+        // drive to second position
+        swerveDrive.setDesiredPosistion(autoSecondPositionX, autoSecondPositionY, autoSecondPositionRotation);
+        swerveDrive.driveToPositionTwo();
+        // Step 3 check
+        if (Math.hypot(autoSecondPositionX - swerveDrive.returnX(),
+            autoSecondPositionY - swerveDrive.returnY()) <= 0.09) {
+          System.out.println("Start of step 4");
+          // if at 3rd position
+          autoStep = 4;
+        }
+        break;
+      case 4:
+        // Step four
+        // 3rd position and intake
+        shooterAndIntake.setAngle(25);
+        shooterAndIntake.intake(1);
+        System.out.println(blue ? "blue" : "red");
+        // drive to note
+        swerveDrive.setDesiredPosistion(autoThirdPositionX, autoThirdPositionY, autoThirdPositionRotation);
+        swerveDrive.driveToPositionTwo();
+        // Step 4 check
+        if (Math
+            .sqrt(((autoThirdPositionX - swerveDrive.returnX()) * (autoThirdPositionX - swerveDrive.returnX()))
+                + ((autoThirdPositionY - swerveDrive.returnY())
+                    * (autoThirdPositionY - swerveDrive.returnY()))) <= 0.05) {
+          // if at 3rd position
+          System.out.println("Start of step 5 second shot");
+          swerveDrive.driveTeleop(0, 0, 0);
+          shooterAndIntake.intake(0);
+          timer.reset();
+          autoStep = 5;
+        }
         break;
 
-      case kAutoRight:
-        // auto right
-        switch (autoStep) {
-          case 1:
-            // Step one
-            // auto right
-            // 57
-            shooterAndIntake.setAngle(autoInitialShooterAngle);
-            shooterAndIntake.shooterToSpeed(0.33);
-            // Step 1 check
-            if (timer.get() >= 3) {
-              // if (Math.abs(shooterAndIntake.returnAngle() - 57) <= 2) {
-              // if shooter angle is close to 31
-              shooterAndIntake.angle(0);
-              timer.reset();
-              autoStep = 2;
-            }
-            break;
-          case 2:
-            // Step two
-            // auto right
-            // shoot
-            shooterAndIntake.intake(1);
-            shooterAndIntake.shooter(0.33);
-            // Step 2 check
-            if (timer.get() >= 2) {
-              // if 2 or more seconds on step 2
-              shooterAndIntake.shooter(0);
-              shooterAndIntake.intake(0);
-              autoStep = 3;
-            }
-            break;
-          case 3:
-            // Step three
-            // auto right
-            // second position
-            shooterAndIntake.setAngle(25);
-            // drive to second position
-            swerveDrive.setDesiredPosistion(autoSecondPositionX, autoSecondPositionY, autoSecondPositionRotation);
-            swerveDrive.driveToPositionTwo();
-            // Step 3 check
-            if (Math.hypot(autoSecondPositionX - swerveDrive.returnX(),
-                autoSecondPositionY - swerveDrive.returnY()) <= 0.09) {
-              // if at 3rd position
-              autoStep = 4;
-            }
-
-            break;
-          case 4:
-            // Step four
-            // auto right
-            // 3rd position and intake
-            shooterAndIntake.setAngle(25);
-            shooterAndIntake.intake(1);
-            // drive to note
-            swerveDrive.setDesiredPosistion(autoThirdPositionX, autoThirdPositionY, autoThirdPositionRotation);
-            swerveDrive.driveToPositionTwo();
-            // Step 4 check
-            if (Math
-                .sqrt(((autoThirdPositionX - swerveDrive.returnX()) * (autoThirdPositionX - swerveDrive.returnX()))
-                    + ((autoThirdPositionY - swerveDrive.returnY())
-                        * (autoThirdPositionY - swerveDrive.returnY()))) <= 0.05) {
-              // if at 3rd position
-              shooterAndIntake.intake(0);
-              timer.reset();
-              autoStep = 5;
-            }
-            break;
-          case 5:
-            // Step five
-            // auto right
-            // reverse intake
-            shooterAndIntake.intake(-1);
-            shooterAndIntake.setAngle(37);
-            swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
-                autoShootingThirdPositionRotation);
-            swerveDrive.driveToPositionTwo();
-            // Step five check
-            if (timer.get() >= 0.5) {
-              shooterAndIntake.intake(0);
-              autoStep = 6;
-            }
-            break;
-          case 6:
-            // Step six
-            // auto right
-            // line up to shoot
-            // power up shooter
-            shooterAndIntake.shooter(0.7);
-            // set shooter angle
-            shooterAndIntake.setAngle(33);
-            swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
-                autoShootingThirdPositionRotation);
-            swerveDrive.driveToPositionTwo();
-            /*
-             * Back to subwoofer
-             * if (blue){
-             * swerveDrive.setDesiredPosistion(1.365, 5.548, 0);
-             * swerveDrive.driveToPositionTwo(0, 0, 0);
-             * } else {
-             * swerveDrive.setDesiredPosistion(1.365, 2.656, 0);
-             * swerveDrive.driveToPositionTwo(0, 0, 0);
-             * }
-             */
-            // Step 6 check
-            if (Math.abs(shooterAndIntake.returnAngle() - 33) <= 2) {
-              // if lined up
-              shooterAndIntake.angle(0);
-              timer.reset();
-              autoStep = 7;
-            }
-            break;
-          case 7:
-            // Step seven
-            // auto right
-            // shoot second note
-            shooterAndIntake.intake(1);
-            shooterAndIntake.shooter(0.7);
-            // Step 7 check
-            if (timer.get() >= 2) {
-              shooterAndIntake.angle(0);
-              shooterAndIntake.shooter(0);
-              shooterAndIntake.intake(0);
-              autoStep = 8;
-            }
-            break;
-          case 8:
-            // Step eight
-            // auto right
-            swerveDrive.setDesiredPosistion(autoShootingThirdPositionX + 1, autoShootingThirdPositionY,
-                autoShootingThirdPositionRotation);
-            swerveDrive.driveToPositionTwo();
-            break;
+      case 5:
+        shooterAndIntake.intake(-1);
+        shooterAndIntake.setAngle(37);
+        swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
+            autoShootingThirdPositionRotation);
+        swerveDrive.driveToPositionTwo();
+        if (timer.get() >= 0.5) {
+          System.out.println("Start of step 6");
+          shooterAndIntake.intake(0);
+          autoStep = 6;
         }
-
         break;
-      case kAutoLeft:
-        // auto left
-        switch (autoStep) {
-          case 1:
-            // Step one
-            // auto left
-            // 57
-            shooterAndIntake.setAngle(autoInitialShooterAngle);
-            shooterAndIntake.shooterToSpeed(0.33);
-            // Step 1 check
-            if (timer.get() >= 3) {
-              System.out.println("start of step 2");
-              // if (Math.abs(shooterAndIntake.returnAngle() - 57) <= 2) {
-              // if shooter angle is close to 31
-              shooterAndIntake.angle(0);
-              timer.reset();
-              autoStep = 2;
-            }
-            break;
-          case 2:
-            // Step two
-            // auto left
-            // shoot
-            shooterAndIntake.intake(1);
-            shooterAndIntake.shooter(0.33);
-            // Step 2 check
-            if (timer.get() >= 2) {
-              System.out.println("start of step 3");
-              // if 2 or more seconds on step 2
-              shooterAndIntake.shooter(0);
-              shooterAndIntake.intake(0);
-              autoStep = 3;
-            }
-            break;
-          case 3:
-            // Step three
-            // auto left
-            // second position
-            shooterAndIntake.setAngle(25);
-            // drive to second position
-            swerveDrive.setDesiredPosistion(autoSecondPositionX, autoSecondPositionY, autoSecondPositionRotation);
-            swerveDrive.driveToPositionTwo();
-            // Step 3 check
-            if (Math.hypot(autoSecondPositionX - swerveDrive.returnX(),
-                autoSecondPositionY - swerveDrive.returnY()) <= 0.09) {
-              // if at 3rd position
-              System.out.println("start of step 4");
-              autoStep = 4;
-            }
-
-            break;
-          case 4:
-            // Step four
-            // auto left
-            // 3rd position and intake
-            shooterAndIntake.setAngle(25);
-            shooterAndIntake.intake(1);
-            // drive to note
-            swerveDrive.setDesiredPosistion(autoThirdPositionX, autoThirdPositionY, autoThirdPositionRotation);
-            swerveDrive.driveToPositionTwo();
-            // Step 4 check
-            if (Math.hypot(autoThirdPositionX - swerveDrive.returnX(),
-                autoThirdPositionY - swerveDrive.returnY()) <= 0.09) {
-              // if at 3rd position
-              System.out.println("start of step 5");
-              shooterAndIntake.intake(0);
-              timer.reset();
-              autoStep = 5;
-            }
-            break;
-          case 5:
-            // Step five
-            // auto left
-            // reverse intake
-            shooterAndIntake.intake(-1);
-            shooterAndIntake.setAngle(37);
-            swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
-                autoShootingThirdPositionRotation);
-            swerveDrive.driveToPositionTwo();
-            // Step five check
-            if (timer.get() >= 0.5) {
-              System.out.println("start of step 6");
-              shooterAndIntake.intake(0);
-              autoStep = 6;
-            }
-            break;
-          case 6:
-            // Step six
-            // auto left
-            // line up to shoot
-            // power up shooter
-            shooterAndIntake.shooter(0.7);
-            // set shooter angle
-            shooterAndIntake.setAngle(33);
-            swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
-                autoShootingThirdPositionRotation);
-            swerveDrive.driveToPositionTwo();
-            /*
-             * Back to subwoofer
-             * if (blue){
-             * swerveDrive.setDesiredPosistion(1.365, 5.548, 0);
-             * swerveDrive.driveToPositionTwo();
-             * } else {
-             * swerveDrive.setDesiredPosistion(1.365, 2.656, 0);
-             * swerveDrive.driveToPositionTwo();
-             * }
-             */
-            // Step 6 check
-            if (Math.abs(shooterAndIntake.returnAngle() - 33) <= 2) {
-              // if lined up
-              shooterAndIntake.angle(0);
-              timer.reset();
-              autoStep = 7;
-            }
-            break;
-          case 7:
-            // Step seven
-            // auto left
-            // shoot second note
-            shooterAndIntake.intake(1);
-            shooterAndIntake.shooter(0.7);
-            // Step 7 check
-            if (timer.get() >= 2) {
-              shooterAndIntake.angle(0);
-              shooterAndIntake.shooter(0);
-              shooterAndIntake.intake(0);
-              autoStep = 8;
-            }
-            break;
-          case 8:
-            // Step eight
-            // auto left
-            swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
-                autoShootingThirdPositionRotation);
-            swerveDrive.driveToPositionTwo();
+      case 6:
+        // Step six
+        // line up to shoot
+        // power up shooter
+        shooterAndIntake.shooter(0.7);
+        // set shooter angle
+        double desiredShooterAngle = 33;// TODO Was 33 for right/left but 37 for middle (but the angle on step 5 was 37
+                                        // for all 3
+        // TODO this may just need to be a variable like the others, but was unsure due
+        // to the inconsistency with the previous step
+        if (m_autoSelected == kAutoMiddle) {
+          desiredShooterAngle = 37;
         }
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
+        shooterAndIntake.setAngle(desiredShooterAngle);
+        swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
+            autoShootingThirdPositionRotation);
+        swerveDrive.driveToPositionTwo();
+        /*
+         * Back to subwoofer
+         * if (blue){
+         * swerveDrive.setDesiredPosistion(1.365, 5.548, 0);
+         * swerveDrive.driveToPositionTwo();
+         * } else {
+         * swerveDrive.setDesiredPosistion(1.365, 2.656, 0);
+         * swerveDrive.driveToPositionTwo();
+         * }
+         */
+
+        // Step 6 check
+        if (Math.abs(shooterAndIntake.returnAngle() - desiredShooterAngle) <= 2) { // TODO was also 33 for right
+          // if lined up
+          System.out.println("Start of step 7");
+          shooterAndIntake.angle(0);
+          timer.reset();
+          autoStep = 7;
+        }
+        break;
+      case 7:
+        // Step seven
+        // shoot second note
+        shooterAndIntake.intake(1);
+        shooterAndIntake.shooter(0.7);
+        // Step 7 check
+        if (timer.get() >= 2) {
+          System.out.println("Start of step 8");
+          shooterAndIntake.angle(0);
+          shooterAndIntake.shooter(0);
+          shooterAndIntake.intake(0);
+          autoStep = 8;
+        }
+        break;
+      case 8:
+        // Step eight
+
+        if (m_autoSelected == kAutoMiddle) { // TODO likely doesn't need a special for middle, but this is what it had
+          swerveDrive.driveTeleop(0, 0, 0);
+          // swerveDrive.setDesiredPosistion(3.623, 5.548, 0);
+          // swerveDrive.driveToPositionTwo();
+        } else {
+          swerveDrive.setDesiredPosistion(autoShootingThirdPositionX + 1, autoShootingThirdPositionY,
+              autoShootingThirdPositionRotation);
+          swerveDrive.driveToPositionTwo();
+        }
+
         break;
     }
+
   }
 
   /** This function is called once when teleop is enabled. */
