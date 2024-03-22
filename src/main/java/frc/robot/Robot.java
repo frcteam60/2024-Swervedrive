@@ -423,11 +423,11 @@ public class Robot extends TimedRobot {
           autoSecondPositionRotation = 0;
 
           autoThirdPositionX = 2.623;
-          autoThirdPositionY = 1.209; // Had 1.209 listed here, but was 2.656 for auto right red
+          autoThirdPositionY = 1.209; // TODO Had 1.209 listed here, but was 2.656 for auto right red
           autoThirdPositionRotation = 0;
 
           autoShootingThirdPositionX = 2.623;
-          autoShootingThirdPositionY = 1.209; // Had 1.209 listed here, but was 2.656 for auto right red
+          autoShootingThirdPositionY = 1.209; // TODO Had 1.209 listed here, but was 2.656 for auto right red
           autoShootingThirdPositionRotation = -31;
         }
         break;
