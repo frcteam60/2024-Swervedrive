@@ -219,7 +219,8 @@ public class SwerveDrive {
             if (YawError >= -3 && YawError <= 3) {
                 YawError = 0;
             }
-            joystickTurning = coerceToRange((YawError) * 0.020, -1, 1);
+            joystickTurning = coerceToRange((YawError) * 0.010, -1, 1);
+            // 0.020
         } else {
             desiredYaw = getGyroRobotYaw() + (joystickTurning * 10);
             YawError = angleSubtractor(desiredYaw, getGyroRobotYaw());
@@ -246,23 +247,8 @@ public class SwerveDrive {
     }
 
     // odometery drive to posistion
-    public void driveToPosition(double x1, double y1, double x2) {
+    public void driveToPosition() {
         diagonal = Math.sqrt((length * length) + (width * width));
-
-        /*
-         * // Converts gyro angle into radians then Rotation2d
-         * gyroRotation2d = new Rotation2d(-(getGyroRobotYaw()/360 * 2 * Math.PI));
-         * 
-         * // Update the pose
-         * robotPose2d = odometry.update(gyroRotation2d,
-         * new SwerveModulePosition[] {frontLeft.getPosition(),
-         * frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()});
-         */
-
-        // Convert to chassis speeds
-        // ChassisSpeeds chassisSpeeds =
-        // kinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(),
-        // backLeft.getState(), backRight.getState());
 
         // Computes turning value
         // Desired Yaw
@@ -286,7 +272,7 @@ public class SwerveDrive {
         }
         forward = coerceToRange(XError * 1.2, -1, 1);
 
-        drive(forward, strafe, turning);
+        drive(forward * 0.3, strafe * 0.3, turning * 0.3);
 
     }
 
@@ -319,81 +305,86 @@ public class SwerveDrive {
         forward = coerceToRange(XError, -1, 1);
         // 1.2
 
-        drive(forward * 0.3, strafe * 0.3, turning * 0.3);
+        drive(forward * 0.5, strafe * 0.5, turning * 0.3);
 
     }
 
     // drive method
-    public void robotOrientedDrive(double x1, double y1, double x2) {
+    public void robotOrientedDrive(double forwardSpeed, double strafeSpeed, double turningSpeed) {
         diagonal = Math.sqrt((length * length) + (width * width));
 
-        /*
-         * // Converts gyro angle into radians then Rotation2d
-         * gyroRotation2d = new Rotation2d(-(getGyroRobotYaw()/360 * 2 * Math.PI));
-         * 
-         * // Update the pose
-         * robotPose2d = odometry.update(gyroRotation2d,
-         * new SwerveModulePosition[] {frontLeft.getPosition(),
-         * frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()});
-         */
-
-        // Convert to chassis speeds
-        // ChassisSpeeds chassisSpeeds =
-        // kinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(),
-        // backLeft.getState(), backRight.getState());
-
-        if (x2 >= -0.01 && x2 <= 0.01) {
+        if (turningSpeed >= -0.03 && turningSpeed <= 0.03) {
             YawError = angleSubtractor(desiredYaw, getGyroRobotYaw());
             if (YawError >= -3 && YawError <= 3) {
                 YawError = 0;
             }
-            // turning = coerceToRange((YawError) * 0.015, -1, 1);
-            turning = coerceToRange((YawError) * 0.020, -1, 1);
-        }
-
-        else {
-            desiredYaw = getGyroRobotYaw() + (x2 * 5);
+            turningSpeed = coerceToRange((YawError) * 0.020, -1, 1);
+        } else {
+            desiredYaw = getGyroRobotYaw() + (turningSpeed * 10);
             YawError = angleSubtractor(desiredYaw, getGyroRobotYaw());
-            if (YawError >= -3 && YawError <= 3) {
+            if (YawError >= -2 && YawError <= 2) {
                 YawError = 0;
             }
-            // turning = coerceToRange((YawError) * 0.06, -1, 1);
-            turning = coerceToRange((YawError) * 0.1, -1, 1);
+            turningSpeed = coerceToRange((YawError) * 0.07, -1, 1);
         }
 
-        if (y1 >= -0.01 && y1 <= 0.01) {
-            forward = 0;
+        if (forwardSpeed >= -0.01 && forwardSpeed <= 0.01) {
+            forwardSpeed = 0;
         } else {
-            forward = y1 * -1;
+            forwardSpeed = forwardSpeed;
         }
 
-        if (x1 >= -0.01 && x1 <= 0.01) {
-            strafe = 0;
+        if (strafeSpeed >= -0.01 && strafeSpeed <= 0.01) {
+            strafeSpeed = 0;
         } else {
-            strafe = x1;
+            strafeSpeed = strafeSpeed;
         }
 
-        double a = strafe - turning * (length / diagonal); // back horizontal
-        double b = strafe + turning * (length / diagonal); // front horizontal
-        double c = forward - turning * (width / diagonal); // right vertical
-        double d = forward + turning * (width / diagonal); // left vertical
+        diagonal = Math.sqrt((length * length) + (width * width));
+
+        // ***
+        // Adjusts values to field oriented drive
+        gyro_degrees = getGyroRobotYaw();
+        gyro_radians = degreesToRadians(getGyroRobotYaw());
+        temp = forwardSpeed * Math.cos(gyro_radians) + strafeSpeed * Math.sin(gyro_radians);
+        strafeSpeed = strafeSpeed * Math.cos(gyro_radians) - forwardSpeed * Math.sin(gyro_radians);
+        forwardSpeed = temp;
 
         /*
-         * We switched left and right(we could also have switched front and back)
-         * this change should turn the wheels the right way when the robot is trying to
-         * rotate
+         * temp = forward * Math.cos(gyro_radians) + strafe * Math.sin(gyro_radians);
+         * strafe = (forward * -1) * Math.sin(gyro_radians) + strafe *
+         * Math.cos(gyro_radians);
+         * forward = temp;
          */
+
+        // ***
+        double a = strafeSpeed - turningSpeed * (length / diagonal); // back horizontal
+        double b = strafeSpeed + turningSpeed * (length / diagonal); // front horizontal
+        double c = forwardSpeed + turningSpeed * (width / diagonal); // right vertical
+        double d = forwardSpeed - turningSpeed * (width / diagonal); // left vertical
+
         // Speed Values
-        double backRightSpeed = Math.sqrt((a * a) + (c * c));
-        double backLeftSpeed = Math.sqrt((a * a) + (d * d));
-        double frontRightSpeed = Math.sqrt((b * b) + (c * c));
-        double frontLeftSpeed = Math.sqrt((b * b) + (d * d));
+        // ***
+        double backRightSpeed = Math.hypot(a, c);
+        double backLeftSpeed = Math.hypot(a, d);
+        double frontRightSpeed = Math.hypot(b, c);
+        double frontLeftSpeed = Math.hypot(b, d);
         // Angle Values
         double backRightAngle = (Math.atan2(a, c) / Math.PI * 180);
         double backLeftAngle = (Math.atan2(a, d) / Math.PI * 180);
         double frontRightAngle = (Math.atan2(b, c) / Math.PI * 180);
         double frontLeftAngle = (Math.atan2(b, d) / Math.PI * 180);
 
+        // ***
+        // If a speed is more than 100% power scale the speeds down
+        tempHighestSpeed = Math.max(Math.max(Math.abs(frontLeftSpeed), Math.abs(frontRightSpeed)),
+                Math.max(Math.abs(backLeftSpeed), Math.abs(backRightSpeed)));
+        if (tempHighestSpeed > 1) {
+            frontLeftSpeed = frontLeftSpeed / tempHighestSpeed;
+            frontRightSpeed = frontRightSpeed / tempHighestSpeed;
+            backLeftSpeed = backLeftSpeed / tempHighestSpeed;
+            backRightSpeed = backRightSpeed / tempHighestSpeed;
+        }
         //
         backRight.drive(backRightSpeed, backRightAngle);
         backLeft.drive(backLeftSpeed, backLeftAngle);
@@ -411,7 +402,7 @@ public class SwerveDrive {
     // pointing at to the desired yaw
     public void setTurnPoint(Pose2d desiredPoint) {
         Rotation2d pointAngle = new Rotation2d(desiredPoint.getX() - robotPose2d.getX(),
-                robotPose2d.getY() - desiredPoint.getY());
+                desiredPoint.getY() - robotPose2d.getY());
         desiredYaw = pointAngle.getDegrees();
     }
 
@@ -486,6 +477,7 @@ public class SwerveDrive {
                 newY = robotPose2dInFieldspace.getY();
                 // System.out.println(newX);
                 // System.out.println(newY);
+                System.out.println("updated postion by april tag");
 
                 odometry.resetPosition(new Rotation2d(degreesToRadians(getGyroRobotYaw())), wheelPosistions,
                         new Pose2d(newX, newY, new Rotation2d(degreesToRadians(getGyroRobotYaw()))));
