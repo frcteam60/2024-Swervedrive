@@ -41,13 +41,15 @@ public class ShooterAndIntake {
     public ShooterAndIntake(boolean invertRShooter, boolean invertLShooter, boolean invertShooterAngle,
             boolean invertIntakeLow, boolean invertIntakeHigh, double upperLimitAngle, double lowerLimitAngle) {
 
+        double rampRate = 2.3;
+
         // Shooter
         Rshooter.setInverted(invertRShooter);
         Lshooter.setInverted(invertLShooter);
-        Lshooter.setClosedLoopRampRate(2);
-        Lshooter.setOpenLoopRampRate(2);
-        Rshooter.setClosedLoopRampRate(2);
-        Rshooter.setOpenLoopRampRate(2);
+        Lshooter.setClosedLoopRampRate(rampRate);
+        Lshooter.setOpenLoopRampRate(rampRate);
+        Rshooter.setClosedLoopRampRate(rampRate);
+        Rshooter.setOpenLoopRampRate(rampRate);
 
         // Intake
         intakeLow.setInverted(invertIntakeLow);
