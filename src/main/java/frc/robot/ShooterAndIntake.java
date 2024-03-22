@@ -120,11 +120,8 @@ public class ShooterAndIntake {
     }
 
     void intake(int direction) {
-        if (direction == 0 && colorSensor.sensesNote(angleEncoder.getPosition())) {
-            // intakeHigh.set(-0.4);
-            intakeHigh.set(0);
-            // intakeHigh.set(-0.1);
-            intakeLow.set(0);
+        if (direction == 0 && colorSensor.sensesNote(returnAngle())) {
+            adjustNoteBack(false);
         } else {
             intakeHigh.set(direction * 0.5);
             intakeLow.set(direction * 0.5);
@@ -137,11 +134,9 @@ public class ShooterAndIntake {
     }
 
     void shooterToSpeed(double desiredSpeed) {
-        if (colorSensor.sensesNote(angleEncoder.getPosition())) {
+        if (colorSensor.sensesNote(returnAngle())) {
             // If note is infront of color sensor
-            intakeHigh.set(-0.1);
-            intakeLow.set(0);
-            shooter(-0.05);
+            adjustNoteBack(true);
         } else {
             shooter(desiredSpeed);
         }
@@ -169,6 +164,14 @@ public class ShooterAndIntake {
 
     void updateDashboardForColorSensor() {
         colorSensor.updateDashboard();
+    }
+
+    private void adjustNoteBack(boolean includeShooter) {
+        intakeHigh.set(-0.1);
+        intakeLow.set(0);
+        if (includeShooter) {
+            shooter(-0.05);
+        }
     }
 
     private double getPowerForSpeakerShot() {

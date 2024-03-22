@@ -27,16 +27,8 @@ public class BionicColorSensor {
     }
 
     boolean sensesNote(double shooterAngle) {
-        if (shooterAngle <= 50){
-            return colorSensor.getIR() > 48;
-        } else if(shooterAngle >= 51 && shooterAngle <= 75){
-            return colorSensor.getIR() > 48;
-        } else if(shooterAngle >= 76 && shooterAngle <= 100){
-            return colorSensor.getIR() > 48;
-        } else {
-            // if angle is 100-122
-            return colorSensor.getIR() > 48;
-        }
+        double maximumValidIR = Math.pow((shooterAngle - 117) / 11.5, 2) + 17.8;
+        return colorSensor.getIR() > maximumValidIR;
         // return colorSensor.getIR() > 49;
     }
 
