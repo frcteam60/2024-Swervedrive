@@ -202,11 +202,13 @@ public class Robot extends TimedRobot {
         // <RED ACTION>
         blue = false;
         // NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
+        PositionHelpers.setAllianceIsBlue(blue);
       }
       if (ally.get() == Alliance.Blue) {
         // <BLUE ACTION>
         blue = true;
         // NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
+        PositionHelpers.setAllianceIsBlue(blue);
       }
     }
 
@@ -350,11 +352,13 @@ public class Robot extends TimedRobot {
         // <RED ACTION>
         blue = false;
         // NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
+        PositionHelpers.setAllianceIsBlue(blue);
       }
       if (ally.get() == Alliance.Blue) {
         // <BLUE ACTION>
         blue = true;
         // NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
+        PositionHelpers.setAllianceIsBlue(blue);
       }
     }
     swerveDrive.zeroGyro();
@@ -655,11 +659,13 @@ public class Robot extends TimedRobot {
         // <RED ACTION>
         blue = false;
         // NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
+        PositionHelpers.setAllianceIsBlue(blue);
       }
       if (ally.get() == Alliance.Blue) {
         // <BLUE ACTION>
         blue = true;
         // NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
+        PositionHelpers.setAllianceIsBlue(blue);
       }
     }
 
@@ -674,6 +680,7 @@ public class Robot extends TimedRobot {
       swerveDrive.driveToPosition();
     } else if (controller.getXButton()) {
       // if override pressed
+      // TODO shouldn't these be the controller inputs if the override is pushed?
       swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), getSteeringWheelAxis());
 
       // } else if (controller.getBButton()){
@@ -693,7 +700,7 @@ public class Robot extends TimedRobot {
         swerveDrive.setDesiredPosistion(15.96, 6.93, -120);
         swerveDrive.driveToPosition();
       }
-    } else if (joystick.getRawButtonPressed(4)) {
+    } else if (false) { // Currently not being used
       // Go to close source
       if (blue) {
         swerveDrive.setDesiredPosistion(14.854, 0.636, 120);
@@ -702,6 +709,9 @@ public class Robot extends TimedRobot {
         swerveDrive.setDesiredPosistion(14.854, 4.568, -120);
         swerveDrive.driveToPosition();
       }
+    } else if (joystick.getRawButtonPressed(4)) {
+      // Setup for a long speaker shot
+      swerveDrive.pointToSpeaker();
     } else if (joystick.getRawButtonPressed(5)) {
       // Go to subwoofer
       if (blue) {
@@ -749,7 +759,10 @@ public class Robot extends TimedRobot {
     }
 
     // Shooter angle
-    if (controller.getXButton()) {
+    if (joystick.getRawButtonPressed(4)) {
+      // Setup for a long speaker shot
+      shooterAndIntake.setAngleForSpeaker();
+    } else if (controller.getXButton()) {
       // secondary driver override
     } else if (joystick.getRawButton(6) || joystick.getRawButton(4)) {
       // Source pick up
@@ -793,7 +806,8 @@ public class Robot extends TimedRobot {
       // shooterAndIntake.shootInAmp();
     } else if (controller.getPOV() == 0) {
       // top
-      shooterAndIntake.shooter(40);
+      // Long range speaker shot
+      shooterAndIntake.rampForSpeaker();
     } else if (controller.getPOV() == 180) {
       // bottom
       shooterAndIntake.shooter(20);

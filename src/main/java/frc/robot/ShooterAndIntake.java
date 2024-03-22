@@ -69,7 +69,7 @@ public class ShooterAndIntake {
     }
 
     void shooter(double speed) {
-        double intakeSpeed = -0.1;
+        double intakeSpeed = -0.2;
         if (speed < intakeSpeed) {
             speed = intakeSpeed;
         }
@@ -141,6 +141,7 @@ public class ShooterAndIntake {
             // If note is infront of color sensor
             intakeHigh.set(-0.1);
             intakeLow.set(0);
+            shooter(-0.05);
         } else {
             shooter(desiredSpeed);
         }
@@ -170,8 +171,22 @@ public class ShooterAndIntake {
         colorSensor.updateDashboard();
     }
 
+    private double getPowerForSpeakerShot() {
+        double distance = PositionHelpers.getSpeakerDistance();
+        double basePower = .33; // Power used on subwoofer shot
+        // max distance is ~20, halfway will be around 10. This leads to a power of 1.13
+        // and .73, respectively (over 1 gets rounded down)
+        return Math.min(1, basePower + 4.0 * distance / 100);
+    }
+
     void setAngleForSpeaker() {
         double distance = PositionHelpers.getSpeakerDistance();
+        double power = getPowerForSpeakerShot();
         // TODO convert the distance into an angle for the arm
+    }
+
+    void rampForSpeaker() {
+        double power = getPowerForSpeakerShot();
+        shooterToSpeed(power);
     }
 }
