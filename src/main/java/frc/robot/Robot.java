@@ -552,10 +552,8 @@ public class Robot extends TimedRobot {
         swerveDrive.setDesiredPosistion(autoThirdPositionX, autoThirdPositionY, autoThirdPositionRotation);
         swerveDrive.driveToPositionTwo();
         // Step 4 check
-        if (Math
-            .sqrt(((autoThirdPositionX - swerveDrive.returnX()) * (autoThirdPositionX - swerveDrive.returnX()))
-                + ((autoThirdPositionY - swerveDrive.returnY())
-                    * (autoThirdPositionY - swerveDrive.returnY()))) <= 0.05) {
+        if (Math.hypot(autoThirdPositionX - swerveDrive.returnX(),
+            autoThirdPositionY - swerveDrive.returnY()) <= 0.05) {
           // if at 3rd position
           System.out.println("Start of step 5 second shot");
           swerveDrive.driveTeleop(0, 0, 0);
