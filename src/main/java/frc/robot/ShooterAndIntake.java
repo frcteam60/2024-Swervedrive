@@ -114,7 +114,7 @@ public class ShooterAndIntake {
     }
 
     void intake(int direction) {
-        if (direction == 0 && colorSensor.sensesNote()) {
+        if (direction == 0 && colorSensor.sensesNote(angleEncoder.getPosition())) {
             //intakeHigh.set(-0.4);
             intakeHigh.set(-0.1);
             intakeLow.set(0);
@@ -130,9 +130,10 @@ public class ShooterAndIntake {
     }
 
     void shooterToSpeed(double desiredSpeed) {
-        if (colorSensor.sensesNote()) {
+        if (colorSensor.sensesNote(angleEncoder.getPosition())) {
             // If note is infront of color sensor
-            intake(-1);
+            intakeHigh.set(-0.1);
+            intakeLow.set(0);
         } else {
             shooter(desiredSpeed);
         }

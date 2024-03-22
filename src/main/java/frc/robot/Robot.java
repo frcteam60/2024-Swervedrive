@@ -393,7 +393,7 @@ public class Robot extends TimedRobot {
         if (blue) {
           autoStartingPositionX = 0.683;
           autoStartingPositionY = 4.365;
-          autoStartingPositionRotation = 60;
+          autoStartingPositionRotation = -60;
 
           autoSecondPositionX = 0.836;
           autoSecondPositionY = 4.1;
@@ -409,7 +409,7 @@ public class Robot extends TimedRobot {
         } else {
           autoStartingPositionX = 0.683;
           autoStartingPositionY = 1.474;
-          autoStartingPositionRotation = -60;
+          autoStartingPositionRotation = 60;
 
           autoSecondPositionX = 0.836;
           autoSecondPositionY = 1.209;
@@ -428,7 +428,7 @@ public class Robot extends TimedRobot {
         if (blue) {
           autoStartingPositionX = 0.683;
           autoStartingPositionY = 6.731;
-          autoStartingPositionRotation = -60;
+          autoStartingPositionRotation = 60;
 
           autoSecondPositionX = 0.836;
           autoSecondPositionY = 6.996;
@@ -444,7 +444,7 @@ public class Robot extends TimedRobot {
         } else {
           autoStartingPositionX = 0.683;
           autoStartingPositionY = 3.839;
-          autoStartingPositionRotation = 60;
+          autoStartingPositionRotation = -60;
 
           autoSecondPositionX = 0.836;
           autoSecondPositionY = 4.104;
@@ -461,7 +461,6 @@ public class Robot extends TimedRobot {
         break;
     }
     swerveDrive.setYawOffset(autoStartingPositionRotation);
-    //yawOffset = (float) autoStartingPositionRotation;
     swerveDrive.setPosition(swerveDrive.getGyroRobotYaw(),
         new SwerveModulePosition[] { frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(),
             backRight.getPosition() },
@@ -996,8 +995,8 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     if (joystick.getRawButton(1)) {
-      swerveDrive.setDesiredPosistion(1, 0, 0);
-      swerveDrive.driveToPosition(0, 0, 0);
+      swerveDrive.setDesiredPosistion(1, 1, 0);
+      swerveDrive.driveToPosition();
     } else if (controller.getXButton()) {
       // if override pressed
       swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), getSteeringWheelAxis());
@@ -1014,37 +1013,37 @@ public class Robot extends TimedRobot {
       // Go to far source
       if (blue) {
         swerveDrive.setDesiredPosistion(15.96, 1.274, 120);
-        swerveDrive.driveToPosition(0, 0, 0);
+        swerveDrive.driveToPosition();
       } else {
         swerveDrive.setDesiredPosistion(15.96, 6.93, -120);
-        swerveDrive.driveToPosition(0, 0, 0);
+        swerveDrive.driveToPosition();
       }
     } else if (joystick.getRawButtonPressed(4)) {
       // Go to close source
       if (blue) {
         swerveDrive.setDesiredPosistion(14.854, 0.636, 120);
-        swerveDrive.driveToPosition(0, 0, 0);
+        swerveDrive.driveToPosition();
       } else {
         swerveDrive.setDesiredPosistion(14.854, 4.568, -120);
-        swerveDrive.driveToPosition(0, 0, 0);
+        swerveDrive.driveToPosition();
       }
     } else if (joystick.getRawButtonPressed(5)) {
       // Go to subwoofer
       if (blue) {
         swerveDrive.setDesiredPosistion(1.365, 5.48, 0);
-        swerveDrive.driveToPosition(0, 0, 0);
+        swerveDrive.driveToPosition();
       } else {
         swerveDrive.setDesiredPosistion(1.365, 2.656, 0);
-        swerveDrive.driveToPosition(0, 0, 0);
+        swerveDrive.driveToPosition();
       }
     } else if (joystick.getRawButtonPressed(3)) {
       // Go to amp
       if (blue) {
         swerveDrive.setDesiredPosistion(1.842, 7.53, 90);
-        swerveDrive.driveToPosition(0, 0, 0);
+        swerveDrive.driveToPosition();
       } else {
         swerveDrive.setDesiredPosistion(1.842, 0.451, -90);
-        swerveDrive.driveToPosition(0, 0, 0);
+        swerveDrive.driveToPosition();
       }
     } else if (joystick.getPOV() == 0) {
       // North
@@ -1155,7 +1154,7 @@ public class Robot extends TimedRobot {
     case 11:
     // left stage
     swerveDrive.setDesiredPosistion(4.248, 5.18, 120);
-    swerveDrive.driveToPosition(0, 0, 0);
+    swerveDrive.driveToPosition();
     // If lined up at trap
     if (swerveDrive.compareFieldPositions(4.248, 5.18, swerveDrive.returnX(),
     swerveDrive.returnY()) <= 0.03 ){
@@ -1170,7 +1169,7 @@ public class Robot extends TimedRobot {
     case 13:
     // far middle
     swerveDrive.setDesiredPosistion(6.108, 4.105, 0);
-    swerveDrive.driveToPosition(0, 0, 0);
+    swerveDrive.driveToPosition();
     // If lined up at trap
     if (swerveDrive.compareFieldPositions(6.108, 4.105, swerveDrive.returnX(),
     swerveDrive.returnY()) <= 0.03 ){
@@ -1185,7 +1184,7 @@ public class Robot extends TimedRobot {
     case 12:
     // right
     swerveDrive.setDesiredPosistion(4.248, 3.031, -120);
-    swerveDrive.driveToPosition(0, 0, 0);
+    swerveDrive.driveToPosition();
     // If lined up at trap
     if (swerveDrive.compareFieldPositions(4.248, 3.031, swerveDrive.returnX(),
     swerveDrive.returnY()) <= 0.03 ){
@@ -1198,7 +1197,7 @@ public class Robot extends TimedRobot {
     break;
     default:
     // default
-    shooterAndIntake.trapShot(true);
+    shooterAndIntake.trapShot(false);
     break;
     
     }
@@ -1216,21 +1215,6 @@ public class Robot extends TimedRobot {
     } else {
       shooterAndIntake.intake(0);
     }
-
-    /*
-     * // Intake
-     * if(controller.getPOV()){
-     * 
-     * } else if (controller.getLeftTriggerAxis() >= 0.5){
-     * shooterAndIntake.intake(1);
-     * //swerveDrive.setTurnPoint(new Pose2d(0, 0, null));
-     * } else if(controller.getLeftBumper()){
-     * shooterAndIntake.intakeSpeed(Preferences.getDouble("IntakeTop", 0.7),
-     * Preferences.getDouble("IntakeBottom", 0.7));
-     * }else {
-     * shooterAndIntake.intake(0);m
-     * }
-     */
 
     // climber
     if (controller.getXButton()) {
@@ -1252,10 +1236,16 @@ public class Robot extends TimedRobot {
 
     if (wheelJoystick.getRawButtonPressed(1)) {
       // 
-      frontRight.resetInvert(false, true);
-      frontLeft.resetInvert(true, true);
-      backRight.resetInvert(false, true);
-      backLeft.resetInvert(true, true);
+      // Inverts drive motors
+      frontRight.invertDriveMotor(false);
+      frontLeft.invertDriveMotor(true);
+      backRight.invertDriveMotor(false);
+      backLeft.invertDriveMotor(true);
+      // Inverts angle motors
+      frontRight.invertAngleMotor(true);
+      frontLeft.invertAngleMotor(true);
+      backRight.invertAngleMotor(true);
+      backLeft.invertAngleMotor(true);
     }
 
   }
@@ -1266,6 +1256,7 @@ public class Robot extends TimedRobot {
     swerveDrive.offDrive();
     shooterAndIntake.offShooterAndIntake();
     climber.offClimber();
+    swerveDrive.setDesiredYaw(swerveDrive.getGyroRobotYaw());
   }
 
   /** This function is called periodically when disabled. */
