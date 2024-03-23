@@ -67,7 +67,7 @@ public class SwerveDrive {
 
     // ***
     AHRS gyro = new AHRS(SPI.Port.kMXP);
-    double yawOffset;
+    double yawOffset = 0;
 
     // ***
     double getGyroRobotYaw() {

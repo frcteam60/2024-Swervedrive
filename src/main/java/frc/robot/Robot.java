@@ -161,6 +161,8 @@ public class Robot extends TimedRobot {
   double autoShootingThirdPositionY;
   double autoShootingThirdPositionRotation;
 
+  double autoShooterAngleSecondShot;
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any
@@ -495,6 +497,7 @@ public class Robot extends TimedRobot {
     switch (autoStep) {
       case 1:
         // Step one
+        // set shooter angle and speed
         shooterAndIntake.setAngle(autoInitialShooterAngle);
         shooterAndIntake.shooterToSpeed(0.33);
         // Step 1 check
@@ -510,7 +513,7 @@ public class Robot extends TimedRobot {
         break;
       case 2:
         // Step two
-        // shoot
+        // shoot first note in speaker
         shooterAndIntake.intake(1);
         shooterAndIntake.shooter(0.33);
         // Step 2 check
@@ -524,6 +527,7 @@ public class Robot extends TimedRobot {
         break;
       case 3:
         // Step three
+        // drive to second position
         // middle doesn't have 2nd position
         if (m_autoSelected == kAutoMiddle) {
           System.out.println("Start of step 4");
@@ -531,7 +535,7 @@ public class Robot extends TimedRobot {
           autoStep = 4;
           break;
         }
-        // second position
+        // set shooter angle to intake better
         shooterAndIntake.setAngle(25);
         // drive to second position
         swerveDrive.setDesiredPosistion(autoSecondPositionX, autoSecondPositionY, autoSecondPositionRotation);
@@ -546,7 +550,8 @@ public class Robot extends TimedRobot {
         break;
       case 4:
         // Step four
-        // 3rd position and intake
+        // 3rd position
+        // intake second note
         shooterAndIntake.setAngle(25);
         shooterAndIntake.intake(1);
         System.out.println(blue ? "blue" : "red");
@@ -566,12 +571,15 @@ public class Robot extends TimedRobot {
         break;
 
       case 5:
+      // step 5
+      // pull second note back
         shooterAndIntake.intake(-1);
         shooterAndIntake.setAngle(37);
         swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
             autoShootingThirdPositionRotation);
         swerveDrive.driveToPositionTwo();
         if (timer.get() >= 0.5) {
+          // step 5 check
           System.out.println("Start of step 6");
           shooterAndIntake.intake(0);
           autoStep = 6;
@@ -579,34 +587,19 @@ public class Robot extends TimedRobot {
         break;
       case 6:
         // Step six
-        // line up to shoot
+        // line up to shoot second note
         // power up shooter
         shooterAndIntake.shooter(0.7);
         // set shooter angle
-        double desiredShooterAngle = 33;// TODO Was 33 for right/left but 37 for middle (but the angle on step 5 was 37
-                                        // for all 3
-        // TODO this may just need to be a variable like the others, but was unsure due
-        // to the inconsistency with the previous step
-        if (m_autoSelected == kAutoMiddle) {
-          desiredShooterAngle = 37;
-        }
-        shooterAndIntake.setAngle(desiredShooterAngle);
+        // TODO Was 33 for right/left but 37 for middle (but the angle on step 5 was 37 for all 3
+        // TODO set autoShooterAngleSecondShot
+        shooterAndIntake.setAngle(autoShooterAngleSecondShot);
         swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
             autoShootingThirdPositionRotation);
         swerveDrive.driveToPositionTwo();
-        /*
-         * Back to subwoofer
-         * if (blue){
-         * swerveDrive.setDesiredPosistion(1.365, 5.548, 0);
-         * swerveDrive.driveToPositionTwo();
-         * } else {
-         * swerveDrive.setDesiredPosistion(1.365, 2.656, 0);
-         * swerveDrive.driveToPositionTwo();
-         * }
-         */
 
         // Step 6 check
-        if (Math.abs(shooterAndIntake.returnAngle() - desiredShooterAngle) <= 2) { // TODO was also 33 for right
+        if (Math.abs(shooterAndIntake.returnAngle() - autoShooterAngleSecondShot) <= 2) {
           // if lined up
           System.out.println("Start of step 7");
           shooterAndIntake.angle(0);
@@ -630,17 +623,20 @@ public class Robot extends TimedRobot {
         break;
       case 8:
         // Step eight
-
-        if (m_autoSelected == kAutoMiddle) { // TODO likely doesn't need a special for middle, but this is what it had
-          swerveDrive.driveTeleop(0, 0, 0);
-          // swerveDrive.setDesiredPosistion(3.623, 5.548, 0);
-          // swerveDrive.driveToPositionTwo();
+        // drive towards center line
+        if (blue){
+          // we dont want to hit the podium so we need a different position
+          if (m_autoSelected == kAutoRight){
+            break;
+          }
         } else {
-          swerveDrive.setDesiredPosistion(autoShootingThirdPositionX + 1, autoShootingThirdPositionY,
-              autoShootingThirdPositionRotation);
-          swerveDrive.driveToPositionTwo();
+          if (m_autoSelected == kAutoLeft){
+            break;
+          }
         }
-
+        // drive towards center line
+        swerveDrive.setDesiredPosistion(autoShootingThirdPositionX + 1, autoShootingThirdPositionY,0);
+        swerveDrive.driveToPositionTwo();
         break;
     }
 
@@ -678,8 +674,7 @@ public class Robot extends TimedRobot {
       swerveDrive.driveToPosition();
     } else if (controller.getXButton()) {
       // if override pressed
-      // TODO shouldn't these be the controller inputs if the override is pushed?
-      swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), getSteeringWheelAxis());
+      swerveDrive.driveTeleop(controller.getLeftY(), controller.getLeftX(), controller.getRightX());
 
       // } else if (controller.getBButton()){
 
@@ -689,7 +684,7 @@ public class Robot extends TimedRobot {
        * swerveDrive.drive(joystick.getX(), joystick.getY(), 0);
        */
       // write variable linedUp
-    } else if (joystick.getRawButtonPressed(6)) {
+    } else if (joystick.getRawButton(6)) {
       // Go to far source
       if (blue) {
         swerveDrive.setDesiredPosistion(15.96, 1.274, 120);
@@ -707,10 +702,10 @@ public class Robot extends TimedRobot {
         swerveDrive.setDesiredPosistion(14.854, 4.568, -120);
         swerveDrive.driveToPosition();
       }
-    } else if (joystick.getRawButtonPressed(4)) {
+    } else if (joystick.getRawButton(4)) {
       // Setup for a long speaker shot
       swerveDrive.pointToSpeaker();
-    } else if (joystick.getRawButtonPressed(5)) {
+    } else if (joystick.getRawButton(5)) {
       // Go to subwoofer
       if (blue) {
         swerveDrive.setDesiredPosistion(1.365, 5.48, 0);
@@ -719,7 +714,7 @@ public class Robot extends TimedRobot {
         swerveDrive.setDesiredPosistion(1.365, 2.656, 0);
         swerveDrive.driveToPosition();
       }
-    } else if (joystick.getRawButtonPressed(3)) {
+    } else if (joystick.getRawButton(3)) {
       // Go to amp
       if (blue) {
         swerveDrive.setDesiredPosistion(1.842, 7.53, 90);
@@ -757,7 +752,7 @@ public class Robot extends TimedRobot {
     }
 
     // Shooter angle
-    if (joystick.getRawButtonPressed(4)) {
+    if (joystick.getRawButton(4)) {
       // Setup for a long speaker shot
       shooterAndIntake.setAngleForSpeaker();
     } else if (controller.getXButton()) {

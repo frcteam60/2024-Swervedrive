@@ -16,6 +16,7 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+
 /** Add your docs here. */
 public class ShooterAndIntake {
     CANSparkMax Rshooter = new CANSparkMax(9, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
@@ -36,6 +37,8 @@ public class ShooterAndIntake {
     SparkMaxPIDController angle_PidController;
 
     BionicColorSensor colorSensor = new BionicColorSensor();
+    // TODO set correct speaker height in meters
+    double speakerHeight = 0;
 
     // SwerveDrive constructor
     public ShooterAndIntake(boolean invertRShooter, boolean invertLShooter, boolean invertShooterAngle,
@@ -96,12 +99,6 @@ public class ShooterAndIntake {
         }
         if (angleLinedUp && isRobotInPlace) {
             // Shoot
-        }
-    }
-
-    void shootInAmp() {
-        if (angleEncoder.getPosition() == 96) {
-            shooter(0.15);
         }
     }
 
@@ -186,6 +183,7 @@ public class ShooterAndIntake {
         double distance = PositionHelpers.getSpeakerDistance();
         double power = getPowerForSpeakerShot();
         // TODO convert the distance into an angle for the arm
+        setAngle(Math.hypot(distance, speakerHeight));
     }
 
     void rampForSpeaker() {
