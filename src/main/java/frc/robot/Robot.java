@@ -214,6 +214,8 @@ public class Robot extends TimedRobot {
       }
     }
 
+    PositionHelpers.assignSwerve(swerveDrive);
+
   }
 
   /**
@@ -322,6 +324,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("rotation2d", swerveDrive.returnRotation().toString());
     SmartDashboard.putNumber("robot X", swerveDrive.returnX());
     SmartDashboard.putNumber("robot Y", swerveDrive.returnY());
+
+    SmartDashboard.putNumber("Speaker distance", PositionHelpers.getSpeakerDistance());
 
   }
 
