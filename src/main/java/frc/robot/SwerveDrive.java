@@ -400,10 +400,18 @@ public class SwerveDrive {
 
     // this method is to convert the position on the field that we want to be
     // pointing at to the desired yaw
-    public void setTurnPoint(Pose2d desiredPoint) {
+    // Will point the intake towards it
+    public void setIntakeTowardsPoint(Pose2d desiredPoint) {
         Rotation2d pointAngle = new Rotation2d(desiredPoint.getX() - robotPose2d.getX(),
                 desiredPoint.getY() - robotPose2d.getY());
         desiredYaw = pointAngle.getDegrees();
+    }
+
+    // Same as above, but will point the shooter instead
+    public void setShooterTowardsPoint(Pose2d desiredPoint) {
+        Rotation2d pointAngle = new Rotation2d(desiredPoint.getX() - robotPose2d.getX(),
+                desiredPoint.getY() - robotPose2d.getY());
+        desiredYaw = angleSubtractor(pointAngle.getDegrees(), 180);
     }
 
     public double returnDesiredYaw() {
@@ -523,7 +531,7 @@ public class SwerveDrive {
 
     void pointToSpeaker() {
         Pose2d speakerPos = PositionHelpers.getSpeakerPosition();
-        setTurnPoint(speakerPos);
+        setShooterTowardsPoint(speakerPos);
         desiredX = returnX();
         desiredY = returnY();
         driveToPositionTwo();
