@@ -522,7 +522,11 @@ public class SwerveDrive {
     }
 
     void pointToSpeaker() {
-        setTurnPoint(PositionHelpers.getSpeakerPosition());
+        Pose2d speakerPos = PositionHelpers.getSpeakerPosition();
+        setTurnPoint(speakerPos);
+        desiredX = returnX();
+        desiredY = returnY();
+        driveToPositionTwo();
     }
 
 }
