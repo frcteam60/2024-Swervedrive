@@ -713,7 +713,7 @@ public class Robot extends TimedRobot {
         swerveDrive.setDesiredPosistion(14.854, 4.568, -120);
         swerveDrive.driveToPosition();
       }
-    } else if (joystick.getRawButtonPressed(4)) {
+    } else if (joystick.getRawButton(4)) {
       // Setup for a long speaker shot
       swerveDrive.pointToSpeaker();
     } else if (joystick.getRawButtonPressed(5)) {
