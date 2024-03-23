@@ -486,6 +486,9 @@ public class SwerveDrive {
         robotPose2d = odometry.update(gyroRotation2d,
         new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()});
     }
+    void pointToSpeaker(){
+        setTurnPoint(PositionHelpers.getSpeakerPosition());
+    }
 
 }
 
