@@ -476,10 +476,8 @@ public class Robot extends TimedRobot {
     swerveDrive.setYawOffset(autoStartingPositionRotation);
     // yawOffset = (float) autoStartingPositionRotation;
     swerveDrive.setPosition(swerveDrive.getGyroRobotYaw(),
-        new SwerveModulePosition[] { frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(),
-            backRight.getPosition() },
-        new Pose2d(autoStartingPositionX, autoStartingPositionY,
-            new Rotation2d(-(swerveDrive.getGyroRobotYaw()) * 2 * Math.PI)));
+        new SwerveModulePosition[] { frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()},
+        new Pose2d(autoStartingPositionX, autoStartingPositionY, new Rotation2d(swerveDrive.degreesToRadians(autoStartingPositionRotation))));
 
   }
 

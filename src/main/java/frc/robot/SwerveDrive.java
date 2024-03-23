@@ -429,7 +429,7 @@ public class SwerveDrive {
     }
 
     public double compareFieldPositions(double firstX, double firstY, double secondX, double secondY){
-       return ((firstX - secondX) * (firstX - secondX) + (firstY - secondY) * (firstY - secondY));
+       return Math.hypot(firstX - secondX, firstY - secondY);
     }
 
     public void resetPosition(SwerveModulePosition[] wheelPosistions, Pose2d botposeInTargetspace, Pose2d robotPose2dInFieldspace, double tv){
@@ -460,7 +460,7 @@ public class SwerveDrive {
     }
 
     public void setPosition(double gyroYaw, SwerveModulePosition[] wheelPosistions, Pose2d pose2d){
-        odometry.resetPosition(new Rotation2d(gyroYaw), wheelPosistions, pose2d);
+        odometry.resetPosition(new Rotation2d(degreesToRadians(gyroYaw)), wheelPosistions, pose2d);
     }
 
     public void setDesiredPosistion(double targetX, double targetY, double targetYaw){
