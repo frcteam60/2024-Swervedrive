@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -463,7 +462,7 @@ public class SwerveDrive {
     }
 
     public double compareFieldPositions(double firstX, double firstY, double secondX, double secondY) {
-        return ((firstX - secondX) * (firstX - secondX) + (firstY - secondY) * (firstY - secondY));
+        return Math.hypot(firstX - secondX, firstY - secondY);
     }
 
     public void resetPosition(SwerveModulePosition[] wheelPosistions, Pose2d botposeInTargetspace,
@@ -500,7 +499,7 @@ public class SwerveDrive {
     }
 
     public void setPosition(double gyroYaw, SwerveModulePosition[] wheelPosistions, Pose2d pose2d) {
-        odometry.resetPosition(new Rotation2d(gyroYaw), wheelPosistions, pose2d);
+        odometry.resetPosition(new Rotation2d(degreesToRadians(gyroYaw)), wheelPosistions, pose2d);
     }
 
     public void setDesiredPosistion(double targetX, double targetY, double targetYaw) {
