@@ -479,13 +479,13 @@ public class SwerveDrive {
         SmartDashboard.putNumber("angle from target", Math.abs(angleSubtractor(radiansToDegrees(Math.atan2(cameraposeInTargetspace.getX(), cameraposeInTargetspace.getY())), 180)));
         SmartDashboard.putBoolean("valid target", tv == 1);
         
-        if(Math.hypot(cameraposeInTargetspace.getX(), cameraposeInTargetspace.getY()) <= (240 * 0.0254) && Math.abs(angleSubtractor(radiansToDegrees(Math.atan2(cameraposeInTargetspace.getX(), cameraposeInTargetspace.getY())), 180)) >= 7 && tv == 1){      
+        if(Math.hypot(cameraposeInTargetspace.getX(), cameraposeInTargetspace.getY()) <= (120 * 0.0254) && Math.abs(angleSubtractor(radiansToDegrees(Math.atan2(cameraposeInTargetspace.getX(), cameraposeInTargetspace.getY())), 180)) >= 7 && tv == 1){      
             // our new x and y pose equal the values from the limelight
             newX = robotPose2dInFieldspace.getX();
             newY = robotPose2dInFieldspace.getY();
             // System.out.println(newX);
             // System.out.println(newY);
-            System.out.println("updated postion by april tag");
+            //System.out.println("updated postion by april tag");
             SmartDashboard.putString("apriltag update", "true");
             odometry.resetPosition(new Rotation2d(degreesToRadians(getGyroRobotYaw())), wheelPositions,
                     new Pose2d(newX, newY, new Rotation2d(degreesToRadians(getGyroRobotYaw()))));

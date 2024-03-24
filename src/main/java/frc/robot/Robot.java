@@ -228,6 +228,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     swerveDrive.periodicOdometry();
+    SmartDashboard.putBoolean("Blue", blue);
     SmartDashboard.putNumber("X error", swerveDrive.returnXError());
     SmartDashboard.putNumber(" eYrror", swerveDrive.returnYError());
     // Limelight
@@ -560,7 +561,7 @@ public class Robot extends TimedRobot {
         // intake second note
         shooterAndIntake.setAngle(25);
         shooterAndIntake.intake(1);
-        System.out.println(blue ? "blue" : "red");
+        //System.out.println(blue ? "blue" : "red");
         // drive to note
         swerveDrive.setDesiredPosistion(autoThirdPositionX, autoThirdPositionY, autoThirdPositionRotation);
         swerveDrive.driveToPositionTwo();
@@ -581,6 +582,7 @@ public class Robot extends TimedRobot {
       // pull second note back
         shooterAndIntake.intake(-1);
         shooterAndIntake.setAngle(autoShooterAngleSecondShot);
+        //shooterAndIntake.setAngleForSpeaker();
         swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
             autoShootingThirdPositionRotation);
         swerveDrive.driveToPositionTwo();
@@ -596,6 +598,10 @@ public class Robot extends TimedRobot {
         // line up to shoot second note
         // power up shooter
         shooterAndIntake.shooter(0.7);
+        //TODO
+        /* shooterAndIntake.rampForSpeaker();
+        shooterAndIntake.setAngleForSpeaker();
+        swerveDrive.pointToSpeaker(); */
         // set shooter angle
         // TODO set autoShooterAngleSecondShot (33, 37)
         shooterAndIntake.setAngle(autoShooterAngleSecondShot);
@@ -617,6 +623,7 @@ public class Robot extends TimedRobot {
         // shoot second note
         shooterAndIntake.intake(1);
         shooterAndIntake.shooter(0.7);
+        
         // Step 7 check
         if (timer.get() >= 2) {
           System.out.println("Start of step 8");
