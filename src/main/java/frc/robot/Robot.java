@@ -4,9 +4,8 @@
 
 // check zeroYaw works
 package frc.robot;
-// Important !! new Robot!
+// Important !! Bionic Beast
 
-//set has target to 0
 // what is best intake angle
 
 import java.util.Arrays;
@@ -125,7 +124,7 @@ public class Robot extends TimedRobot {
   // ID of primary april tag
   NetworkTableEntry IDNum = table.getEntry("tid");
   long primaryTagID;
-  NetworkTableEntry robotPoseInTargetSpace = table.getEntry("robotpose_targetspace");
+  NetworkTableEntry  camerapose_targetspace = table.getEntry("camerapose_targetspace");
 
   // limelight json
   LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults("limelight");
@@ -142,7 +141,7 @@ public class Robot extends TimedRobot {
   double ts;
   double botposeRed;
   double botposeBlue;
-  double botposeInTargetspace[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+  double cameraposeInTargetspace[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
   SwerveModulePosition[] swervedrivepositions[];
   boolean blue;
 
@@ -203,13 +202,11 @@ public class Robot extends TimedRobot {
       if (ally.get() == Alliance.Red) {
         // <RED ACTION>
         blue = false;
-        // NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
         PositionHelpers.setAllianceIsBlue(blue);
       }
       if (ally.get() == Alliance.Blue) {
         // <BLUE ACTION>
         blue = true;
-        // NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
         PositionHelpers.setAllianceIsBlue(blue);
       }
     }
@@ -249,17 +246,20 @@ public class Robot extends TimedRobot {
         System.out.println(botpose2);
         Arrays.fill(botpose2, 0);
       }
-      if (botposeInTargetspace.length < 6) {
-        botposeInTargetspace = new double[6];
-        Arrays.fill(botposeInTargetspace, 0);
+      if (cameraposeInTargetspace.length < 6) {
+        cameraposeInTargetspace = new double[6];
+        Arrays.fill(cameraposeInTargetspace, 0);
       }
       SwerveModulePosition[] modulePositions = { frontLeft.getPosition(),
           frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition() };
       swerveDrive.resetPosition(modulePositions,
-          new Pose2d(botposeInTargetspace[0], botposeInTargetspace[1],
-              new Rotation2d(-(botposeInTargetspace[5] / 360 * 2 * Math.PI))),
+        new Pose2d(cameraposeInTargetspace[0], cameraposeInTargetspace[2], new Rotation2d(-(cameraposeInTargetspace[4] / 360 * 2 * Math.PI))),
           new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5] / 360 * 2 * Math.PI))), hasTarget);
     }
+    cameraposeInTargetspace = camerapose_targetspace.getDoubleArray(cameraposeInTargetspace);
+    SmartDashboard.putNumberArray("Camera PoseInTargetspace", camerapose_targetspace.getDoubleArray(cameraposeInTargetspace));
+    SmartDashboard.putNumber("robot from target yaw", cameraposeInTargetspace[4]);
+    SmartDashboard.putString("cameraposeInTargetspace", Arrays.toString(cameraposeInTargetspace));
 
     // Relative Encoders
     SmartDashboard.putNumber("backLeft relative encoder", backLeft.returnRelative());
@@ -311,8 +311,7 @@ public class Robot extends TimedRobot {
 
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(0);
 
-    botposeInTargetspace = robotPoseInTargetSpace.getDoubleArray(botposeInTargetspace);
-    SmartDashboard.putNumber("robot from target yaw", botposeInTargetspace[5]);
+
 
     // post to smart dashboard periodically
     SmartDashboard.putNumber("LimelightX", x);
@@ -357,13 +356,11 @@ public class Robot extends TimedRobot {
       if (ally.get() == Alliance.Red) {
         // <RED ACTION>
         blue = false;
-        // NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
         PositionHelpers.setAllianceIsBlue(blue);
       }
       if (ally.get() == Alliance.Blue) {
         // <BLUE ACTION>
         blue = true;
-        // NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
         PositionHelpers.setAllianceIsBlue(blue);
       }
     }
@@ -374,6 +371,7 @@ public class Robot extends TimedRobot {
     // Sets positions on the field based on our auto selected and alliance color
     switch (m_autoSelected) {
       case kAutoMiddle:
+        autoShooterAngleSecondShot = 37;
         if (blue) {
           autoStartingPositionX = 1.365;
           autoStartingPositionY = 5.548;
@@ -405,6 +403,7 @@ public class Robot extends TimedRobot {
         }
         break;
       case kAutoRight:
+        autoShooterAngleSecondShot = 37;
         if (blue) {
           autoStartingPositionX = 0.683;
           autoStartingPositionY = 4.365;
@@ -433,15 +432,16 @@ public class Robot extends TimedRobot {
           autoSecondPositionRotation = 0;
 
           autoThirdPositionX = 2.623;
-          autoThirdPositionY = 1.209; // TODO Had 1.209 listed here, but was 2.656 for auto right red
+          autoThirdPositionY = 1.209;
           autoThirdPositionRotation = 0;
 
           autoShootingThirdPositionX = 2.623;
-          autoShootingThirdPositionY = 1.209; // TODO Had 1.209 listed here, but was 2.656 for auto right red
+          autoShootingThirdPositionY = 1.209;
           autoShootingThirdPositionRotation = -31;
         }
         break;
       case kAutoLeft:
+        autoShooterAngleSecondShot = 37;
         if (blue) {
           autoStartingPositionX = 0.683;
           autoStartingPositionY = 6.731;
@@ -578,7 +578,7 @@ public class Robot extends TimedRobot {
       // step 5
       // pull second note back
         shooterAndIntake.intake(-1);
-        shooterAndIntake.setAngle(37);
+        shooterAndIntake.setAngle(autoShooterAngleSecondShot);
         swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
             autoShootingThirdPositionRotation);
         swerveDrive.driveToPositionTwo();
@@ -595,8 +595,7 @@ public class Robot extends TimedRobot {
         // power up shooter
         shooterAndIntake.shooter(0.7);
         // set shooter angle
-        // TODO Was 33 for right/left but 37 for middle (but the angle on step 5 was 37 for all 3
-        // TODO set autoShooterAngleSecondShot
+        // TODO set autoShooterAngleSecondShot (33, 37)
         shooterAndIntake.setAngle(autoShooterAngleSecondShot);
         swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
             autoShootingThirdPositionRotation);
@@ -656,13 +655,11 @@ public class Robot extends TimedRobot {
       if (ally.get() == Alliance.Red) {
         // <RED ACTION>
         blue = false;
-        // NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
         PositionHelpers.setAllianceIsBlue(blue);
       }
       if (ally.get() == Alliance.Blue) {
         // <BLUE ACTION>
         blue = true;
-        // NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
         PositionHelpers.setAllianceIsBlue(blue);
       }
     }
@@ -771,7 +768,7 @@ public class Robot extends TimedRobot {
     } else if (controller.getBButton()) {
       // line up shooter for speaker
       shooterAndIntake.setAngle(60);
-      // shooterAndIntake.shootInSpeaker(true, botposeInTargetspace);
+      // shooterAndIntake.shootInSpeaker(true, cameraposeInTargetspace);
     } else if (controller.getAButton()) {
       // Amp
       // shooterAndIntake.setAngle(116.0);

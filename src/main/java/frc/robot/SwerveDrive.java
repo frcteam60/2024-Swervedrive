@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 //***
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Add your docs here. */
 public class SwerveDrive {
@@ -465,41 +466,40 @@ public class SwerveDrive {
         return Math.hypot(firstX - secondX, firstY - secondY);
     }
 
-    public void resetPosition(SwerveModulePosition[] wheelPosistions, Pose2d botposeInTargetspace,
-            Pose2d robotPose2dInFieldspace, double tv) {
-
-        if (false) {
-            // Put joystick button in this case
+    public void resetPosition(SwerveModulePosition[] wheelPositions, Pose2d cameraposeInTargetspace,
+        Pose2d robotPose2dInFieldspace, double tv) {
+        // cameraposeInTargetspace here has y as make sense y not targetspace y
+        
+        // if ((distanceFromTarget <= (180 * 0.0254)) && (robotPose2d.getX() -
+        // pose.getX()) <= 678 && (robotPose2d.getY() - pose.getY()) <= 567 &&
+        // getGyroRobotYaw() - pose.getRotation().getDegrees() >= 5678){
+        // if robot is less than 120 inches from target, and robot is more than 7
+        // degrees off from line normal to target, and target is seen
+        SmartDashboard.putNumber("distance from target", Math.hypot(cameraposeInTargetspace.getX(), cameraposeInTargetspace.getY()));
+        SmartDashboard.putNumber("angle from target", Math.abs(angleSubtractor(radiansToDegrees(Math.atan2(cameraposeInTargetspace.getX(), cameraposeInTargetspace.getY())), 180)));
+        SmartDashboard.putBoolean("valid target", tv == 1);
+        
+        if(Math.hypot(cameraposeInTargetspace.getX(), cameraposeInTargetspace.getY()) <= (240 * 0.0254) && Math.abs(angleSubtractor(radiansToDegrees(Math.atan2(cameraposeInTargetspace.getX(), cameraposeInTargetspace.getY())), 180)) >= 7 && tv == 1){      
+            // our new x and y pose equal the values from the limelight
+            newX = robotPose2dInFieldspace.getX();
+            newY = robotPose2dInFieldspace.getY();
+            // System.out.println(newX);
+            // System.out.println(newY);
+            System.out.println("updated postion by april tag");
+            SmartDashboard.putString("apriltag update", "true");
+            odometry.resetPosition(new Rotation2d(degreesToRadians(getGyroRobotYaw())), wheelPositions,
+                    new Pose2d(newX, newY, new Rotation2d(degreesToRadians(getGyroRobotYaw()))));
         } else {
-            // if ((distanceFromTarget <= (180 * 0.0254)) && (robotPose2d.getX() -
-            // pose.getX()) <= 678 && (robotPose2d.getY() - pose.getY()) <= 567 &&
-            // getGyroRobotYaw() - pose.getRotation().getDegrees() >= 5678){
-            // if robot is less than 120 inches from target, and robot is more than 7
-            // degrees off from line normal to target, and target is seen
-            if ((Math.sqrt(botposeInTargetspace.getX() * botposeInTargetspace.getX()
-                    + botposeInTargetspace.getY() * botposeInTargetspace.getY()) <= (120 * 0.0254))
-                    && Math.abs(botposeInTargetspace.getRotation().getDegrees()) >= 7 && tv == 1) {
-                // our new x and y pose equal the values from the limelight
-                newX = robotPose2dInFieldspace.getX();
-                newY = robotPose2dInFieldspace.getY();
-                // System.out.println(newX);
-                // System.out.println(newY);
-                System.out.println("updated postion by april tag");
-
-                odometry.resetPosition(new Rotation2d(degreesToRadians(getGyroRobotYaw())), wheelPosistions,
-                        new Pose2d(newX, newY, new Rotation2d(degreesToRadians(getGyroRobotYaw()))));
-
-            } else {
-                // No change in the robots x and y posistion
-
-            }
-
+            SmartDashboard.putString("apriltag update", "false");
+            // No change in the robots x and y posistion
         }
+
+        
 
     }
 
-    public void setPosition(double gyroYaw, SwerveModulePosition[] wheelPosistions, Pose2d pose2d) {
-        odometry.resetPosition(new Rotation2d(degreesToRadians(gyroYaw)), wheelPosistions, pose2d);
+    public void setPosition(double gyroYaw, SwerveModulePosition[] wheelPositions, Pose2d pose2d) {
+        odometry.resetPosition(new Rotation2d(degreesToRadians(gyroYaw)), wheelPositions, pose2d);
     }
 
     public void setDesiredPosistion(double targetX, double targetY, double targetYaw) {
