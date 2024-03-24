@@ -16,7 +16,6 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-
 /** Add your docs here. */
 public class ShooterAndIntake {
     CANSparkMax Rshooter = new CANSparkMax(9, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
@@ -182,8 +181,9 @@ public class ShooterAndIntake {
     void setAngleForSpeaker() {
         double distance = PositionHelpers.getSpeakerDistance();
         double power = getPowerForSpeakerShot();
-        // TODO convert the distance into an angle for the arm
-        setAngle(Math.hypot(distance, speakerHeight));
+        double speakerHeight = 2.05;
+        double angle = Math.toDegrees(Math.atan2(speakerHeight, distance));
+        setAngle(angle);
     }
 
     void rampForSpeaker() {
