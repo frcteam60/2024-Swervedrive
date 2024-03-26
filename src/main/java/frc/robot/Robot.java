@@ -65,6 +65,8 @@ public class Robot extends TimedRobot {
   public boolean stepSeven = false;
   public boolean stepEight = false;
 
+  boolean inTeleop = false;
+
   // private final CANCoder AbsoluteEncoder = new CANCoder(0);
   // private WPI_CANCoder CANCoder = new
   // ** */
@@ -101,7 +103,7 @@ public class Robot extends TimedRobot {
       0, 1);
 
   // Climber
-  Climber climber = new Climber(true, true, false, false);
+  Climber climber = new Climber(false, false, true, true);
 
   // Swerve drive
   private WheelDrive backLeft = new WheelDrive(2, 1, 0);
@@ -176,7 +178,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
 
     // CameraServer.startAutomaticCapture();
-    shooterAndIntake.setAngleEncoder(21.8);
+    shooterAndIntake.setAngleEncoder(20.5);
 
     // zeros angle encoders
     frontRight.zeroEncoders(0.675 * 360);
@@ -240,7 +242,7 @@ public class Robot extends TimedRobot {
       botpose2 = LimelightHelpers.getBotPose_wpiRed("limelight");
       SmartDashboard.putString("botpose2", Arrays.toString(botpose2));
     }
-    if (hasTarget == 1) {
+    if (hasTarget == 1 && inTeleop) {
       if (botpose2.length < 6) {
         System.out.print(botpose2);
         botpose2 = new double[6];
@@ -348,6 +350,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    inTeleop = false;
     timer.stop();
     timer.start();
     autoStep = 1;
@@ -678,7 +681,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-
+    inTeleop = true;
     if (joystick.getRawButton(1)) {
       swerveDrive.setDesiredPosistion(1, 1, 0);
       swerveDrive.driveToPosition();
@@ -767,7 +770,7 @@ public class Robot extends TimedRobot {
       shooterAndIntake.setAngleForSpeaker();
     } else if (controller.getXButton()) {
       // secondary driver override
-    } else if (joystick.getRawButton(6) || joystick.getRawButton(4)) {
+    } else if (joystick.getRawButton(6)) {
       // Source pick up
       shooterAndIntake.setAngle(45);
     } else if (controller.getYButton()) {
@@ -789,7 +792,7 @@ public class Robot extends TimedRobot {
     }
 
     // Shooter
-    if (joystick.getRawButton(6) || joystick.getRawButton(4)) {
+    if (joystick.getRawButton(6)) {
       // Source
       shooterAndIntake.shooter(-0.5);
     } else if (controller.getYButton()) {
@@ -813,7 +816,7 @@ public class Robot extends TimedRobot {
       shooterAndIntake.rampForSpeaker();
     } else if (controller.getPOV() == 180) {
       // bottom
-      shooterAndIntake.shooter(20);
+      shooterAndIntake.shooter(0.2);
     } else if (controller.getRightTriggerAxis() >= 0.5) {
       // Shoot out
       shooterAndIntake.shooter(controller.getRightTriggerAxis());
@@ -940,6 +943,7 @@ public class Robot extends TimedRobot {
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
+    inTeleop = false;
     swerveDrive.offDrive();
     shooterAndIntake.offShooterAndIntake();
     climber.offClimber();

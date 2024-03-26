@@ -36,8 +36,7 @@ public class ShooterAndIntake {
     SparkMaxPIDController angle_PidController;
 
     BionicColorSensor colorSensor = new BionicColorSensor();
-    // TODO set correct speaker height in meters
-    double speakerHeight = 0;
+    double speakerHeight = 2.05;
 
     // SwerveDrive constructor
     public ShooterAndIntake(boolean invertRShooter, boolean invertLShooter, boolean invertShooterAngle,
@@ -180,10 +179,8 @@ public class ShooterAndIntake {
 
     void setAngleForSpeaker() {
         double distance = PositionHelpers.getSpeakerDistance();
-        double power = getPowerForSpeakerShot();
-        double speakerHeight = 2.05;
         double angle = Math.toDegrees(Math.atan2(speakerHeight, distance));
-        setAngle(angle);
+        setAngle(angle + 6);
     }
 
     void rampForSpeaker() {

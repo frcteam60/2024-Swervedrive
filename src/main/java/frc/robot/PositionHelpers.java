@@ -13,7 +13,7 @@ public class PositionHelpers {
     }
 
     public static Pose2d getSpeakerPosition() {
-        double speakerX = 0;
+        double speakerX = 0.24;
         double speakerY = allianceIsBlue ? 5.548 : 2.656;
         return new Pose2d(speakerX, speakerY, new Rotation2d());
     }
