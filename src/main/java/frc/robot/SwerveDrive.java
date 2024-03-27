@@ -65,6 +65,7 @@ public class SwerveDrive {
 
     // ***
     double tempHighestSpeed;
+    double tempHighestDirection;
 
     // ***
     AHRS gyro = new AHRS(SPI.Port.kMXP);
@@ -248,8 +249,6 @@ public class SwerveDrive {
 
     // odometery drive to posistion
     public void driveToPosition() {
-        diagonal = Math.sqrt((length * length) + (width * width));
-
         // Computes turning value
         // Desired Yaw
         YawError = angleSubtractor(desiredYaw, getGyroRobotYaw());
@@ -263,23 +262,29 @@ public class SwerveDrive {
         if (YError >= -0.01 && YError <= 0.01) {
             YError = 0;
         }
-        strafe = coerceToRange(YError * 1.2, -1, 1);
 
         // Desired x
         XError = desiredX - robotPose2d.getX();
         if (XError >= -0.01 && XError <= 0.01) {
             XError = 0;
         }
-        forward = coerceToRange(XError * 1.2, -1, 1);
 
-        drive(forward * 0.3, strafe * 0.3, turning * 0.3);
+        // ***
+        // If a speed is more than 100% power scale the speeds down
+        tempHighestDirection = Math.max(Math.abs(YError), Math.abs(XError));
+        if (tempHighestDirection > 1) {
+            YError = YError / tempHighestSpeed;
+            XError= XError / tempHighestSpeed;
+        }
+        strafe = YError;
+        forward = XError;
+
+        drive(forward * 0.5, strafe * 0.5, turning * 0.4);
 
     }
 
     // odometery drive to posistion two
     public void driveToPositionTwo() {
-        diagonal = Math.sqrt((length * length) + (width * width));
-
         // Computes turning value
         // Desired Yaw
         YawError = angleSubtractor(desiredYaw, getGyroRobotYaw());
@@ -294,7 +299,6 @@ public class SwerveDrive {
             YError = 0;
         }
 
-        strafe = coerceToRange(YError, -1, 1);
         // 1.2
 
         // Desired x
@@ -302,9 +306,17 @@ public class SwerveDrive {
         if (XError >= -0.01 && XError <= 0.01) {
             XError = 0;
         }
-        forward = coerceToRange(XError, -1, 1);
         // 1.2
 
+        // ***
+        // If a speed is more than 100% power scale the speeds down
+        tempHighestDirection = Math.max(Math.abs(YError), Math.abs(XError));
+        if (tempHighestDirection > 1) {
+            YError = YError / tempHighestSpeed;
+            XError= XError / tempHighestSpeed;
+        }
+        strafe = YError;
+        forward = XError;
         drive(forward * 0.5, strafe * 0.5, turning * 0.3);
 
     }

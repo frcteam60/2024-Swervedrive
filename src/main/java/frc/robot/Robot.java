@@ -18,17 +18,15 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+//import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 // Network table for Limelight
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -232,7 +230,7 @@ public class Robot extends TimedRobot {
     swerveDrive.periodicOdometry();
     SmartDashboard.putBoolean("Blue", blue);
     SmartDashboard.putNumber("X error", swerveDrive.returnXError());
-    SmartDashboard.putNumber(" eYrror", swerveDrive.returnYError());
+    SmartDashboard.putNumber("Y error", swerveDrive.returnYError());
     // Limelight
     if (blue) {
       botpose2 = LimelightHelpers.getBotPose_wpiBlue("limelight");
@@ -260,10 +258,11 @@ public class Robot extends TimedRobot {
           new Pose2d(botpose2[0], botpose2[1], new Rotation2d(-(botpose2[5] / 360 * 2 * Math.PI))), hasTarget);
     }
     cameraposeInTargetspace = camerapose_targetspace.getDoubleArray(cameraposeInTargetspace);
+
     SmartDashboard.putNumberArray("Camera PoseInTargetspace", camerapose_targetspace.getDoubleArray(cameraposeInTargetspace));
     SmartDashboard.putNumber("robot from target yaw", cameraposeInTargetspace[4]);
     SmartDashboard.putString("cameraposeInTargetspace", Arrays.toString(cameraposeInTargetspace));
-
+    /* // angle motors
     // Relative Encoders
     SmartDashboard.putNumber("backLeft relative encoder", backLeft.returnRelative());
     SmartDashboard.putNumber("backRight relative encoder", backRight.returnRelative());
@@ -279,7 +278,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("backLeft drive encoder", backLeft.returnDrivePosition());
     SmartDashboard.putNumber("backRight drive encoder", backRight.returnDrivePosition());
     SmartDashboard.putNumber("frontRight drive encoder", frontRight.returnDrivePosition());
-    SmartDashboard.putNumber("frontLeft drive encoder", frontLeft.returnDrivePosition());
+    SmartDashboard.putNumber("frontLeft drive encoder", frontLeft.returnDrivePosition()); */
 
     // Gyro angle
     SmartDashboard.putNumber("Yaw", swerveDrive.getGyroRobotYaw());
@@ -290,9 +289,9 @@ public class Robot extends TimedRobot {
     // Drive method
     SmartDashboard.putNumber("desiredYaw", swerveDrive.returnDesiredYaw());
 
-    SmartDashboard.putNumber("forward", swerveDrive.returnForward());
+    /* SmartDashboard.putNumber("forward", swerveDrive.returnForward());
     SmartDashboard.putNumber("strafe", swerveDrive.returnStrafe());
-    SmartDashboard.putNumber("turning", swerveDrive.returnTurning());
+    SmartDashboard.putNumber("turning", swerveDrive.returnTurning()); */
 
     //
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
@@ -309,11 +308,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Has target", hasTarget);
 
     // Gets the value of the primary april tag we are detecting
-    primaryTagID = IDNum.getInteger(autoStep);
+    primaryTagID = IDNum.getInteger(0);
     // SmartDashboard.putNumber("April tag ID", primaryTagID);
 
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(0);
-
 
 
     // post to smart dashboard periodically
@@ -383,7 +381,8 @@ public class Robot extends TimedRobot {
           autoInitialShooterAngle = 57;
           // Middle position doesn't have a second position
 
-          autoThirdPositionX = 2.623;
+          //autoThirdPositionX = 2.623;
+          autoThirdPositionX = 2.769;
           autoThirdPositionY = 5.548;
           autoThirdPositionRotation = 0;
 
@@ -397,7 +396,8 @@ public class Robot extends TimedRobot {
           autoInitialShooterAngle = 57;
           // Middle position doesn't have a second position
 
-          autoThirdPositionX = 2.623;
+          //autoThirdPositionX = 2.623;
+          autoThirdPositionX = 2.769;
           autoThirdPositionY = 2.656;
           autoThirdPositionRotation = 0;
 
@@ -414,7 +414,8 @@ public class Robot extends TimedRobot {
           autoStartingPositionRotation = -60;
           autoInitialShooterAngle = 60;
 
-          autoSecondPositionX = 0.836;
+          //autoSecondPositionX = 0.836;
+          autoThirdPositionX = 2.769;
           autoSecondPositionY = 4.1;
           autoSecondPositionRotation = 0;
 
@@ -431,7 +432,8 @@ public class Robot extends TimedRobot {
           autoStartingPositionRotation = -60;
           autoInitialShooterAngle = 60;
 
-          autoSecondPositionX = 0.836;
+          //autoSecondPositionX = 0.836;
+          autoThirdPositionX = 2.769;
           autoSecondPositionY = 1.209;
           autoSecondPositionRotation = 0;
 
@@ -452,7 +454,8 @@ public class Robot extends TimedRobot {
           autoStartingPositionRotation = 60;
           autoInitialShooterAngle = 60;
 
-          autoSecondPositionX = 0.836;
+          //autoSecondPositionX = 0.836;
+          autoSecondPositionX = 0.836 + 0.3048;
           autoSecondPositionY = 6.996;
           autoSecondPositionRotation = 0;
 
@@ -469,7 +472,8 @@ public class Robot extends TimedRobot {
           autoStartingPositionRotation = 60;
           autoInitialShooterAngle = 60;
 
-          autoSecondPositionX = 0.836;
+          //autoSecondPositionX = 0.836;
+          autoThirdPositionX = 2.769;
           autoSecondPositionY = 4.104;
           autoSecondPositionRotation = 0;
 
@@ -584,8 +588,8 @@ public class Robot extends TimedRobot {
       // step 5
       // pull second note back
         shooterAndIntake.intake(-1);
-        shooterAndIntake.setAngle(autoShooterAngleSecondShot);
-        //shooterAndIntake.setAngleForSpeaker();
+        //shooterAndIntake.setAngle(autoShooterAngleSecondShot);
+        shooterAndIntake.setAngleForSpeaker();
         swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
             autoShootingThirdPositionRotation);
         swerveDrive.driveToPositionTwo();
@@ -600,14 +604,14 @@ public class Robot extends TimedRobot {
         // Step six
         // line up to shoot second note
         // power up shooter
-        shooterAndIntake.shooter(0.7);
+        //shooterAndIntake.shooter(0.7);
         //TODO
-        /* shooterAndIntake.rampForSpeaker();
+        shooterAndIntake.rampForSpeaker();
         shooterAndIntake.setAngleForSpeaker();
-        swerveDrive.pointToSpeaker(); */
+        //swerveDrive.pointToSpeaker();
         // set shooter angle
-        // TODO set autoShooterAngleSecondShot (33, 37)
-        shooterAndIntake.setAngle(autoShooterAngleSecondShot);
+        // TODO test autoShooterAngleSecondShot (33, 37)
+        //shooterAndIntake.setAngle(autoShooterAngleSecondShot);
         swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
             autoShootingThirdPositionRotation);
         swerveDrive.driveToPositionTwo();
@@ -625,7 +629,9 @@ public class Robot extends TimedRobot {
         // Step seven
         // shoot second note
         shooterAndIntake.intake(1);
-        shooterAndIntake.shooter(0.7);
+        //shooterAndIntake.shooter(0.7);
+        shooterAndIntake.rampForSpeaker();
+        shooterAndIntake.setAngleForSpeaker();
         
         // Step 7 check
         if (timer.get() >= 2) {
