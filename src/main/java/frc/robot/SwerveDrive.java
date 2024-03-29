@@ -198,14 +198,14 @@ public class SwerveDrive {
 
         // ***
         // If a speed is more than 100% power scale the speeds down
-        tempHighestSpeed = Math.max(Math.max(Math.abs(frontLeftSpeed), Math.abs(frontRightSpeed)),
+        /* tempHighestSpeed = Math.max(Math.max(Math.abs(frontLeftSpeed), Math.abs(frontRightSpeed)),
                 Math.max(Math.abs(backLeftSpeed), Math.abs(backRightSpeed)));
         if (tempHighestSpeed > 1) {
             frontLeftSpeed = frontLeftSpeed / tempHighestSpeed;
             frontRightSpeed = frontRightSpeed / tempHighestSpeed;
             backLeftSpeed = backLeftSpeed / tempHighestSpeed;
             backRightSpeed = backRightSpeed / tempHighestSpeed;
-        }
+        } */
         //
         backRight.drive(backRightSpeed, backRightAngle);
         backLeft.drive(backLeftSpeed, backLeftAngle);
@@ -310,11 +310,11 @@ public class SwerveDrive {
 
         // ***
         // If a speed is more than 100% power scale the speeds down
-        tempHighestDirection = Math.max(Math.abs(YError), Math.abs(XError));
+        /* tempHighestDirection = Math.max(Math.abs(YError), Math.abs(XError));
         if (tempHighestDirection > 1) {
             YError = YError / tempHighestSpeed;
             XError= XError / tempHighestSpeed;
-        }
+        } */
         strafe = YError;
         forward = XError;
         drive(forward * 0.5, strafe * 0.5, turning * 0.3);

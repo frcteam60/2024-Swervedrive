@@ -47,6 +47,7 @@ public class Robot extends TimedRobot {
   private static final String kAutoMiddle = "AutoMiddle";
   private static final String kAutoRight = "AutoRight";
   private static final String kAutoLeft = "AutoLeft";
+  private static final String ksimpleAuto = "SimpleAuto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private Timer timer = new Timer();
@@ -169,14 +170,22 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    try{
+      Thread.sleep(2000);
+    } catch(Exception e) {
+      System.out.println("threw error: "+e);
+    }
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("AutoMiddle", kAutoMiddle);
     m_chooser.addOption("AutoRight", kAutoRight);
     m_chooser.addOption("AutoLeft", kAutoLeft);
+    m_chooser.addOption("SimpleAuto", ksimpleAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
     // CameraServer.startAutomaticCapture();
     shooterAndIntake.setAngleEncoder(20.5);
+    //shooterAndIntake.setAngleEncoder(21.8);
+    //shooterAndIntake.setAngleEncoder(22);
 
     // zeros angle encoders
     frontRight.zeroEncoders(0.675 * 360);
@@ -204,7 +213,7 @@ public class Robot extends TimedRobot {
         blue = false;
         PositionHelpers.setAllianceIsBlue(blue);
       }
-      if (ally.get() == Alliance.Blue) {
+      else {
         // <BLUE ACTION>
         blue = true;
         PositionHelpers.setAllianceIsBlue(blue);
@@ -262,7 +271,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumberArray("Camera PoseInTargetspace", camerapose_targetspace.getDoubleArray(cameraposeInTargetspace));
     SmartDashboard.putNumber("robot from target yaw", cameraposeInTargetspace[4]);
     SmartDashboard.putString("cameraposeInTargetspace", Arrays.toString(cameraposeInTargetspace));
-    /* // angle motors
+    // angle motors
     // Relative Encoders
     SmartDashboard.putNumber("backLeft relative encoder", backLeft.returnRelative());
     SmartDashboard.putNumber("backRight relative encoder", backRight.returnRelative());
@@ -278,7 +287,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("backLeft drive encoder", backLeft.returnDrivePosition());
     SmartDashboard.putNumber("backRight drive encoder", backRight.returnDrivePosition());
     SmartDashboard.putNumber("frontRight drive encoder", frontRight.returnDrivePosition());
-    SmartDashboard.putNumber("frontLeft drive encoder", frontLeft.returnDrivePosition()); */
+    SmartDashboard.putNumber("frontLeft drive encoder", frontLeft.returnDrivePosition());
 
     // Gyro angle
     SmartDashboard.putNumber("Yaw", swerveDrive.getGyroRobotYaw());
@@ -348,6 +357,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    // zeros angle encoders
+    frontRight.zeroEncoders(0.675 * 360);
+    frontLeft.zeroEncoders(0.37 * 360);
+    backRight.zeroEncoders(0.4763 * 360);
+    backLeft.zeroEncoders(0.275 * 360);
+
+    shooterAndIntake.colorSensor.setMaxValidIR();
     inTeleop = false;
     timer.stop();
     timer.start();
@@ -486,6 +502,11 @@ public class Robot extends TimedRobot {
           autoShootingThirdPositionRotation = 31;
         }
         break;
+      case ksimpleAuto:
+        autoStartingPositionRotation = 0;
+        autoStartingPositionX = 0;
+        autoStartingPositionY = 0;
+      break;
     }
     swerveDrive.setYawOffset(autoStartingPositionRotation);
     // yawOffset = (float) autoStartingPositionRotation;
@@ -505,6 +526,12 @@ public class Robot extends TimedRobot {
 
     // If default is selected, don't do anything
     if (m_autoSelected == kDefaultAuto) {
+      return;
+    }
+    if (m_autoSelected == ksimpleAuto){
+      //swerveDrive.setDesiredPosistion(1.365, 5.548, 0);
+      swerveDrive.setDesiredPosistion(2, 2, 0);
+      swerveDrive.driveToPositionTwo();
       return;
     }
 
@@ -666,6 +693,7 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    shooterAndIntake.colorSensor.setMaxValidIR();
     swerveDrive.setDesiredYaw(swerveDrive.getGyroRobotYaw());
 
     Optional<Alliance> ally = DriverStation.getAlliance();
@@ -688,10 +716,11 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     inTeleop = true;
-    if (joystick.getRawButton(1)) {
+    /* if (joystick.getRawButton(1)) {
       swerveDrive.setDesiredPosistion(1, 1, 0);
       swerveDrive.driveToPosition();
-    } else if (controller.getXButton()) {
+    } else  */
+    if (controller.getXButton()) {
       // if override pressed
       swerveDrive.driveTeleop(controller.getLeftY(), controller.getLeftX(), controller.getRightX());
 
