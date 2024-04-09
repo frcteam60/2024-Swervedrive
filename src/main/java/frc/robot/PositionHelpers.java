@@ -27,4 +27,8 @@ public class PositionHelpers {
     public static void assignSwerve(SwerveDrive swerveDriveReference) {
         swerveDriveRef = swerveDriveReference;
     }
+
+    public static boolean getAllianceIsBlue(){
+        return allianceIsBlue;
+    }
 }

@@ -18,6 +18,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.net.PortForwarder;
 //import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 // Network table for Limelight
 import edu.wpi.first.networktables.NetworkTable;
@@ -170,6 +171,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    for (int port = 5800; port <= 5809; port++){
+      PortForwarder.add(port, "limelight.local", port);
+    }
     try{
       Thread.sleep(2000);
     } catch(Exception e) {
@@ -206,7 +210,7 @@ public class Robot extends TimedRobot {
 
     swerveDrive.periodicOdometry();
 
-    Optional<Alliance> ally = DriverStation.getAlliance();
+    /* Optional<Alliance> ally = DriverStation.getAlliance();
     if (ally.isPresent()) {
       if (ally.get() == Alliance.Red) {
         // <RED ACTION>
@@ -218,7 +222,7 @@ public class Robot extends TimedRobot {
         blue = true;
         PositionHelpers.setAllianceIsBlue(blue);
       }
-    }
+    } */
 
     PositionHelpers.assignSwerve(swerveDrive);
 
@@ -371,17 +375,20 @@ public class Robot extends TimedRobot {
     // autoStep = 0;
     Optional<Alliance> ally = DriverStation.getAlliance();
     if (ally.isPresent()) {
-      if (ally.get() == Alliance.Red) {
-        // <RED ACTION>
-        blue = false;
-        PositionHelpers.setAllianceIsBlue(blue);
-      }
       if (ally.get() == Alliance.Blue) {
         // <BLUE ACTION>
         blue = true;
-        PositionHelpers.setAllianceIsBlue(blue);
       }
+      else {
+        // <RED ACTION>
+        blue = false;
+      }
+    } else {
+      blue = true;
+      System.out.println("alliance not set");
     }
+    PositionHelpers.setAllianceIsBlue(blue);
+    System.out.println(blue);
     swerveDrive.zeroGyro();
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
@@ -430,12 +437,12 @@ public class Robot extends TimedRobot {
           autoStartingPositionRotation = -60;
           autoInitialShooterAngle = 60;
 
-          //autoSecondPositionX = 0.836;
-          autoThirdPositionX = 2.769;
+          autoSecondPositionX = 0.836;
           autoSecondPositionY = 4.1;
           autoSecondPositionRotation = 0;
 
-          autoThirdPositionX = 2.623;
+          autoThirdPositionX = 2.769;
+          //autoThirdPositionX = 2.623;
           autoThirdPositionY = 4.1;
           autoThirdPositionRotation = 0;
 
@@ -448,12 +455,12 @@ public class Robot extends TimedRobot {
           autoStartingPositionRotation = -60;
           autoInitialShooterAngle = 60;
 
-          //autoSecondPositionX = 0.836;
-          autoThirdPositionX = 2.769;
+          autoSecondPositionX = 0.836;
           autoSecondPositionY = 1.209;
           autoSecondPositionRotation = 0;
 
-          autoThirdPositionX = 2.623;
+          autoThirdPositionX = 2.769;
+          //autoThirdPositionX = 2.623;
           autoThirdPositionY = 1.209;
           autoThirdPositionRotation = 0;
 
@@ -470,12 +477,12 @@ public class Robot extends TimedRobot {
           autoStartingPositionRotation = 60;
           autoInitialShooterAngle = 60;
 
-          //autoSecondPositionX = 0.836;
-          autoSecondPositionX = 0.836 + 0.3048;
+          autoSecondPositionX = 0.836;
+          //autoSecondPositionX = 0.836 + 0.3048;
           autoSecondPositionY = 6.996;
           autoSecondPositionRotation = 0;
 
-          autoThirdPositionX = 2.623;
+          autoThirdPositionX = 2.769;
           autoThirdPositionY = 6.996;
           autoThirdPositionRotation = 0;
 
@@ -488,12 +495,12 @@ public class Robot extends TimedRobot {
           autoStartingPositionRotation = 60;
           autoInitialShooterAngle = 60;
 
-          //autoSecondPositionX = 0.836;
-          autoThirdPositionX = 2.769;
+          autoSecondPositionX = 0.836;
           autoSecondPositionY = 4.104;
           autoSecondPositionRotation = 0;
 
-          autoThirdPositionX = 2.623;
+          //autoThirdPositionX = 2.623;
+          autoThirdPositionX = 2.769;
           autoThirdPositionY = 4.104;
           autoThirdPositionRotation = 0;
 
@@ -558,7 +565,8 @@ public class Robot extends TimedRobot {
         shooterAndIntake.intake(1);
         shooterAndIntake.shooter(0.33);
         // Step 2 check
-        if (timer.get() >= 2) {
+        if (timer.get() >= 12) {
+          // regaler 2 sec
           System.out.println("Start of step 3");
           // if 2 or more seconds on step 2
           shooterAndIntake.shooter(0);
@@ -606,29 +614,38 @@ public class Robot extends TimedRobot {
           System.out.println("Start of step 5 second shot");
           swerveDrive.driveTeleop(0, 0, 0);
           shooterAndIntake.intake(0);
-          timer.reset();
+          timer.restart();
           autoStep = 5;
         }
         break;
 
       case 5:
-      // step 5
+        shooterAndIntake.intake(1);
+        if(timer.get() > 2){
+          shooterAndIntake.intake(0);
+          timer.reset();
+          autoStep = 6;
+        }
+      break;
+      case 6:
+      // step 6
       // pull second note back
         shooterAndIntake.intake(-1);
         //shooterAndIntake.setAngle(autoShooterAngleSecondShot);
         shooterAndIntake.setAngleForSpeaker();
         swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
             autoShootingThirdPositionRotation);
+        swerveDrive.pointToSpeaker();
         swerveDrive.driveToPositionTwo();
         if (timer.get() >= 0.5) {
-          // step 5 check
-          System.out.println("Start of step 6");
+          // step 6 check
+          System.out.println("Start of step 7");
           shooterAndIntake.intake(0);
-          autoStep = 6;
+          autoStep = 7;
         }
         break;
-      case 6:
-        // Step six
+      case 7:
+        // Step 7
         // line up to shoot second note
         // power up shooter
         //shooterAndIntake.shooter(0.7);
@@ -641,36 +658,39 @@ public class Robot extends TimedRobot {
         //shooterAndIntake.setAngle(autoShooterAngleSecondShot);
         swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
             autoShootingThirdPositionRotation);
+        swerveDrive.pointToSpeaker();
         swerveDrive.driveToPositionTwo();
+        //swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(),0);
+        
 
-        // Step 6 check
+        // Step 7 check
         if (Math.abs(shooterAndIntake.returnAngle() - autoShooterAngleSecondShot) <= 2) {
           // if lined up
-          System.out.println("Start of step 7");
+          System.out.println("Start of step 8");
           shooterAndIntake.angle(0);
           timer.reset();
-          autoStep = 7;
+          autoStep = 8;
         }
         break;
-      case 7:
-        // Step seven
+      case 8:
+        // Step eight
         // shoot second note
         shooterAndIntake.intake(1);
         //shooterAndIntake.shooter(0.7);
         shooterAndIntake.rampForSpeaker();
         shooterAndIntake.setAngleForSpeaker();
         
-        // Step 7 check
+        // Step 8 check
         if (timer.get() >= 2) {
-          System.out.println("Start of step 8");
+          System.out.println("Start of step 9");
           shooterAndIntake.angle(0);
           shooterAndIntake.shooter(0);
           shooterAndIntake.intake(0);
-          autoStep = 8;
+          autoStep = 9;
         }
         break;
-      case 8:
-        // Step eight
+      case 9:
+        // Step nine
         // drive towards center line
         if (blue){
           // we dont want to hit the podium so we need a different position
@@ -698,17 +718,20 @@ public class Robot extends TimedRobot {
 
     Optional<Alliance> ally = DriverStation.getAlliance();
     if (ally.isPresent()) {
-      if (ally.get() == Alliance.Red) {
-        // <RED ACTION>
-        blue = false;
-        PositionHelpers.setAllianceIsBlue(blue);
-      }
       if (ally.get() == Alliance.Blue) {
         // <BLUE ACTION>
         blue = true;
-        PositionHelpers.setAllianceIsBlue(blue);
       }
+      else {
+        // <RED ACTION>
+        blue = false;
+      }
+    } else {
+      blue = true;
+      System.out.println("alliance not set teleop");
     }
+    PositionHelpers.setAllianceIsBlue(blue);
+    System.out.println(blue);
 
   }
 
@@ -753,6 +776,7 @@ public class Robot extends TimedRobot {
     } else if (joystick.getRawButton(4)) {
       // Setup for a long speaker shot
       swerveDrive.pointToSpeaker();
+      swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(),0);
     } else if (joystick.getRawButton(5)) {
       // Go to subwoofer
       if (blue) {
@@ -855,7 +879,7 @@ public class Robot extends TimedRobot {
     } else if (controller.getRightTriggerAxis() >= 0.5) {
       // Shoot out
       shooterAndIntake.shooter(controller.getRightTriggerAxis());
-    } else if (controller.getRightBumper()) {
+    } else if (controller.getRightBumper() || controller.getLeftBumper()) {
       // Reverse shooter
       shooterAndIntake.shooter(-0.25);
     } else {

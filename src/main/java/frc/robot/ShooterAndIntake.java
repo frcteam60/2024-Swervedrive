@@ -70,6 +70,9 @@ public class ShooterAndIntake {
 
     }
 
+    public double inchesToMeters(double inches) {
+        return inches * 0.0254;
+    }
     void shooter(double speed) {
         double intakeSpeed = -0.2;
         if (speed < intakeSpeed) {
@@ -77,6 +80,10 @@ public class ShooterAndIntake {
         }
         Rshooter.set(speed);
         Lshooter.set(speed);
+    }
+
+    void topShooter(){
+        
     }
 
     void angle(double direction) {
@@ -180,8 +187,8 @@ public class ShooterAndIntake {
 
     void setAngleForSpeaker() {
         double distance = PositionHelpers.getSpeakerDistance();
-        double angle = Math.toDegrees(Math.atan2(speakerHeight, distance));
-        setAngle(angle + 6);
+        double angle = Math.toDegrees(Math.atan2(speakerHeight - inchesToMeters(8), distance));
+        setAngle(angle + 2);
     }
 
     void rampForSpeaker() {

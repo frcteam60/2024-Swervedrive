@@ -64,8 +64,6 @@ public class SwerveDrive {
     Pose2d robotPose2d;
 
     // ***
-    double tempHighestSpeed;
-    double tempHighestDirection;
 
     // ***
     AHRS gyro = new AHRS(SPI.Port.kMXP);
@@ -156,6 +154,7 @@ public class SwerveDrive {
     // drive method
     // ***
     public void drive(double forwardSpeed, double strafeSpeed, double turningSpeed) {
+        double tempHighestSpeed;
         diagonal = Math.sqrt((length * length) + (width * width));
 
         // Convert to chassis speeds
@@ -249,10 +248,11 @@ public class SwerveDrive {
 
     // odometery drive to posistion
     public void driveToPosition() {
+        double tempHighestDirection;
         // Computes turning value
         // Desired Yaw
         YawError = angleSubtractor(desiredYaw, getGyroRobotYaw());
-        if (YawError >= -3 && YawError <= 3) {
+        if (YawError >= -1 && YawError <= 1) {
             YawError = 0;
         }
         turning = coerceToRange((YawError) * 0.015, -1, 1);
@@ -271,20 +271,21 @@ public class SwerveDrive {
 
         // ***
         // If a speed is more than 100% power scale the speeds down
-        tempHighestDirection = Math.max(Math.abs(YError), Math.abs(XError));
+   /*      tempHighestDirection = Math.max(Math.abs(YError), Math.abs(XError));
         if (tempHighestDirection > 1) {
-            YError = YError / tempHighestSpeed;
-            XError= XError / tempHighestSpeed;
-        }
+            YError = YError / tempHighestDirection;
+            XError= XError / tempHighestDirection;
+        } */
         strafe = YError;
         forward = XError;
 
-        drive(forward * 0.5, strafe * 0.5, turning * 0.4);
+        drive(forward * 0.5, strafe * 0.5, turning * 0.7);
 
     }
 
     // odometery drive to posistion two
     public void driveToPositionTwo() {
+        double tempHighestDirection;
         // Computes turning value
         // Desired Yaw
         YawError = angleSubtractor(desiredYaw, getGyroRobotYaw());
@@ -312,8 +313,8 @@ public class SwerveDrive {
         // If a speed is more than 100% power scale the speeds down
         /* tempHighestDirection = Math.max(Math.abs(YError), Math.abs(XError));
         if (tempHighestDirection > 1) {
-            YError = YError / tempHighestSpeed;
-            XError= XError / tempHighestSpeed;
+            YError = YError / tempHighestDirection;
+            XError= XError / tempHighestDirection;
         } */
         strafe = YError;
         forward = XError;
@@ -323,6 +324,7 @@ public class SwerveDrive {
 
     // drive method
     public void robotOrientedDrive(double forwardSpeed, double strafeSpeed, double turningSpeed) {
+        double tempHighestSpeed;
         diagonal = Math.sqrt((length * length) + (width * width));
 
         if (turningSpeed >= -0.03 && turningSpeed <= 0.03) {
@@ -543,9 +545,7 @@ public class SwerveDrive {
     void pointToSpeaker() {
         Pose2d speakerPos = PositionHelpers.getSpeakerPosition();
         setShooterTowardsPoint(speakerPos);
-        desiredX = returnX();
-        desiredY = returnY();
-        driveToPositionTwo();
+        
     }
 
 }
