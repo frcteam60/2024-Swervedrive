@@ -16,6 +16,7 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+
 /** Add your docs here. */
 public class ShooterAndIntake {
     CANSparkMax Rshooter = new CANSparkMax(9, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
@@ -26,8 +27,13 @@ public class ShooterAndIntake {
     CANSparkMax intakeLow = new CANSparkMax(12, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     CANSparkMax intakeHigh = new CANSparkMax(13, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
 
+    SparkMaxPIDController rPIDController = Rshooter.getPIDController();
+    SparkMaxPIDController lPIDController = Lshooter.getPIDController();
+
     // DutyCycleEncoder absAngleEncoder = new DutyCycleEncoder(0);
     RelativeEncoder angleEncoder;
+    RelativeEncoder rEncoder;
+    RelativeEncoder lEncoder;
 
     double angleLimitUpper;
     double angleLimitLower;
@@ -52,6 +58,9 @@ public class ShooterAndIntake {
         Rshooter.setClosedLoopRampRate(rampRate);
         Rshooter.setOpenLoopRampRate(rampRate);
 
+        rEncoder = Rshooter.getEncoder();
+        lEncoder = Lshooter.getEncoder();
+        
         // Intake
         intakeLow.setInverted(invertIntakeLow);
         intakeHigh.setInverted(invertIntakeHigh);
@@ -68,10 +77,26 @@ public class ShooterAndIntake {
         angleLimitUpper = upperLimitAngle;
         angleLimitLower = lowerLimitAngle;
 
+        rPIDController.setP(1);
+        rPIDController.setI(0);
+        rPIDController.setD(0);
+        rPIDController.setOutputRange(-1, 1);
+
+    }
+
+    void LSpeedTest(){
+        Lshooter.set(0.5);
+    
     }
 
     public double inchesToMeters(double inches) {
         return inches * 0.0254;
+    }
+    double returnRShooterSpeed(){
+        return rEncoder.getVelocity();
+    }
+    double returnLShooterSpeed(){
+        return lEncoder.getVelocity();
     }
     void shooter(double speed) {
         double intakeSpeed = -0.2;
@@ -84,6 +109,29 @@ public class ShooterAndIntake {
 
     void topShooter(){
         
+    }
+
+    void setrShooterPID(double P, double I, double D, double F){
+        rPIDController.setP(P);
+        rPIDController.setI(I);
+        rPIDController.setD(D);
+        rPIDController.setFF(F);
+        //rPIDController.setOutputRange(-1, 1);
+    }
+    void setlShooterPID(double P, double I, double D, double F){
+        lPIDController.setP(P);
+        lPIDController.setI(I);
+        lPIDController.setD(D);
+        lPIDController.setFF(F);
+        //lPIDController.setOutputRange(-1, 1);
+    }
+    double lShooterVelocity(double rpm){
+        lPIDController.setReference(rpm, CANSparkMax.ControlType.kVelocity);
+        return rpm - returnLShooterSpeed();
+    }
+    double rShooterVelocity(double rpm){
+        rPIDController.setReference(rpm, CANSparkMax.ControlType.kVelocity);
+        return rpm - returnRShooterSpeed();
     }
 
     void angle(double direction) {
@@ -195,4 +243,5 @@ public class ShooterAndIntake {
         double power = getPowerForSpeakerShot();
         shooterToSpeed(power);
     }
+    
 }
