@@ -80,6 +80,14 @@ public class Robot extends TimedRobot {
   private Joystick joystick = new Joystick(1);
   private Joystick wheelJoystick = new Joystick(2);
 
+  void zeroAngleDriveEncoders(){
+    // zeros angle encoders
+    frontRight.zeroEncoders(0.675 * 360);
+    frontLeft.zeroEncoders(0.37 * 360);
+    backRight.zeroEncoders(0.4763 * 360);
+    backLeft.zeroEncoders(0.275 * 360);
+  }
+
   // ***
   double getJoystickForward() {
     // This method returns a positive value when the joystick is pushed forward
@@ -192,10 +200,7 @@ public class Robot extends TimedRobot {
     //shooterAndIntake.setAngleEncoder(22);
 
     // zeros angle encoders
-    frontRight.zeroEncoders(0.675 * 360);
-    frontLeft.zeroEncoders(0.37 * 360);
-    backRight.zeroEncoders(0.4763 * 360);
-    backLeft.zeroEncoders(0.275 * 360);
+    zeroAngleDriveEncoders();
 
     // Inverts drive motors
     frontRight.invertDriveMotor(false);
@@ -363,10 +368,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     // zeros angle encoders
-    frontRight.zeroEncoders(0.675 * 360);
-    frontLeft.zeroEncoders(0.37 * 360);
-    backRight.zeroEncoders(0.4763 * 360);
-    backLeft.zeroEncoders(0.275 * 360);
+    zeroAngleDriveEncoders();
 
     shooterAndIntake.colorSensor.setMaxValidIR();
     inTeleop = false;
@@ -714,6 +716,8 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    zeroAngleDriveEncoders();
+    
     shooterAndIntake.colorSensor.setMaxValidIR();
     swerveDrive.setDesiredYaw(swerveDrive.getGyroRobotYaw());
 
