@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-// check zeroYaw works
+// zero yaw makes it turn to
 package frc.robot;
 // Important !! Bionic Beast
 
@@ -849,6 +849,9 @@ public class Robot extends TimedRobot {
       // Amp
       // shooterAndIntake.setAngle(116.0);
       shooterAndIntake.setAngle(Preferences.getDouble("Amp Angle", 45));
+    } else if (controller.getPOV() == 180) {
+      // bottom
+      shooterAndIntake.setAngle(30);
     } else if (Math.abs(controller.getLeftY()) > 0.02) {
       shooterAndIntake.angle(controller.getLeftY());
     } else {
@@ -880,7 +883,7 @@ public class Robot extends TimedRobot {
       shooterAndIntake.rampForSpeaker();
     } else if (controller.getPOV() == 180) {
       // bottom
-      shooterAndIntake.shooter(0.2);
+      shooterAndIntake.shooter(0.4);
     } else if (controller.getRightTriggerAxis() >= 0.5) {
       // Shoot out
       shooterAndIntake.shooter(controller.getRightTriggerAxis());
