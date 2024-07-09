@@ -84,8 +84,9 @@ public class ShooterAndIntake {
 
     }
 
-    void LSpeedTest(){
+    void shooterSpeedTest(){
         Lshooter.set(0.5);
+        //Rshooter.set(0.5);
     
     }
 

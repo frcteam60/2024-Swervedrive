@@ -780,7 +780,7 @@ public class Robot extends TimedRobot {
       }
     } else if (joystick.getRawButton(4)) {
       // Setup for a long speaker shot
-      swerveDrive.pointToSpeaker();
+      swerveDrive.pointToSpeaker(); // points the speaker side of the robot to speaker
       swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(),0);
     } else if (joystick.getRawButton(5)) {
       // Go to subwoofer
@@ -882,7 +882,8 @@ public class Robot extends TimedRobot {
       // Long range speaker shot
       shooterAndIntake.rampForSpeaker();
     } else if (controller.getPOV() == 180) {
-      // bottom
+      // bottom POV
+      // demo shot
       shooterAndIntake.shooter(0.4);
     } else if (controller.getRightTriggerAxis() >= 0.5) {
       // Shoot out
@@ -1027,17 +1028,17 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     shooterAndIntake.setlShooterPID(Preferences.getDouble("l P", 0), (Preferences.getDouble("l I", 0)), Preferences.getDouble("l D", 0), Preferences.getDouble("l F", 0));
-    shooterAndIntake.setrShooterPID(Preferences.getDouble("r P", 0), (Preferences.getDouble("r I", 0)), Preferences.getDouble("r D", 0), Preferences.getDouble("r F", 0));
+    //shooterAndIntake.setrShooterPID(Preferences.getDouble("r P", 0), (Preferences.getDouble("r I", 0)), Preferences.getDouble("r D", 0), Preferences.getDouble("r F", 0));
   }
 
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    /* shooterAndIntake.LSpeedTest();
-    SmartDashboard.putNumber("l speed", shooterAndIntake.returnLShooterSpeed()); */
+    SmartDashboard.putNumber("L speed", shooterAndIntake.returnLShooterSpeed());
+
     // Shooter speeds
     SmartDashboard.putNumber("l error", shooterAndIntake.lShooterVelocity(Preferences.getDouble("lShooter desired rpm", 0)));
-    SmartDashboard.putNumber("r error", shooterAndIntake.rShooterVelocity(Preferences.getDouble("rShooter desired rpm", 0)));
+    //SmartDashboard.putNumber("r error", shooterAndIntake.rShooterVelocity(Preferences.getDouble("rShooter desired rpm", 0)));
 
   }
 
