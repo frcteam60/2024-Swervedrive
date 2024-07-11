@@ -1027,19 +1027,24 @@ public class Robot extends TimedRobot {
   /** This function is called once when test mode is enabled. */
   @Override
   public void testInit() {
-    shooterAndIntake.setlShooterPID(Preferences.getDouble("l P", 0), (Preferences.getDouble("l I", 0)), Preferences.getDouble("l D", 0), Preferences.getDouble("l F", 0));
+    //shooterAndIntake.setlShooterPID(Preferences.getDouble("l P", 0), (Preferences.getDouble("l I", 0)), Preferences.getDouble("l D", 0), Preferences.getDouble("l F", 0));
     //shooterAndIntake.setrShooterPID(Preferences.getDouble("r P", 0), (Preferences.getDouble("r I", 0)), Preferences.getDouble("r D", 0), Preferences.getDouble("r F", 0));
   }
 
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    SmartDashboard.putNumber("L speed", shooterAndIntake.returnLShooterSpeed());
+    
+    shooterAndIntake.angle(controller.getLeftX());
+    if (controller.getLeftBumper()){
+      shooterAndIntake.setAngleEncoder(20.5);
+    }
 
+    /* 
+    SmartDashboard.putNumber("L speed", shooterAndIntake.returnLShooterSpeed());
     // Shooter speeds
     SmartDashboard.putNumber("l error", shooterAndIntake.lShooterVelocity(Preferences.getDouble("lShooter desired rpm", 0)));
-    //SmartDashboard.putNumber("r error", shooterAndIntake.rShooterVelocity(Preferences.getDouble("rShooter desired rpm", 0)));
-
+    */
   }
 
   /** This function is called once when the robot is first started up. */

@@ -14,6 +14,7 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 
@@ -43,6 +44,11 @@ public class ShooterAndIntake {
 
     BionicColorSensor colorSensor = new BionicColorSensor();
     double speakerHeight = 2.05;
+
+    double p = 0.00025;
+    double i = 0;
+    double d = 0;
+    double ff = 0.0001795;
 
     // SwerveDrive constructor
     public ShooterAndIntake(boolean invertRShooter, boolean invertLShooter, boolean invertShooterAngle,
@@ -77,18 +83,20 @@ public class ShooterAndIntake {
         angleLimitUpper = upperLimitAngle;
         angleLimitLower = lowerLimitAngle;
 
-        rPIDController.setP(1);
-        rPIDController.setI(0);
-        rPIDController.setD(0);
+        rPIDController.setFF(ff);
+        rPIDController.setP(p);
+        rPIDController.setI(i);
+        rPIDController.setD(d);
         rPIDController.setOutputRange(-1, 1);
-
+        
+        lPIDController.setFF(ff);
+        lPIDController.setP(p);
+        lPIDController.setI(i);
+        lPIDController.setD(d);
+        lPIDController.setOutputRange(-1, 1);
+        
     }
 
-    void shooterSpeedTest(){
-        Lshooter.set(0.5);
-        //Rshooter.set(0.5);
-    
-    }
 
     public double inchesToMeters(double inches) {
         return inches * 0.0254;
@@ -112,33 +120,23 @@ public class ShooterAndIntake {
         
     }
 
-    void setrShooterPID(double P, double I, double D, double F){
-        rPIDController.setP(P);
-        rPIDController.setI(I);
-        rPIDController.setD(D);
-        rPIDController.setFF(F);
-        //rPIDController.setOutputRange(-1, 1);
-    }
-    void setlShooterPID(double P, double I, double D, double F){
-        lPIDController.setP(P);
-        lPIDController.setI(I);
-        lPIDController.setD(D);
-        lPIDController.setFF(F);
-        //lPIDController.setOutputRange(-1, 1);
-    }
-    double lShooterVelocity(double rpm){
+    // Sets L RPM
+    double setLShooterRPM(double rpm){
         lPIDController.setReference(rpm, CANSparkMax.ControlType.kVelocity);
         return rpm - returnLShooterSpeed();
     }
-    double rShooterVelocity(double rpm){
+    // Sets R RPM
+    double setRShooterRPM(double rpm){
         rPIDController.setReference(rpm, CANSparkMax.ControlType.kVelocity);
         return rpm - returnRShooterSpeed();
     }
 
+    // set speed of the shooter angle
     void angle(double direction) {
         shooterAngle.set(direction);
     }
 
+    // move shooter to desired angle
     void setAngle(double desiredAngle) {
         shooterAngle.set((desiredAngle - angleEncoder.getPosition()) * 0.35);
     }
@@ -194,14 +192,12 @@ public class ShooterAndIntake {
         }
     }
 
-    void zeroAngleEncoder(double position) {
-        angleEncoder.setPosition(position);
-    }
-
+    // Returns shooter angle
     double returnAngle() {
         return angleEncoder.getPosition();
     }
-
+    
+    // set angle encoder angle
     void setAngleEncoder(double angle) {
         angleEncoder.setPosition(angle);
     }
