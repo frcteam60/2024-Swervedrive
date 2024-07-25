@@ -82,10 +82,10 @@ public class Robot extends TimedRobot {
 
   void zeroAngleDriveEncoders(){
     // zeros angle encoders
-    frontRight.zeroEncoders(0.675 * 360);
-    frontLeft.zeroEncoders(0.37 * 360);
-    backRight.zeroEncoders(0.4763 * 360);
-    backLeft.zeroEncoders(0.275 * 360);
+    frontRight.zeroEncoders(0.27 * 360);
+    frontLeft.zeroEncoders(0.862 * 360);
+    backRight.zeroEncoders(0.598 * 360);
+    backLeft.zeroEncoders(0.4806 * 360);
   }
 
   // ***
