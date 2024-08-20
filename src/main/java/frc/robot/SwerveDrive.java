@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -14,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 /** Add your docs here. */
 public class SwerveDrive {
@@ -207,6 +209,20 @@ public class SwerveDrive {
         } */
         //
         backRight.drive(backRightSpeed, backRightAngle);
+        backLeft.drive(backLeftSpeed, backLeftAngle);
+        frontRight.drive(frontRightSpeed, frontRightAngle);
+        frontLeft.drive(frontLeftSpeed, frontLeftAngle);
+
+    }
+
+    void driveRotateAroundPoint(double joystickForward, double joystickSideways, double joystickTurn){
+        //TODO change variable to convert joystick axis to desired velocity in meters per second
+        double joystickToVelocity = 1; 
+        ChassisSpeeds robotSpeed = ChassisSpeeds(joystickForward * joystickToVelocity , joystickSideways * joystickToVelocity, joystickTurn * joystickToVelocity);
+        
+        Double[] swerveModuleStates = kinematics.toSwerveModuleStates(robotSpeed, rotationPoint);
+        //
+        backRight.drive(SwerveModuleStates[0], backRightAngle);
         backLeft.drive(backLeftSpeed, backLeftAngle);
         frontRight.drive(frontRightSpeed, frontRightAngle);
         frontLeft.drive(frontLeftSpeed, frontLeftAngle);
@@ -545,6 +561,14 @@ public class SwerveDrive {
     void pointToSpeaker() {
         Pose2d speakerPos = PositionHelpers.getSpeakerPosition();
         setShooterTowardsPoint(speakerPos);
+        
+    }
+
+    void rotateAroundPointReturnModuleStates(ChassisSpeeds robotSpeeds, Translation2d rotationPoint){
+        //ChassisSpeeds(double vxMetersPerSecond, double vyMetersPerSecond, double omegaRadiansPerSecond);
+        kinematics.toSwerveModuleStates(robotSpeeds, rotationPoint);
+        //kinematics.toChassisSpeeds(frontLeft.getState(frontLeft.returnModuleSpeed(), new Rotation2d(frontLeft.returnsetPointAngle())), frontRight.getState(frontRight.returnModuleSpeed(), new Rotation2d(frontLeft.returnsetPointAngle())),
+        //backLeft.getState(backLeft.returnModuleSpeed(), new Rotation2d(frontLeft.returnsetPointAngle())), backRight.getState(backRight.returnModuleSpeed(), new Rotation2d(backRight.returnsetPointAngle())));
         
     }
 

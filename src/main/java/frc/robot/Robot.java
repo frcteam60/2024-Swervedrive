@@ -15,6 +15,10 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.cameraserver.CameraServer;
 
+//Command based
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -44,6 +48,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
+  // Command
+  private Command m_autonomousCommand;
   private static final String kDefaultAuto = "Default";
   private static final String kAutoMiddle = "AutoMiddle";
   private static final String kAutoRight = "AutoRight";
@@ -345,6 +351,7 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putNumber("Speaker distance", PositionHelpers.getSpeakerDistance());
 
+    SmartDashboard.putNumber("L speed", shooterAndIntake.returnLShooterSpeed());
     
   }
 
@@ -568,8 +575,7 @@ public class Robot extends TimedRobot {
         shooterAndIntake.intake(1);
         shooterAndIntake.shooter(0.33);
         // Step 2 check
-        if (timer.get() >= 12) {
-          // regaler 2 sec
+        if (timer.get() >= 2) {
           System.out.println("Start of step 3");
           // if 2 or more seconds on step 2
           shooterAndIntake.shooter(0);
@@ -761,13 +767,17 @@ public class Robot extends TimedRobot {
        */
       // write variable linedUp
     } else if (joystick.getRawButton(6)) {
-      // Go to far source
+      // Turn to angle of source
       if (blue) {
-        swerveDrive.setDesiredPosistion(15.96, 1.274, 120);
-        swerveDrive.driveToPosition();
+        //swerveDrive.setDesiredPosistion(15.96, 1.274, 120);
+        //swerveDrive.driveToPosition(); // Go to far source
+        swerveDrive.setDesiredYaw(120);
+        swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), 0);
       } else {
-        swerveDrive.setDesiredPosistion(15.96, 6.93, -120);
-        swerveDrive.driveToPosition();
+        //swerveDrive.setDesiredPosistion(15.96, 6.93, -120);
+        //swerveDrive.driveToPosition();// Go to far source
+        swerveDrive.setDesiredYaw(-120);
+        swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), 0);
       }
     } else if (false) { // Currently not being used
       // Go to close source
@@ -834,10 +844,10 @@ public class Robot extends TimedRobot {
       shooterAndIntake.setAngleForSpeaker();
     } else if (controller.getXButton()) {
       // secondary driver override
-    } else if (joystick.getRawButton(6)) {
+    } /* else if (joystick.getRawButton(6)) {
       // Source pick up
       shooterAndIntake.setAngle(45);
-    } else if (controller.getYButton()) {
+    } */ else if (controller.getYButton()) {
       // source pick up controller
       // shooterAndIntake.setAngle(Preferences.getDouble("Source Angle", 45));
       shooterAndIntake.setAngle(56);
@@ -1035,10 +1045,11 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     
-    shooterAndIntake.angle(controller.getLeftX());
+    /* shooterAndIntake.angle(controller.getLeftX());
     if (controller.getLeftBumper()){
       shooterAndIntake.setAngleEncoder(20.5);
-    }
+    } */
+
 
     /* 
     SmartDashboard.putNumber("L speed", shooterAndIntake.returnLShooterSpeed());

@@ -74,7 +74,7 @@ public class WheelDrive {
        
         this.absoluteEncoder = new DutyCycleEncoder(encoderNumber);
                 
-        this.moduleState = new SwerveModuleState();
+        //this.moduleState = new SwerveModuleState();
 
         
         // set PID coefficients
@@ -153,7 +153,12 @@ public class WheelDrive {
     double returnDrivePosition(){
         return speedEncoder.getPosition();
     }
-
+    double returnModuleSpeed(){
+        // TODO convert module speed to meters per second
+        double moduleSpeed = speedEncoder.getVelocity();
+        moduleSpeed = 0;
+        return moduleSpeed;
+    }
     public double returnsetPointAngle(){
         return setPointAngle;
     }
@@ -184,5 +189,9 @@ public class WheelDrive {
         return new SwerveModulePosition(speedEncoder.getPosition() * wheelCirc, new Rotation2d(angleEncoder.getPosition()/360 * 2 * Math.PI));
     }
 
+    public SwerveModuleState getState(double moduleSpeed, Rotation2d moduleAngle){
+        moduleState = new SwerveModuleState(moduleSpeed, moduleAngle);
+        return moduleState;
 
+    }
 }
