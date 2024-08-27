@@ -218,14 +218,15 @@ public class SwerveDrive {
     void driveRotateAroundPoint(double joystickForward, double joystickSideways, double joystickTurn){
         //TODO change variable to convert joystick axis to desired velocity in meters per second
         double joystickToVelocity = 1; 
-        ChassisSpeeds robotSpeed = ChassisSpeeds(joystickForward * joystickToVelocity , joystickSideways * joystickToVelocity, joystickTurn * joystickToVelocity);
+        //ChassisSpeeds robotSpeed = ChassisSpeeds(joystickForward * joystickToVelocity , joystickSideways * joystickToVelocity, joystickTurn * joystickToVelocity);
         
-        Double[] swerveModuleStates = kinematics.toSwerveModuleStates(robotSpeed, rotationPoint);
+        //fromFieldRelativeSpeeds(robotSpeed, gyroRotation2d);
+        //Double[] swerveModuleStates = kinematics.toSwerveModuleStates(robotSpeed, rotationPoint);
         //
-        backRight.drive(SwerveModuleStates[0], backRightAngle);
-        backLeft.drive(backLeftSpeed, backLeftAngle);
-        frontRight.drive(frontRightSpeed, frontRightAngle);
-        frontLeft.drive(frontLeftSpeed, frontLeftAngle);
+        //backRight.drive(SwerveModuleStates[0], backRightAngle);
+        //backLeft.drive(backLeftSpeed, backLeftAngle);
+        //frontRight.drive(frontRightSpeed, frontRightAngle);
+        //frontLeft.drive(frontLeftSpeed, frontLeftAngle);
 
     }
 

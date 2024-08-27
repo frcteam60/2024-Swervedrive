@@ -415,9 +415,11 @@ public class Robot extends TimedRobot {
           // Middle position doesn't have a second position
 
           //autoThirdPositionX = 2.623;
-          autoThirdPositionX = 2.769;
+          //autoThirdPositionX = 2.769; old
+          autoThirdPositionX = 3;
           autoThirdPositionY = 5.548;
           autoThirdPositionRotation = 0;
+          //make auto third posistion teeny bit farther north
 
           autoShootingThirdPositionX = 2.623;
           autoShootingThirdPositionY = 5.548;
@@ -430,7 +432,8 @@ public class Robot extends TimedRobot {
           // Middle position doesn't have a second position
 
           //autoThirdPositionX = 2.623;
-          autoThirdPositionX = 2.769;
+          //autoThirdPositionX = 2.769;old
+          autoThirdPositionX = 3;
           autoThirdPositionY = 2.656;
           autoThirdPositionRotation = 0;
 
@@ -440,6 +443,7 @@ public class Robot extends TimedRobot {
         }
         break;
       case kAutoRight:
+      //TODO auto left and right third positions
         autoShooterAngleSecondShot = 37;
         if (blue) {
           autoStartingPositionX = 0.683;
@@ -634,6 +638,7 @@ public class Robot extends TimedRobot {
           shooterAndIntake.intake(0);
           timer.reset();
           autoStep = 6;
+          //TODO do we need to spin shooter wheels to
         }
       break;
       case 6:
@@ -756,7 +761,9 @@ public class Robot extends TimedRobot {
     } else  */
     if (controller.getXButton()) {
       // if override pressed
-      swerveDrive.driveTeleop(controller.getLeftY(), controller.getLeftX(), controller.getRightX());
+      //swerveDrive.driveTeleop(controller.getLeftY(), controller.getLeftX(), controller.getRightX());  handheld controller
+      // only flight joystick control
+      swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), joystick.getTwist());
 
       // } else if (controller.getBButton()){
 
@@ -844,10 +851,10 @@ public class Robot extends TimedRobot {
       shooterAndIntake.setAngleForSpeaker();
     } else if (controller.getXButton()) {
       // secondary driver override
-    } /* else if (joystick.getRawButton(6)) {
+    } else if (joystick.getRawButton(6)) {
       // Source pick up
-      shooterAndIntake.setAngle(45);
-    } */ else if (controller.getYButton()) {
+      shooterAndIntake.setAngle(56);
+    } else if (controller.getYButton()) {
       // source pick up controller
       // shooterAndIntake.setAngle(Preferences.getDouble("Source Angle", 45));
       shooterAndIntake.setAngle(56);
