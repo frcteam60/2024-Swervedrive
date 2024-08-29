@@ -419,7 +419,7 @@ public class Robot extends TimedRobot {
           autoThirdPositionX = 3;
           autoThirdPositionY = 5.548;
           autoThirdPositionRotation = 0;
-          //make auto third posistion teeny bit farther north
+          //made auto third posistion teeny bit farther north
 
           autoShootingThirdPositionX = 2.623;
           autoShootingThirdPositionY = 5.548;
@@ -455,7 +455,8 @@ public class Robot extends TimedRobot {
           autoSecondPositionY = 4.1;
           autoSecondPositionRotation = 0;
 
-          autoThirdPositionX = 2.769;
+          //autoThirdPositionX = 2.769; old
+          autoThirdPositionX = 3;
           //autoThirdPositionX = 2.623;
           autoThirdPositionY = 4.1;
           autoThirdPositionRotation = 0;
@@ -473,8 +474,9 @@ public class Robot extends TimedRobot {
           autoSecondPositionY = 1.209;
           autoSecondPositionRotation = 0;
 
-          autoThirdPositionX = 2.769;
+          //autoThirdPositionX = 2.769; old
           //autoThirdPositionX = 2.623;
+          autoThirdPositionX = 3;
           autoThirdPositionY = 1.209;
           autoThirdPositionRotation = 0;
 
@@ -496,7 +498,8 @@ public class Robot extends TimedRobot {
           autoSecondPositionY = 6.996;
           autoSecondPositionRotation = 0;
 
-          autoThirdPositionX = 2.769;
+          //autoThirdPositionX = 2.769; old
+          autoThirdPositionX = 3;
           autoThirdPositionY = 6.996;
           autoThirdPositionRotation = 0;
 
@@ -514,7 +517,8 @@ public class Robot extends TimedRobot {
           autoSecondPositionRotation = 0;
 
           //autoThirdPositionX = 2.623;
-          autoThirdPositionX = 2.769;
+          //autoThirdPositionX = 2.769; old
+          autoThirdPositionX = 3;
           autoThirdPositionY = 4.104;
           autoThirdPositionRotation = 0;
 
@@ -561,14 +565,14 @@ public class Robot extends TimedRobot {
         // Step one
         // set shooter angle and speed
         shooterAndIntake.setAngle(autoInitialShooterAngle);
-        shooterAndIntake.shooterToSpeed(0.33);
+        //shooterAndIntake.shooterToSpeed(0.33);
+        shooterAndIntake.shooter(0.33);
         // Step 1 check
         if (timer.get() >= 3) {
           // if (Math.abs(shooterAndIntake.returnAngle() - 57) <= 2) {
           // if (timer.get() >= 3){
           // if shooter angle is close to 3
           System.out.println("Start of step 2");
-          shooterAndIntake.angle(0);
           timer.reset();
           autoStep = 2;
         }
@@ -576,12 +580,14 @@ public class Robot extends TimedRobot {
       case 2:
         // Step two
         // shoot first note in speaker
+        shooterAndIntake.setAngle(autoInitialShooterAngle);
         shooterAndIntake.intake(1);
         shooterAndIntake.shooter(0.33);
         // Step 2 check
         if (timer.get() >= 2) {
           System.out.println("Start of step 3");
           // if 2 or more seconds on step 2
+          shooterAndIntake.angle(0);
           shooterAndIntake.shooter(0);
           shooterAndIntake.intake(0);
           autoStep = 3;
@@ -626,7 +632,7 @@ public class Robot extends TimedRobot {
           // if at 3rd position
           System.out.println("Start of step 5 second shot");
           swerveDrive.driveTeleop(0, 0, 0);
-          shooterAndIntake.intake(0);
+          shooterAndIntake.intake(1);
           timer.restart();
           autoStep = 5;
         }
@@ -634,6 +640,7 @@ public class Robot extends TimedRobot {
 
       case 5:
         shooterAndIntake.intake(1);
+        swerveDrive.driveTeleop(0, 0, 0);
         if(timer.get() > 2){
           shooterAndIntake.intake(0);
           timer.reset();
@@ -656,6 +663,7 @@ public class Robot extends TimedRobot {
           System.out.println("Start of step 7");
           shooterAndIntake.intake(0);
           autoStep = 7;
+          timer.reset();
         }
         break;
       case 7:
@@ -664,7 +672,8 @@ public class Robot extends TimedRobot {
         // power up shooter
         //shooterAndIntake.shooter(0.7);
         //TODO
-        shooterAndIntake.rampForSpeaker();
+        //shooterAndIntake.rampForSpeaker(); old
+        shooterAndIntake.shooter(shooterAndIntake.getPowerForSpeakerShot());
         shooterAndIntake.setAngleForSpeaker();
         //swerveDrive.pointToSpeaker();
         // set shooter angle
@@ -678,7 +687,7 @@ public class Robot extends TimedRobot {
         
 
         // Step 7 check
-        if (Math.abs(shooterAndIntake.returnAngle() - autoShooterAngleSecondShot) <= 2) {
+        if (Math.abs(shooterAndIntake.returnAngle() - autoShooterAngleSecondShot) <= 2 && timer.get() > 1.5) {
           // if lined up
           System.out.println("Start of step 8");
           shooterAndIntake.angle(0);
@@ -691,8 +700,14 @@ public class Robot extends TimedRobot {
         // shoot second note
         shooterAndIntake.intake(1);
         //shooterAndIntake.shooter(0.7);
-        shooterAndIntake.rampForSpeaker();
+        //shooterAndIntake.rampForSpeaker(); old
+        shooterAndIntake.shooter(shooterAndIntake.getPowerForSpeakerShot());
         shooterAndIntake.setAngleForSpeaker();
+
+        swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
+            autoShootingThirdPositionRotation);
+        swerveDrive.pointToSpeaker();
+        swerveDrive.driveToPositionTwo();
         
         // Step 8 check
         if (timer.get() >= 2) {
@@ -700,6 +715,12 @@ public class Robot extends TimedRobot {
           shooterAndIntake.angle(0);
           shooterAndIntake.shooter(0);
           shooterAndIntake.intake(0);
+
+          swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
+            autoShootingThirdPositionRotation);
+        swerveDrive.pointToSpeaker();
+        swerveDrive.driveToPositionTwo();
+
           autoStep = 9;
         }
         break;
@@ -763,7 +784,12 @@ public class Robot extends TimedRobot {
       // if override pressed
       //swerveDrive.driveTeleop(controller.getLeftY(), controller.getLeftX(), controller.getRightX());  handheld controller
       // only flight joystick control
-      swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), joystick.getTwist());
+      if(getSteeringWheelAxis() > 0.1){
+        swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), getSteeringWheelAxis());
+      } else{
+        swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), joystick.getTwist() * 0.5);
+      }
+      
 
       // } else if (controller.getBButton()){
 

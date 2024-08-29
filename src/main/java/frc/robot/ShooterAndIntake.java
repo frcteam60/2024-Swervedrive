@@ -222,7 +222,7 @@ public class ShooterAndIntake {
         }
     }
 
-    private double getPowerForSpeakerShot() {
+    double getPowerForSpeakerShot() {
         double distance = PositionHelpers.getSpeakerDistance();
         double basePower = .3; // Power used on subwoofer shot, minus some due to distance max distance is ~20
                                // (illegal shot), halfcourt will be around 8.5. This leads to a power of 1.1
@@ -240,5 +240,7 @@ public class ShooterAndIntake {
         double power = getPowerForSpeakerShot();
         shooterToSpeed(power);
     }
+
+    
     
 }
