@@ -201,7 +201,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
 
     // CameraServer.startAutomaticCapture();
-    shooterAndIntake.setAngleEncoder(20.5);
+    shooterAndIntake.setAngleEncoder(22.5);//20.5
     //shooterAndIntake.setAngleEncoder(21.8);
     //shooterAndIntake.setAngleEncoder(22);
 
@@ -687,7 +687,7 @@ public class Robot extends TimedRobot {
         
 
         // Step 7 check
-        if (Math.abs(shooterAndIntake.returnAngle() - autoShooterAngleSecondShot) <= 2 && timer.get() > 1.5) {
+        if (Math.abs(shooterAndIntake.returnAngle() - autoShooterAngleSecondShot) <= 2 && timer.get() > 1.75) {//1.5
           // if lined up
           System.out.println("Start of step 8");
           shooterAndIntake.angle(0);
