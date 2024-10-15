@@ -88,10 +88,10 @@ public class Robot extends TimedRobot {
 
   void zeroAngleDriveEncoders(){
     // zeros angle encoders
-    frontRight.zeroEncoders(0.27 * 360);
-    frontLeft.zeroEncoders(0.862 * 360);
-    backRight.zeroEncoders(0.598 * 360);
-    backLeft.zeroEncoders(0.4806 * 360);
+    frontRight.zeroEncoders(-0.394 * 360);
+    frontLeft.zeroEncoders(-0.493 * 360);
+    backRight.zeroEncoders(-0.257 * 360);
+    backLeft.zeroEncoders(0.275 * 360);
   }
 
   // ***
@@ -672,8 +672,8 @@ public class Robot extends TimedRobot {
         // power up shooter
         //shooterAndIntake.shooter(0.7);
         //TODO
-        //shooterAndIntake.rampForSpeaker(); old
-        shooterAndIntake.shooter(shooterAndIntake.getPowerForSpeakerShot());
+        shooterAndIntake.rampForSpeaker();
+        //shooterAndIntake.shooter(shooterAndIntake.getPowerForSpeakerShot());
         shooterAndIntake.setAngleForSpeaker();
         //swerveDrive.pointToSpeaker();
         // set shooter angle
@@ -700,8 +700,8 @@ public class Robot extends TimedRobot {
         // shoot second note
         shooterAndIntake.intake(1);
         //shooterAndIntake.shooter(0.7);
-        //shooterAndIntake.rampForSpeaker(); old
-        shooterAndIntake.shooter(shooterAndIntake.getPowerForSpeakerShot());
+        shooterAndIntake.rampForSpeaker();
+        //shooterAndIntake.shooter(shooterAndIntake.getPowerForSpeakerShot());
         shooterAndIntake.setAngleForSpeaker();
 
         swerveDrive.setDesiredPosistion(autoShootingThirdPositionX, autoShootingThirdPositionY,
@@ -784,7 +784,7 @@ public class Robot extends TimedRobot {
       // if override pressed
       //swerveDrive.driveTeleop(controller.getLeftY(), controller.getLeftX(), controller.getRightX());  handheld controller
       // only flight joystick control
-      if(getSteeringWheelAxis() > 0.1){
+      if(Math.abs(getSteeringWheelAxis()) > 0.1){
         swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), getSteeringWheelAxis());
       } else{
         swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), joystick.getTwist() * 0.5);
@@ -868,7 +868,12 @@ public class Robot extends TimedRobot {
        */
     else {
       // primary driver inputs
-      swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), getSteeringWheelAxis());
+      //swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), getSteeringWheelAxis());
+      if(Math.abs(getSteeringWheelAxis()) > 0.1){
+        swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), getSteeringWheelAxis());
+      } else{
+        swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), joystick.getTwist() * -0.5);
+      }
     }
 
     // Shooter angle
@@ -920,11 +925,11 @@ public class Robot extends TimedRobot {
       shooterAndIntake.shooter(0.0825);
       // If shooter at angle shoot in amp
       // shooterAndIntake.shootInAmp();
-    } else if (controller.getPOV() == 0) {
+    } /*else if (controller.getPOV() == 0) {
       // top
       // Long range speaker shot
       shooterAndIntake.rampForSpeaker();
-    } else if (controller.getPOV() == 180) {
+    }*/ else if (controller.getPOV() == 180) {
       // bottom POV
       // demo shot
       shooterAndIntake.shooter(0.4);
@@ -1024,7 +1029,7 @@ public class Robot extends TimedRobot {
       climber.rightClimber(controller.getRightY());
     } else if ((Math.abs(controller.getRightY()) >= 0.02) && controller.getPOV() == 270) {
       climber.leftClimber(controller.getRightY());
-    } else if (Math.abs(controller.getRightY()) >= 0.02) {
+    } else if (Math.abs(controller.getRightY()) >= 0.02 && controller.getPOV() == 0) {
       climber.climb(controller.getRightY());
     } else {
       climber.climb(0);
