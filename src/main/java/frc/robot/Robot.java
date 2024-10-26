@@ -86,6 +86,9 @@ public class Robot extends TimedRobot {
   private Joystick joystick = new Joystick(1);
   private Joystick wheelJoystick = new Joystick(2);
 
+  public double steeringWheelDeadzone = 0.08;
+  public double joystickTwistDeadzone = 0;
+
   void zeroAngleDriveEncoders(){
     // zeros angle encoders
     frontRight.zeroEncoders(-0.394 * 360);
@@ -110,6 +113,35 @@ public class Robot extends TimedRobot {
   double getSteeringWheelAxis() {
     // This method returns a positive value when the wheel is pushed to the left
     return -wheelJoystick.getRawAxis(0);
+  }
+
+  double getJoystickTwist(){
+    return joystick.getTwist() * -1;
+  }
+
+  // Returns greatest speed twist input
+  double getGreaterTurning(){
+    double steeringWheel;
+    double joystickTwist;
+    // Enforces deadzone for steering wheel
+    if (Math.abs(getSteeringWheelAxis()) >= steeringWheelDeadzone){
+      steeringWheel = getSteeringWheelAxis();
+    } else {
+      steeringWheel = 0;
+    }
+    // Enforces deadzone for the twist of joystick
+    if (Math.abs(getJoystickTwist()) >= joystickTwistDeadzone){
+      joystickTwist = getJoystickTwist() * 0.5;
+    } else {
+      joystickTwist = 0;
+    }
+    // returns whichever input gives greater speed
+    if (Math.abs(steeringWheel) >= Math.abs(joystickTwist)){
+      return steeringWheel;
+    } else {
+      return joystickTwist;
+    }
+   
   }
 
   // Shooter and Intake
@@ -185,6 +217,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    shooterAndIntake.shooterAngleSoftLimit(true);
     for (int port = 5800; port <= 5809; port++){
       PortForwarder.add(port, "limelight.local", port);
     }
@@ -352,6 +385,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Speaker distance", PositionHelpers.getSpeakerDistance());
 
     SmartDashboard.putNumber("L speed", shooterAndIntake.returnLShooterSpeed());
+    SmartDashboard.putNumber("R speed", shooterAndIntake.returnRShooterSpeed());
     
   }
 
@@ -374,6 +408,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    shooterAndIntake.shooterAngleSoftLimit(true);
     // zeros angle encoders
     zeroAngleDriveEncoders();
 
@@ -748,6 +783,9 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    shooterAndIntake.shooterAngleSoftLimit(true);
+    //shooterAndIntake.setPIDI(Preferences.getDouble("I",0));
+    
     zeroAngleDriveEncoders();
     
     shooterAndIntake.colorSensor.setMaxValidIR();
@@ -869,11 +907,12 @@ public class Robot extends TimedRobot {
     else {
       // primary driver inputs
       //swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), getSteeringWheelAxis());
-      if(Math.abs(getSteeringWheelAxis()) > 0.1){
+      /* if(Math.abs(getSteeringWheelAxis()) > 0.1){
         swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), getSteeringWheelAxis());
       } else{
         swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), joystick.getTwist() * -0.5);
-      }
+      } */
+      swerveDrive.driveTeleop(getJoystickForward(), getJoystickSideways(), getGreaterTurning());
     }
 
     // Shooter angle
@@ -909,10 +948,12 @@ public class Robot extends TimedRobot {
     // Shooter
     if (joystick.getRawButton(6)) {
       // Source
-      shooterAndIntake.shooter(-0.5);
+      shooterAndIntake.shooter(-0.75);
+      //shooterAndIntake.shooterControlRPM(-1100);
     } else if (controller.getYButton()) {
       // source
-      shooterAndIntake.shooter(-0.5);
+      shooterAndIntake.shooter(-0.75);
+      //shooterAndIntake.shooterControlRPM(-1100);
       // Low power or variable shooter
       // 0.15 good low power
       // shooterAndIntake.shooter(Preferences.getDouble("ShooterPower", 0.7));
@@ -1059,6 +1100,7 @@ public class Robot extends TimedRobot {
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
+    shooterAndIntake.shooterAngleSoftLimit(true);
     inTeleop = false;
     swerveDrive.offDrive();
     shooterAndIntake.offShooterAndIntake();
@@ -1069,12 +1111,18 @@ public class Robot extends TimedRobot {
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {
+    inTeleop = false;
+    swerveDrive.offDrive();
+    shooterAndIntake.offShooterAndIntake();
+    climber.offClimber();
+    swerveDrive.setDesiredYaw(swerveDrive.getGyroRobotYaw());
 
   }
 
   /** This function is called once when test mode is enabled. */
   @Override
   public void testInit() {
+    shooterAndIntake.shooterAngleSoftLimit(false);
     //shooterAndIntake.setlShooterPID(Preferences.getDouble("l P", 0), (Preferences.getDouble("l I", 0)), Preferences.getDouble("l D", 0), Preferences.getDouble("l F", 0));
     //shooterAndIntake.setrShooterPID(Preferences.getDouble("r P", 0), (Preferences.getDouble("r I", 0)), Preferences.getDouble("r D", 0), Preferences.getDouble("r F", 0));
   }
@@ -1083,17 +1131,26 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     
-    /* shooterAndIntake.angle(controller.getLeftX());
+    shooterAndIntake.angle(controller.getLeftY());
+
     if (controller.getLeftBumper()){
       shooterAndIntake.setAngleEncoder(20.5);
-    } */
+    }
 
+    if (controller.getXButton()){
+      shooterAndIntake.shooter(-1);
+    } else {
+      shooterAndIntake.shooter(0);
+    }    
 
     /* 
     SmartDashboard.putNumber("L speed", shooterAndIntake.returnLShooterSpeed());
     // Shooter speeds
     SmartDashboard.putNumber("l error", shooterAndIntake.lShooterVelocity(Preferences.getDouble("lShooter desired rpm", 0)));
     */
+    //shooterAndIntake.setLShooterRPM();
+    //shooterAndIntake.setRShooterRPM();
+
   }
 
   /** This function is called once when the robot is first started up. */

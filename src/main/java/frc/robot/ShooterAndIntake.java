@@ -45,10 +45,12 @@ public class ShooterAndIntake {
     BionicColorSensor colorSensor = new BionicColorSensor();
     double speakerHeight = 2.05;
 
-    double p = 0.00025;
+    //double p = 0.00025;
+    double p = 0.0001795;
     double i = 0;
     double d = 0;
-    double ff = 0.0001795;
+    //double ff = 0.0001795;
+    double ff = 0.00025;
 
     // SwerveDrive constructor
     public ShooterAndIntake(boolean invertRShooter, boolean invertLShooter, boolean invertShooterAngle,
@@ -88,6 +90,7 @@ public class ShooterAndIntake {
         rPIDController.setI(i);
         rPIDController.setD(d);
         rPIDController.setOutputRange(-1, 1);
+        
         
         lPIDController.setFF(ff);
         lPIDController.setP(p);
@@ -129,6 +132,11 @@ public class ShooterAndIntake {
     double setRShooterRPM(double rpm){
         rPIDController.setReference(rpm, CANSparkMax.ControlType.kVelocity);
         return rpm - returnRShooterSpeed();
+    }
+    
+    void shooterControlRPM(double rpm){
+        setLShooterRPM(rpm);
+        setRShooterRPM(rpm);
     }
 
     // set speed of the shooter angle
@@ -240,6 +248,17 @@ public class ShooterAndIntake {
         double power = getPowerForSpeakerShot();
         shooterToSpeed(power);
     }
+
+    void setPIDI(double integral){
+        lPIDController.setI(integral);
+        rPIDController.setI(integral);
+    }
+
+    void shooterAngleSoftLimit(boolean enable){
+        shooterAngle.enableSoftLimit(SoftLimitDirection.kForward, enable);
+        shooterAngle.enableSoftLimit(SoftLimitDirection.kReverse, enable);
+    }
+    
 
     
     
