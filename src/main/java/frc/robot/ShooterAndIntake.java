@@ -77,7 +77,7 @@ public class ShooterAndIntake {
         angleEncoder = shooterAngle.getEncoder();
         angleEncoder.setPositionConversionFactor(360.0 / 500);
         //shooterAngle.setSoftLimit(SoftLimitDirection.kForward, 122);
-        shooterAngle.setSoftLimit(SoftLimitDirection.kForward,120);
+        shooterAngle.setSoftLimit(SoftLimitDirection.kForward,78);// old 120
         // hardstop is aproximently 21.8
         shooterAngle.setSoftLimit(SoftLimitDirection.kReverse, 25);
         shooterAngle.enableSoftLimit(SoftLimitDirection.kForward, true);

@@ -31,12 +31,15 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.PowerDistribution;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -48,6 +51,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
+  public PowerDistribution PDH = new PowerDistribution(18, ModuleType.kRev);
+
+
   // Command
   private Command m_autonomousCommand;
   private static final String kDefaultAuto = "Default";
@@ -217,6 +223,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    PDH.setSwitchableChannel(false);
     shooterAndIntake.shooterAngleSoftLimit(true);
     for (int port = 5800; port <= 5809; port++){
       PortForwarder.add(port, "limelight.local", port);
